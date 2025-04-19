@@ -24,7 +24,7 @@ TEST(AdditionTest, AddURLSuccessfully)
 }
 
 // Check if the BloomFilter array is as expected
-bool check_array(int correct_array, intchecked_array, int size)
+bool check_array(int *correct_array, int *checked_array, int size)
 {
     for (int i = 0; i < size; i++)
     {
@@ -46,7 +46,7 @@ TEST(AdditionTest, UpdateArray1)
     int index = h(url) % 128;
     int correct_array[128] = {0};
     correct_array[index] = 1;
-    int checked_array = bf.getBitArray();
+    int *checked_array = bf.getBitArray();
     EXPECT_TRUE(check_array(correct_array, checked_array, 128));
 }
 
@@ -63,7 +63,7 @@ TEST(AdditionTest, UpdateArray2)
     int correct_array[8] = {0};
     correct_array[first_index] = 1;
     correct_array[second_index] = 1;
-    intchecked_array = bf.getBitArray();
+    int *checked_array = bf.getBitArray();
     EXPECT_TRUE(check_array(correct_array, checked_array, 8));
 }
 
