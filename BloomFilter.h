@@ -14,10 +14,7 @@ private:
     long int numTimes;
 
 public:
-    BloomFilter();
     BloomFilter(long int size, long int numOfHashFunc, long int numTimes);
-    void init_filter(long int size, long int numOfHashFunctions, long int numTimes);
-    int isValidInput(string input)
     void add_url(const std::string &url);
     bool check_url(const std::string &url);
     std::unordered_set<std::string> getBlacklist();
