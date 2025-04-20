@@ -7,16 +7,16 @@
 class BloomFilter
 {
 private:
-    int *bitArray;
+    int *bit_array;
     std::unordered_set<std::string> blacklist;
-    long int bitArraySize;
-    long int numOfHashFunc;
-    long int numTimes;
+    long int bit_array_size;
+    long int num_of_hash_func;
+    long int num_times;
 
 public:
-    BloomFilter(long int size, long int numOfHashFunc, long int numTimes);
-    void add_url(const std::string &url);
-    void check_url(const std::string &url);
+    BloomFilter(long int size, long int num_of_hash_func, long int num_times);
+    void addUrl(const std::string url);
+    void checkUrl(const std::string url);
     std::unordered_set<std::string> getBlacklist();
     int *getBitArray();
     long int getSize();
