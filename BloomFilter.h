@@ -16,7 +16,7 @@ private:
 public:
     BloomFilter(long int size, long int numOfHashFunc, long int numTimes);
     void add_url(const std::string &url);
-    bool check_url(const std::string &url);
+    void check_url(const std::string &url);
     std::unordered_set<std::string> getBlacklist();
     int *getBitArray();
     long int getSize();
