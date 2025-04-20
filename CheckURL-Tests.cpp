@@ -6,12 +6,12 @@
 TEST(CheckURLTest, ExistingURL) {
     BloomFilter bf(128, 1, 1);
     std::string url = "www.test1.com";
-    bf.AddURL(url);
+    bf.addUrl(url);
     {
         std::stringstream buffer;
         std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
 
-        bf.CheckURL(url);
+        bf.checkUrl(url);
 
         std::cout.rdbuf(old);
 
@@ -28,7 +28,7 @@ TEST(CheckURLTest, NonExistingURL){
         std::stringstream buffer;
         std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
 
-        bf.CheckURL(url);
+        bf.checkUrl(url);
 
         std::cout.rdbuf(old);
 
@@ -51,7 +51,7 @@ TEST(CheckURLTest, FalsePositive){
         std::stringstream buffer;
         std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
 
-        bf.CheckURL(real_url);
+        bf.checkUrl(real_url);
 
         std::cout.rdbuf(old);
         EXPECT_EQ(buffer.str(), "true true\n");
@@ -64,7 +64,7 @@ TEST(CheckURLTest, FalsePositive){
         std::stringstream buffer;
         std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
 
-        bf.CheckURL(false_positive_url);
+        bf.checkUrl(false_positive_url);
 
         std::cout.rdbuf(old);
 
