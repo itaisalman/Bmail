@@ -13,7 +13,7 @@ FetchContent_Declare(
 
 # Create a list of all test files
 set(TEST_FILES
-  # AddURL-Tests.cpp
+  AddURL-Tests.cpp
   # CheckURL-Tests.cpp
   init_input_tests.cpp
   url_input_tests.cpp
