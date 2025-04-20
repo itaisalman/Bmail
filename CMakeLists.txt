@@ -15,7 +15,8 @@ FetchContent_Declare(
 set(TEST_FILES
   AddURL-Tests.cpp
   # CheckURL-Tests.cpp
-  # InputCheck-Tests.cpp
+  init_input_tests.cpp
+  url_input_tests.cpp
   # Add other test files here as needed
 )
 
