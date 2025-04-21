@@ -9,7 +9,7 @@ class BloomFilter
 private:
     int *bit_array;
     std::unordered_set<std::string> blacklist;
-    std::vector<std::pair<std::function<std::size_t(const std::string &)>, int>> hashFunctionCounts;
+    std::vector<std::pair<std::function<std::size_t(const std::string &)>, int>> hash_functions_structer;
     long int bit_array_size;
 
 public:
