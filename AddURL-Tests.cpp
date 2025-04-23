@@ -75,8 +75,8 @@ TEST(AdditionTest, UpdateArray2)
     std::vector<std::pair<std::function<std::size_t(const std::string &)>, int>> hash_structure = bf.getHashFuncVector();
     auto h1 = hash_structure[0].first;
     auto h2 = hash_structure[1].first;
-    int first_index = h1(std::to_string(h1(std::to_string(h1(url))))) % 8;
-    int second_index = h2(std::to_string(h2(url))) % 8;
+    int first_index = h1(std::to_string(h1(url))) % 8;
+    int second_index = h2(std::to_string(h2(std::to_string(h2(url))))) % 8;
     int correct_array[8] = {0};
     setExpectedBits(correct_array, first_index, second_index);
     int *checked_array = bf.getBitArray();
