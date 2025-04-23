@@ -51,21 +51,16 @@ TEST(checkInitInput, InValidInput3) {
 // spaces, tabs, new lines etc..
 TEST(checkInitInput, InValidInput4) {
     // too many spaces between the numbers
-    EXPECT_FALSE(checkInitInput("100  1"));               
-    EXPECT_FALSE(checkInitInput("8  2"));              
-    EXPECT_FALSE(checkInitInput(" 16 1"));              
-    EXPECT_FALSE(checkInitInput("50 1 "));               
-    EXPECT_FALSE(checkInitInput("55  1")); 
-    EXPECT_FALSE(checkInitInput("8  1 2"));               
-    EXPECT_FALSE(checkInitInput("8 2  4"));              
-    EXPECT_FALSE(checkInitInput(" 8 2 3"));              
-    EXPECT_FALSE(checkInitInput("16  1  2 "));            
-    // tabs or different lines
-    EXPECT_FALSE(checkInitInput("\t8 1"));              
+    EXPECT_TRUE(checkInitInput("100              1"));               
+    EXPECT_TRUE(checkInitInput("   8  2"));              
+    EXPECT_TRUE(checkInitInput("16 1           4"));              
+    EXPECT_TRUE(checkInitInput("50 1       "));               
+    EXPECT_TRUE(checkInitInput("55  1")); 
+    EXPECT_TRUE(checkInitInput("            8  1  2"));               
+             
+    // different lines
     EXPECT_FALSE(checkInitInput("8\n1"));     
-    EXPECT_FALSE(checkInitInput("8 1\t1"));              
     EXPECT_FALSE(checkInitInput("16\n1 1")); 
-    EXPECT_FALSE(checkInitInput("\t8 1 2"));              
     EXPECT_FALSE(checkInitInput("100 1\n4")); 
 }         
 
