@@ -1,7 +1,8 @@
 #ifndef INPUT_H
 #define INPUT_H
+#include <string>
 
-bool checkInitInput(string input);
-int isValidURLRequest(string input);
+bool checkInitInput(std::string input);
+int isValidURLRequest(std::string input);
 
 #endif
