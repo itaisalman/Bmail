@@ -3,7 +3,7 @@
 
 using namespace std;
 
-// sanity test for 
+// Creating an instance and check if succeeded by comparing expected values to the fields.
 TEST(BloomFilterTests, getters) 
 {
     BloomFilter bf(8, 2, 1);
