@@ -42,9 +42,12 @@ TEST(CheckURLTest, FalsePositive){
     std::string real_url = "www.real.com";
     std::string false_positive_url = "www.fake7.com";
    
-    std::hash<std::string> h;
-    int index = h(real_url) % 8;
+    hash_funcs = bf.getHashFuncVector();
+    h1 = hash_funcs[0].first;
+    int index = h1(real_url) % 8;
+
     bf.getBitArray()[index] = 1;
+
     bf.getBlacklist().insert(real_url);
 
     {
@@ -57,7 +60,7 @@ TEST(CheckURLTest, FalsePositive){
         EXPECT_EQ(buffer.str(), "true true\n");
     }
 
-    int index_fake = h(false_positive_url) % 8;
+    int index_fake = h1(false_positive_url) % 8;
     EXPECT_EQ(index_fake, index);
 
     {
