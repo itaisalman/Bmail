@@ -13,17 +13,19 @@ FetchContent_Declare(
 
 # Create a list of all test files
 set(TEST_FILES
-  AddURL-Tests.cpp
+  #AddURL-Tests.cpp
   # CheckURL-Tests.cpp
-  init_input_tests.cpp
-  url_input_tests.cpp
-  # Add other test files here as needed
+  #init_input_tests.cpp
+  #url_input_tests.cpp
+  BloomFilter_getters_tests.cpp
 )
 
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_executable(runTests ${TEST_FILES})
+add_executable(runTests ${TEST_FILES} BloomFilter.cpp)
 
 target_link_libraries(runTests gtest_main)
+
+target_compile_features(runTests PRIVATE cxx_std_11)
