@@ -14,6 +14,8 @@ private:
     long int bit_array_size;
     int getIndexAfterHash(std::function<std::size_t(const std::string &)> hashFunc, int times, std::string url);
     void updatingBitArray(std::string url);
+    bool firstUrlCheck(const std::string url);
+    bool secondUrlCheck(const std::string url);
 
 public:
     BloomFilter(long int size, std::vector<int> num_times_vector);
