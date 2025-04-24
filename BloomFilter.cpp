@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <functional>
+#include <iostream>
 #include "BloomFilter.h"
 
 // Constructor
@@ -75,4 +76,62 @@ void BloomFilter::addUrl(std::string url)
 {
     BloomFilter::updatingBitArray(url);
     this->blacklist.insert(url);
+}
+
+// Adds each index obtained by running the hash on the given URL the required number of times to the vector.
+// Then, it checks the corresponding cells in the bit array according to the returned indices. If it finds at least one that is 0, return false.
+// Otherwise, True.
+bool BloomFilter::firstUrlCheck(const std::string url)
+{
+    std::vector<int> indices;
+    // Iterate over each pair of hash function and times to run it.
+    for (auto pair : hash_functions_vector)
+    {
+        indices.push_back(getIndexAfterHash(pair.first, pair.second, url));
+    }
+
+    // Iterate over the indices that needs to be checked.
+    for (auto index : indices)
+    {
+        if (this->bit_array[index] == 0)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+// Double-checking,In case it passed the first checking
+// Check if given url is in the blacklist
+bool BloomFilter::secondUrlCheck(const std::string url)
+{
+    if (this->blacklist.find(url) != blacklist.end())
+    {
+        return true;
+    }
+    return false;
+}
+
+// Checks if given URL exists in the blacklist.
+// Prints results accordingly
+void BloomFilter::checkUrl(const std::string url)
+{
+    // First-checking.
+    if (firstUrlCheck(url))
+    {
+        std::cout << "true ";
+        // Double-checking.
+        if (secondUrlCheck(url))
+        {
+            std::cout << "true" << std::endl;
+        }
+        else
+        {
+            std::cout << "false" << std::endl;
+        }
+    }
+    else
+    {
+        std::cout << "false" << std::endl;
+    }
 }
