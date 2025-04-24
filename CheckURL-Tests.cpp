@@ -41,24 +41,22 @@ TEST(CheckURLTest, NonExistingURL)
 // First check returns true, second check (blacklist) fails → prints "true\nfalse\n"
 TEST(CheckURLTest, FalsePositive)
 {
-    BloomFilter bf(8, 2, 1);
+    std::vector<int> num_hash = {2, 1} BloomFilter bf(8, num_hash);
     std::string real_url = "www.real8.com";
     std::string false_positive_url = "www.fake6.com";
 
     bf.addUrl(real_url);
 
-    auto hash_funcs = bf.getHashFuncVector();
+    std::vector<std::pair<std::function<std::size_t(const std::string &)>, int>> hash_funcs = bf.getHashFuncVector();
 
     auto h1 = hash_funcs[0].first;
     auto h2 = hash_funcs[1].first;
 
-    int result_h1 = h2(real_url);
-    for (int i = 0; i < 2; i++)
-    {
-        result_h1 = h2(std::to_string(result_h1));
-    }
-    int index_h1 = result_h1 % 8;
-    int result_h2 = h2(real_url);
+    size_t result_h1 = h1(real_url);
+    result_h1 = h1(std::to_string(result_h1));
+    int index_h1 = result_h1 % bf.getSize();
+
+    size_t result_h2 = h2(real_url);
     int index_h2 = result_h2 % bf.getSize();
 
     bf.getBitArray()[index_h1] = 1;
@@ -74,15 +72,12 @@ TEST(CheckURLTest, FalsePositive)
         EXPECT_EQ(buffer.str(), "true true\n");
     }
 
-    int result_f1 = h2(real_url);
-    for (int i = 0; i < 2; i++)
-    {
-        result_f1 = h2(std::to_string(result_f1));
-    }
-    int index_f1 = result_f1 % 8;
-    ;
-    int result_f2 = h2(false_positive_url);
-    int index_f2 = result_f1 % bf.getSize();
+    size_t result_f1 = h1(false_positive_url);
+    result_f1 = h1(std::to_string(result_f1));
+    int index_f1 = result_f1 % bf.getSize();
+
+    size_t result_f2 = h2(false_positive_url);
+    int index_f2 = result_f2 % bf.getSize();
 
     if (index_h1 == index_f1 && index_h2 == index_f2)
     {
