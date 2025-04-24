@@ -5,7 +5,8 @@
 // Should return True in both checks → prints "true true\n"
 TEST(CheckURLTest, ExistingURL)
 {
-    BloomFilter bf(128, 1, 1);
+    std::vector<int> num_hash = {1, 1};
+    BloomFilter bf(128, num_hash);
     std::string url = "www.test1.com";
     bf.addUrl(url);
     {
@@ -24,7 +25,8 @@ TEST(CheckURLTest, ExistingURL)
 // Should return False in the first check → prints "false\n
 TEST(CheckURLTest, NonExistingURL)
 {
-    BloomFilter bf(128, 1, 1);
+    std::vector<int> num_hash = {3, 5};
+    BloomFilter bf(8, num_hash);
     std::string url = "www.test2.com";
     {
         std::stringstream buffer;
@@ -41,9 +43,10 @@ TEST(CheckURLTest, NonExistingURL)
 // First check returns true, second check (blacklist) fails → prints "true\nfalse\n"
 TEST(CheckURLTest, FalsePositive)
 {
-    std::vector<int> num_hash = {2, 1} BloomFilter bf(8, num_hash);
-    std::string real_url = "www.real8.com";
-    std::string false_positive_url = "www.fake6.com";
+    std::vector<int> num_hash = {2, 1};
+    BloomFilter bf(1, num_hash);
+    std::string real_url = "www.real.com";
+    std::string false_positive_url = "www.fake.com";
 
     bf.addUrl(real_url);
 
@@ -53,11 +56,9 @@ TEST(CheckURLTest, FalsePositive)
     auto h2 = hash_funcs[1].first;
 
     size_t result_h1 = h1(real_url);
-    result_h1 = h1(std::to_string(result_h1));
-    int index_h1 = result_h1 % bf.getSize();
+    result_h1 = h1(std::to_string(result_h1)) % bf.getSize();
 
-    size_t result_h2 = h2(real_url);
-    int index_h2 = result_h2 % bf.getSize();
+    size_t result_h2 = h2(real_url) % bf.getSize();
 
     bf.getBitArray()[index_h1] = 1;
     bf.getBitArray()[index_h2] = 1;
@@ -73,13 +74,11 @@ TEST(CheckURLTest, FalsePositive)
     }
 
     size_t result_f1 = h1(false_positive_url);
-    result_f1 = h1(std::to_string(result_f1));
-    int index_f1 = result_f1 % bf.getSize();
+    result_f1 = h1(std::to_string(result_f1)) % bf.getSize();
 
-    size_t result_f2 = h2(false_positive_url);
-    int index_f2 = result_f2 % bf.getSize();
+    size_t result_f2 = h2(false_positive_url) % bf.getSize();
 
-    if (index_h1 == index_f1 && index_h2 == index_f2)
+    if (result_h1 == result_f1 && result_h2 == result_f2)
     {
 
         {
