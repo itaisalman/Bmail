@@ -4,28 +4,27 @@
 #include <functional>
 #include "BloomFilter.h"
 
-
 // constructor
-BloomFilter::BloomFilter (long int size, long int num_times_h1, long int num_times_h2)
+BloomFilter::BloomFilter(long int size, std::vector<int> num_times_vector)
 {
     this->bit_array = new int[size]();
     this->bit_array_size = size;
-    this->blacklist = std::unordered_set<std::string>(); 
-    auto hash1 = std::hash<std::string>();
-    auto hash2 = std::hash<std::string>();
-    this->hash_functions_vector = std::vector<std::pair<std::function<size_t(const std::string&)>, int>>();
-    this->hash_functions_vector.push_back(make_pair(hash1, num_times_h1));
-    this->hash_functions_vector.push_back(make_pair(hash2, num_times_h2));
+    this->blacklist = std::unordered_set<std::string>();
+    this->hash_functions_vector = std::vector<std::pair<std::function<size_t(const std::string &)>, int>>();
+    for (int times : num_times_vector)
+    {
+        this->hash_functions_vector.push_back(make_pair(std::hash<std::string>(), times));
+    }
 }
 
 // destructor
-BloomFilter::~BloomFilter() 
+BloomFilter::~BloomFilter()
 {
     delete[] this->bit_array;
 }
 
 // Returns a pointer to the internal bit array used by the Bloom filter
-int* BloomFilter::getBitArray() 
+int *BloomFilter::getBitArray()
 {
     return this->bit_array;
 }
@@ -36,7 +35,7 @@ long int BloomFilter::getSize()
     return this->bit_array_size;
 }
 
-// Returns the current URL blacklist  
+// Returns the current URL blacklist
 std::unordered_set<std::string> BloomFilter::getBlacklist()
 {
     return this->blacklist;
