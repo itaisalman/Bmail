@@ -79,6 +79,8 @@ TEST(AdditionTest, UpdateArray1)
     setExpectedBit(correct_array, indices);
     int *checked_array = bf.getBitArray();
     EXPECT_TRUE(checkArray(correct_array, checked_array, 128));
+    unordered_set<string> blacklist = bf.getBlacklist();
+    EXPECT_TRUE(isBlacklisted(blacklist, url));
 }
 
 // Check if handles correctly with multiple Loops over the hash functions.
@@ -97,6 +99,8 @@ TEST(AdditionTest, UpdateArray2)
     setExpectedBit(correct_array, indices);
     int *checked_array = bf.getBitArray();
     EXPECT_TRUE(checkArray(correct_array, checked_array, 8));
+    unordered_set<string> blacklist = bf.getBlacklist();
+    EXPECT_TRUE(isBlacklisted(blacklist, url));
 }
 
 // Check if handle big arrays correctly.
@@ -114,6 +118,8 @@ TEST(AdditionTest, ArraySize)
     setExpectedBit(correct_array, indices);
     int *checked_array = bf.getBitArray();
     EXPECT_TRUE(checkArray(correct_array, checked_array, 8000));
+    unordered_set<string> blacklist = bf.getBlacklist();
+    EXPECT_TRUE(isBlacklisted(blacklist, url));
 }
 
 int main(int argc, char **argv)
