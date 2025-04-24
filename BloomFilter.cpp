@@ -47,3 +47,30 @@ std::vector<std::pair<std::function<size_t(const std::string &)>, int>> BloomFil
 {
     return this->hash_functions_vector;
 }
+
+int BloomFilter::getIndexAfterHash(std::function<std::size_t(const std::string &)> hashFunc, int times, std::string url)
+{
+    size_t result = hashFunc(url);
+    times--;
+    for (int i = 0; i < times; i++)
+    {
+        result = hashFunc(std::to_string(result));
+    }
+    return result % this->bit_array_size;
+}
+
+void BloomFilter::updatingBitArray(std::string url)
+{
+    for (int i = 0; i < hash_functions_vector.size(); i++)
+    {
+        int index = BloomFilter::getIndexAfterHash(hash_functions_vector[i].first, hash_functions_vector[i].second, url);
+        this->bit_array[index] = 1;
+    }
+}
+
+// Updates BloomFilter's bit array and adding the URL to the its blacklist
+void BloomFilter::addUrl(std::string url)
+{
+    BloomFilter::updatingBitArray(url);
+    this->blacklist.insert(url);
+}
