@@ -4,7 +4,7 @@
 #include <functional>
 #include "BloomFilter.h"
 
-// constructor
+// Constructor
 BloomFilter::BloomFilter(long int size, std::vector<int> num_times_vector)
 {
     this->bit_array = new int[size]();
@@ -17,7 +17,7 @@ BloomFilter::BloomFilter(long int size, std::vector<int> num_times_vector)
     }
 }
 
-// destructor
+// Destructor
 BloomFilter::~BloomFilter()
 {
     delete[] this->bit_array;
@@ -46,4 +46,33 @@ std::unordered_set<std::string> BloomFilter::getBlacklist()
 std::vector<std::pair<std::function<size_t(const std::string &)>, int>> BloomFilter::getHashFuncVector()
 {
     return this->hash_functions_vector;
+}
+
+// Computes the index in the bit array after applying the given hash function multiple times
+int BloomFilter::getIndexAfterHash(std::function<std::size_t(const std::string &)> hashFunc, int times, std::string url)
+{
+    size_t result = hashFunc(url);
+    times--;
+    for (int i = 0; i < times; i++)
+    {
+        result = hashFunc(std::to_string(result));
+    }
+    return result % this->bit_array_size;
+}
+
+// Updates the bit array by setting bits corresponding to the hash results of the URL
+void BloomFilter::updatingBitArray(std::string url)
+{
+    for (int i = 0; i < hash_functions_vector.size(); i++)
+    {
+        int index = BloomFilter::getIndexAfterHash(hash_functions_vector[i].first, hash_functions_vector[i].second, url);
+        this->bit_array[index] = 1;
+    }
+}
+
+// Updates BloomFilter's bit array and adding the URL to the its blacklist
+void BloomFilter::addUrl(std::string url)
+{
+    BloomFilter::updatingBitArray(url);
+    this->blacklist.insert(url);
 }

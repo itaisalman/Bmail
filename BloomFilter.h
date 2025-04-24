@@ -12,6 +12,8 @@ private:
     std::unordered_set<std::string> blacklist;
     std::vector<std::pair<std::function<std::size_t(const std::string &)>, int>> hash_functions_vector;
     long int bit_array_size;
+    int getIndexAfterHash(std::function<std::size_t(const std::string &)> hashFunc, int times, std::string url);
+    void updatingBitArray(std::string url);
 
 public:
     BloomFilter(long int size, std::vector<int> num_times_vector);
