@@ -71,7 +71,7 @@ int isValidURLRequest(string input)
     if (command != "1" && command != "2")
         return 0;
 
-    regex url_regex("^www\\.([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}[0-9]*$");
+    regex url_regex(R"(^(https?:\/\/)?www\.[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+[0-9]*$)");
 
     // If the URL does not match the template – rejected
     if (!regex_match(url, url_regex))
