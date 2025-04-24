@@ -52,8 +52,12 @@ TEST(CheckURLTest, FalsePositive)
     auto h1 = hash_funcs[0].first;
     auto h2 = hash_funcs[1].first;
 
-    int result_h1 = h1(std::to_string(h1(real_url)));
-    int index_h1 = result_h1 % bf.getSize();
+    int result_h1 = h2(real_url);
+    for (int i = 0; i < 2; i++)
+    {
+        result_h1 = h2(std::to_string(result_h1));
+    }
+    int index_h1 = result_h1 % 8;
     int result_h2 = h2(real_url);
     int index_h2 = result_h2 % bf.getSize();
 
@@ -70,8 +74,13 @@ TEST(CheckURLTest, FalsePositive)
         EXPECT_EQ(buffer.str(), "true true\n");
     }
 
-    int result_f1 = h1(std::to_string(h1(false_positive_url)));
-    int index_f1 = result_f1 % bf.getSize();
+    int result_f1 = h2(real_url);
+    for (int i = 0; i < 2; i++)
+    {
+        result_f1 = h2(std::to_string(result_f1));
+    }
+    int index_f1 = result_f1 % 8;
+    ;
     int result_f2 = h2(false_positive_url);
     int index_f2 = result_f1 % bf.getSize();
 
