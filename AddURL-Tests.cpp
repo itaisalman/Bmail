@@ -36,7 +36,6 @@ int hashIndex(std::function<std::size_t(const std::string &)> hashFunc, int time
     for (int i = 0; i < times; i++)
     {
         result = hashFunc(std::to_string(result));
-        std::cout
     }
     return result % array_size;
 }
