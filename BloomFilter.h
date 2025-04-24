@@ -14,7 +14,7 @@ private:
     long int bit_array_size;
 
 public:
-    BloomFilter(long int size, long int num_times_h1, long int num_times_h2);
+    BloomFilter(long int size, std::vector<int> num_times_vector);
     ~BloomFilter();
     void addUrl(const std::string url);
     void checkUrl(const std::string url);
