@@ -60,8 +60,8 @@ TEST(CheckURLTest, FalsePositive)
 
     size_t result_h2 = h2(real_url) % bf.getSize();
 
-    bf.getBitArray()[index_h1] = 1;
-    bf.getBitArray()[index_h2] = 1;
+    bf.getBitArray()[result_h1] = 1;
+    bf.getBitArray()[result_h2] = 1;
 
     {
         std::stringstream buffer;
