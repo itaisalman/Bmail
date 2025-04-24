@@ -4,7 +4,7 @@
 #include <functional>
 #include "BloomFilter.h"
 
-// constructor
+// Constructor
 BloomFilter::BloomFilter(long int size, std::vector<int> num_times_vector)
 {
     this->bit_array = new int[size]();
@@ -17,7 +17,7 @@ BloomFilter::BloomFilter(long int size, std::vector<int> num_times_vector)
     }
 }
 
-// destructor
+// Destructor
 BloomFilter::~BloomFilter()
 {
     delete[] this->bit_array;
@@ -48,6 +48,7 @@ std::vector<std::pair<std::function<size_t(const std::string &)>, int>> BloomFil
     return this->hash_functions_vector;
 }
 
+// Computes the index in the bit array after applying the given hash function multiple times
 int BloomFilter::getIndexAfterHash(std::function<std::size_t(const std::string &)> hashFunc, int times, std::string url)
 {
     size_t result = hashFunc(url);
@@ -59,6 +60,7 @@ int BloomFilter::getIndexAfterHash(std::function<std::size_t(const std::string &
     return result % this->bit_array_size;
 }
 
+// Updates the bit array by setting bits corresponding to the hash results of the URL
 void BloomFilter::updatingBitArray(std::string url)
 {
     for (int i = 0; i < hash_functions_vector.size(); i++)
