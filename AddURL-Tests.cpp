@@ -10,10 +10,12 @@ std::string exampleUrl()
 }
 
 // Construct expected array.
-void setExpectedBits(int *array, int first_index, int second_index)
+void setExpectedBit(int *array, vector<int> indices)
 {
-    array[first_index] = 1;
-    array[second_index] = 1;
+    for (auto index : indices)
+    {
+        array[index] = 1;
+    }
 }
 
 // Check if a given url is in the blacklist.
@@ -26,10 +28,24 @@ bool isBlacklisted(unordered_set<string> blacklist, string url)
     return false;
 }
 
+// Gets the corresponding argument in order to give back the correct index.
+int hashIndex(std::function<std::size_t(const std::string &)> hashFunc, int times, int array_size, std::string url)
+{
+    size_t result = hashFunc(url);
+    times--;
+    for (int i = 0; i < times; i++)
+    {
+        result = hashFunc(std::to_string(result));
+        std::cout
+    }
+    return result % array_size;
+}
+
 // Check if a file added as expected.
 TEST(AdditionTest, AddURLSuccessfully)
 {
-    BloomFilter bf(128, 1, 1);
+    std::vector<int> num_times_vector = {1, 1};
+    BloomFilter bf(128, num_times_vector);
     string url = exampleUrl();
     bf.addUrl(url);
     unordered_set<string> blacklist = bf.getBlacklist();
@@ -49,36 +65,37 @@ bool checkArray(int *correct_array, int *checked_array, int size)
     return true;
 }
 
-// Check if handle with one Loop over the hash functions correctly.
+// Check if handles correctly with one Loop over the hash functions.
 TEST(AdditionTest, UpdateArray1)
 {
-    BloomFilter bf(128, 1, 1);
+    std::vector<int> num_times_vector = {1, 1};
+    BloomFilter bf(128, num_times_vector);
     string url = exampleUrl();
     bf.addUrl(url);
     std::vector<std::pair<std::function<std::size_t(const std::string &)>, int>> hash_structure = bf.getHashFuncVector();
-    auto h1 = hash_structure[0].first;
-    auto h2 = hash_structure[1].first;
-    int first_index = h1(url) % 128;
-    int second_index = h2(url) % 128;
+    int first_index = hashIndex(hash_structure[0].first, hash_structure[0].second, 128, url);
+    int second_index = hashIndex(hash_structure[1].first, hash_structure[1].second, 128, url);
     int correct_array[128] = {0};
-    setExpectedBits(correct_array, first_index, second_index);
+    std::vector<int> indices = {first_index, second_index};
+    setExpectedBit(correct_array, indices);
     int *checked_array = bf.getBitArray();
     EXPECT_TRUE(checkArray(correct_array, checked_array, 128));
 }
 
-// Check if handle with multiple Loops over the hash functions correctly.
+// Check if handles correctly with multiple Loops over the hash functions.
 TEST(AdditionTest, UpdateArray2)
 {
-    BloomFilter bf(8, 2, 3);
+    vector<int> num_times_vector = {2, 3, 20};
+    BloomFilter bf(8, num_times_vector);
     string url = exampleUrl();
     bf.addUrl(url);
     std::vector<std::pair<std::function<std::size_t(const std::string &)>, int>> hash_structure = bf.getHashFuncVector();
-    auto h1 = hash_structure[0].first;
-    auto h2 = hash_structure[1].first;
-    int first_index = h1(std::to_string(h1(std::to_string(h1(url))))) % 8;
-    int second_index = h2(std::to_string(h2(url))) % 8;
+    int first_index = hashIndex(hash_structure[0].first, hash_structure[0].second, 8, url);
+    int second_index = hashIndex(hash_structure[1].first, hash_structure[1].second, 8, url);
+    int third_index = hashIndex(hash_structure[2].first, hash_structure[2].second, 8, url);
     int correct_array[8] = {0};
-    setExpectedBits(correct_array, first_index, second_index);
+    std::vector<int> indices = {first_index, second_index, third_index};
+    setExpectedBit(correct_array, indices);
     int *checked_array = bf.getBitArray();
     EXPECT_TRUE(checkArray(correct_array, checked_array, 8));
 }
@@ -86,16 +103,16 @@ TEST(AdditionTest, UpdateArray2)
 // Check if handle big arrays correctly.
 TEST(AdditionTest, ArraySize)
 {
-    BloomFilter bf(8000, 1, 1);
+    std::vector<int> num_times_vector = {1, 1};
+    BloomFilter bf(8000, num_times_vector);
     string url = exampleUrl();
     bf.addUrl(url);
     std::vector<std::pair<std::function<std::size_t(const std::string &)>, int>> hash_structure = bf.getHashFuncVector();
-    auto h1 = hash_structure[0].first;
-    auto h2 = hash_structure[1].first;
-    int first_index = h1(url) % 8000;
-    int second_index = h2(url) % 8000;
+    int first_index = hashIndex(hash_structure[0].first, hash_structure[0].second, 8000, url);
+    int second_index = hashIndex(hash_structure[1].first, hash_structure[1].second, 8000, url);
     int correct_array[8000] = {0};
-    setExpectedBits(correct_array, first_index, second_index);
+    std::vector<int> indices = {first_index, second_index};
+    setExpectedBit(correct_array, indices);
     int *checked_array = bf.getBitArray();
     EXPECT_TRUE(checkArray(correct_array, checked_array, 8000));
 }
