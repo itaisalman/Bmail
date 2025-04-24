@@ -12,12 +12,14 @@ bool checkInitInput(string input)
     if (input.empty())
         return false;
 
+    // Checks if the input contains a line break
     for (char c : input)
     {
         if (c == '\n')
             return false;
     }
 
+    // Breaks the input by spaces and stores each part in tokens
     istringstream iss(input);
     string token;
     vector<string> tokens;
@@ -27,8 +29,8 @@ bool checkInitInput(string input)
     {
         tokens.push_back(token);
     }
-    // Allow only 2 or 3 numbers
-    if (tokens.size() < 2 || tokens.size() > 3)
+    // At least two numbers
+    if (tokens.size() < 2)
     {
         return false;
     }
