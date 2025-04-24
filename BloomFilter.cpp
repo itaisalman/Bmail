@@ -117,13 +117,11 @@ bool BloomFilter::secondUrlCheck(const std::string url)
 void BloomFilter::checkUrl(const std::string url)
 {
     // First-checking.
-    bool first_check_result = firstUrlCheck(url);
-    if (first_check_result)
+    if (firstUrlCheck(url))
     {
         std::cout << "true ";
         // Double-checking.
-        bool second_check_result = secondUrlCheck(url);
-        if (second_check_result)
+        if (secondUrlCheck(url))
         {
             std::cout << "true" << std::endl;
         }
