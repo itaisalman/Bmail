@@ -87,7 +87,7 @@ std::pair<int, std::string> isValidURLRequest(std::string input)
         return {0, ""};
 
     // Checking the validity of a URL using a regular expression
-    regex url_regex(R"(^(https?:\/\/)?www\.[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+[0-9]*$)");
+    regex url_regex(R"(^(https?:\/\/)?www\.[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+[0-9]*$)", regex_constants::icase);
 
     // If the URL does not match the template – rejected
     if (!regex_match(url, url_regex))
