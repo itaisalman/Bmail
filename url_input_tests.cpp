@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "input.h"
+#include "Input.h"
 #include <string>
 
 // sanity test
@@ -115,8 +115,11 @@ TEST(isValidURLRequest, inValidInput4)
 // upper cases in URL
 TEST(isValidURLRequest, inValidInput5)
 {
-    EXPECT_EQ(0, isValidURLRequest("2 WWW.EXAMPLE.COM").first);
     EXPECT_EQ(0, isValidURLRequest("1 WWw.example.com").first);
+
+    std::pair<int, std::string> result = isValidURLRequest("2 WWW.EXAMPLE.COM");
+    EXPECT_EQ(2, result.first);
+    EXPECT_EQ("WWW.EXAMPLE.COM", result.second);
 
     std::pair<int, std::string> result = isValidURLRequest("2 www.exAamWple.com");
     EXPECT_EQ(2, result.first);
