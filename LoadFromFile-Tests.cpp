@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include "BloomFilter.h"
 #include <fstream>
-#include <cstdio>
 
 // The BloomFilter correctly loads URLs from a file
 TEST(LoadFromFile, LoadBlacklistFromFile)
@@ -68,4 +67,10 @@ TEST(LoadFromFile, LoadFromNonExistentFile)
     std::vector<int> num_hash = {2, 1};
     BloomFilter bf(8, num_hash);
     EXPECT_NO_THROW(bf.loadBlacklistFromFile("nonexist_file.txt"));
+}
+
+int main(int argc, char **argv)
+{
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
