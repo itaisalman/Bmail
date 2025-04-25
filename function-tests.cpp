@@ -531,59 +531,64 @@ TEST(LoadFromFile, LoadBlacklistFromFile)
     out << "www.test2.com\n";
     out.close();
 
-    std::vector<int> num_hash = {4, 3, 1};
-    BloomFilter bf(128, num_hash);
-    bf.loadBlacklistFromFile(file_name);
+    unordered_set<std::string> urls = loadFromFile(file_name);
 
-    std::unordered_set<std::string> blacklist = bf.getBlacklist();
+    EXPECT_EQ(urls.size(), 2);
+    EXPECT_TRUE(urls.find("www.test1.com") != urls.end());
+    EXPECT_TRUE(urls.find("www.test2.com") != urls.end());
 
-    EXPECT_EQ(blacklist.size(), 2);
-    EXPECT_TRUE(blacklist.find("www.test1.com") != blacklist.end());
-    EXPECT_TRUE(blacklist.find("www.test2.com") != blacklist.end());
+    // Clearing the file at the end for the next test
+    std::remove(file_name.c_str());
 }
 
 TEST(LoadFromFile, LoadCumulativeBlacklist)
 {
     std::string file_name = "Blacklist.txt";
-    // Simulates a blacklist file
-    std::ofstream out(file_name);
 
-    out << "www.test3.com";
+    // First writing to the file
+    {
+        std::ofstream out(file_name);
+        out << "www.test3.com\n";
+        out << "www.test4.com\n";
+        out.close();
+    }
 
-    std::vector<int> num_hash = {1, 2};
-    BloomFilter bf(8, num_hash);
-    bf.loadBlacklistFromFile(file_name);
+    // First load
+    std::unordered_set<std::string> urls = loadFromFile(file_name);
 
-    std::unordered_set<std::string> blacklist = bf.getBlacklist();
+    EXPECT_EQ(urls.size(), 2);
+    EXPECT_TRUE(urls.find("www.test3.com") != urls.end());
+    EXPECT_TRUE(urls.find("www.test4.com") != urls.end());
 
-    // Verifies that the existing URL was successfully loaded
-    ASSERT_EQ(blacklist.size(), 1);
-    ASSERT_TRUE(blacklist.find("www.test3.com") != blacklist.end());
+    // Add a new URL before writing again
+    urls.insert("www.test5.com");
 
-    bf.addUrl("www.test4.com");
+    // Second write to file
+    {
+        std::ofstream out(file_name);
+        for (const auto &url : urls)
+        {
+            out << url << "\n";
+        }
+        out.close();
+    }
 
-    // Save the new blacklist to a file (should include both old and new ones)
-    bf.saveBlacklistToFile();
-
-    BloomFilter bf2(8, num_hash);
-
-    // Reloads the file
-    bf2.loadBlacklistFromFile(file_name);
-
-    std::unordered_set<std::string> updateBlacklist = bf2.getBlacklist();
-
-    // Checks that the previous data was saved, and that the new data was added correctly
-    EXPECT_EQ(updateBlacklist.size(), 2);
-    EXPECT_TRUE(updateBlacklist.find("www.test3.com") != updateBlacklist.end());
-    EXPECT_TRUE(updateBlacklist.find("www.test4.com") != updateBlacklist.end());
+    // Reload
+    std::unordered_set<std::string> reloaded_urls = loadFromFile(file_name);
+    EXPECT_EQ(reloaded_urls.size(), 3);
+    EXPECT_TRUE(reloaded_urls.find("www.test3.com") != reloaded_urls.end());
+    EXPECT_TRUE(reloaded_urls.find("www.test4.com") != reloaded_urls.end());
+    EXPECT_TRUE(reloaded_urls.find("www.test5.com") != reloaded_urls.end());
 }
 
 // Checks that the function does not throw an exception even if the file does not exist
 TEST(LoadFromFile, LoadFromNonExistentFile)
 {
-    std::vector<int> num_hash = {2, 1};
-    BloomFilter bf(8, num_hash);
-    EXPECT_NO_THROW(bf.loadBlacklistFromFile("nonexist_file.txt"));
+    std::string file_name = "EmptyBlacklist.txt";
+    EXPECT_NO_THROW({
+        std::unordered_set<std::string> urls = loadFromFile();
+        EXPECT_TRUE(urls.empty());
+    });
 }
 
 // Checks that the blacklist is correctly saved to a file
