@@ -26,5 +26,6 @@ public:
     std::unordered_set<std::string> getBlacklist();
     std::vector<std::pair<std::function<std::size_t(const std::string &)>, int>> getHashFuncVector();
     long int getSize();
+    void setBlacklist(std::unordered_set<std::string> list);
 };
 #endif
