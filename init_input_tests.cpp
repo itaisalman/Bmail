@@ -40,12 +40,12 @@ TEST(checkInitInput, ValidInput)
 // large numbers but still valid
 TEST(checkInitInput, ValidInput1)
 {
-    std::pair<bool, std::pair<int, std::vector<int>>> result = checkInitInput("100000000000 9");
+    std::pair<bool, std::pair<int, std::vector<int>>> result = checkInitInput("1000000000 9");
     EXPECT_TRUE(result.first);
-    EXPECT_EQ(result.second.first, 100000000000);
+    EXPECT_EQ(result.second.first, 1000000000);
     EXPECT_TRUE(std::vector<int>({9}) == result.second.second);
 
-    result = checkInitInput("100 20004235300");
+    result = checkInitInput("100 200042300");
     EXPECT_TRUE(result.first);
     EXPECT_EQ(result.second.first, 100);
     EXPECT_TRUE(std::vector<int>({200042300}) == result.second.second);
