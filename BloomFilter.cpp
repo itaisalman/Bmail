@@ -42,6 +42,16 @@ std::unordered_set<std::string> BloomFilter::getBlacklist()
     return this->blacklist;
 }
 
+// Sets the blacklist from the provided unordered set of strings
+void BloomFilter::setBlacklist(std::unordered_set<std::string> list)
+{
+    this->blacklist.clear();
+    for (const auto &item : list)
+    {
+        this->blacklist.insert(item);
+    }
+}
+
 // Returns the vector of hash functions and their running count
 // Each pair consists of a hash function and an integer used for running count
 std::vector<std::pair<std::function<size_t(const std::string &)>, int>> BloomFilter::getHashFuncVector()
