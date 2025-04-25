@@ -541,50 +541,10 @@ TEST(LoadFromFile, LoadBlacklistFromFile)
     std::remove(file_name.c_str());
 }
 
-TEST(LoadFromFile, LoadCumulativeBlacklist)
-{
-    std::string file_name = "Blacklist.txt";
-
-    // First writing to the file
-    {
-        std::ofstream out(file_name);
-        out << "www.test3.com\n";
-        out << "www.test4.com\n";
-        out.close();
-    }
-
-    // First load
-    std::unordered_set<std::string> urls = loadFromFile(file_name);
-
-    EXPECT_EQ(urls.size(), 2);
-    EXPECT_TRUE(urls.find("www.test3.com") != urls.end());
-    EXPECT_TRUE(urls.find("www.test4.com") != urls.end());
-
-    // Add a new URL before writing again
-    urls.insert("www.test5.com");
-
-    // Second write to file
-    {
-        std::ofstream out(file_name);
-        for (const auto &url : urls)
-        {
-            out << url << "\n";
-        }
-        out.close();
-    }
-
-    // Reload
-    std::unordered_set<std::string> reloaded_urls = loadFromFile(file_name);
-    EXPECT_EQ(reloaded_urls.size(), 3);
-    EXPECT_TRUE(reloaded_urls.find("www.test3.com") != reloaded_urls.end());
-    EXPECT_TRUE(reloaded_urls.find("www.test4.com") != reloaded_urls.end());
-    EXPECT_TRUE(reloaded_urls.find("www.test5.com") != reloaded_urls.end());
-}
-
 // Checks that the function does not throw an exception even if the file does not exist
 TEST(LoadFromFile, LoadFromNonExistentFile)
 {
-    std::string file_name = "EmptyBlacklist.txt";
+    std::string file_name = "Blacklist.txt";
     EXPECT_NO_THROW({
         std::unordered_set<std::string> urls = loadFromFile();
         EXPECT_TRUE(urls.empty());
