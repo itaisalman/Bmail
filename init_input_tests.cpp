@@ -53,7 +53,7 @@ TEST(checkInitInput, ValidInput1)
     result = checkInitInput("100 5462986 56438956 66666666");
     EXPECT_TRUE(result.first);
     EXPECT_EQ(result.second.first, 100);
-    EXPECT_TRUE(std::vector<int>({100, 5462986, 56438956, 66666666}) == result.second.second);
+    EXPECT_TRUE(std::vector<int>({5462986, 56438956, 66666666}) == result.second.second);
 }
 
 // wrong number of arguments
