@@ -22,7 +22,7 @@ TEST(SettersTests, UpdateBlacklist)
     bf.setBlacklist(new_list);
     for (auto url : new_list)
     {
-        EXPECT_EQ(isBlacklisted(bf.getBlacklist(), url));
+        EXPECT_TRUE(isBlacklisted(bf.getBlacklist(), url));
     }
 }
 
