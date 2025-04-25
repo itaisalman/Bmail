@@ -3,6 +3,16 @@
 
 using namespace std;
 
+// Check if a given url is in the blacklist.
+bool isBlacklisted(unordered_set<string> blacklist, string url)
+{
+    if (blacklist.find(url) != blacklist.end())
+    {
+        return true;
+    }
+    return false;
+}
+
 // Checks if the setBlacklist fucntion inserts the URL list correctly to the blacklist field.
 TEST(SettersTests, UpdateBlacklist)
 {
