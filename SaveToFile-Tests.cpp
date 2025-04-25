@@ -7,28 +7,33 @@ TEST(SaveToFile, SaveBlacklistSuccess)
 {
     std::vector<int> num_hash = {2, 3};
     BloomFilter bf(64, num_hash);
+
     bf.addUrl("www.test5.com");
-    bf.addUrl("www.test6.com");
-
-    // save to file
     bf.saveBlacklistToFile();
-
-    // read file back
-    std::ifstream in("Blacklist.txt");
-    ASSERT_TRUE(in.is_open());
-
-    std::unordered_set<std::string> blacklist;
-    std::string line;
-
-    // Each line (url) is entered into the blacklist.
-    while (std::getline(in, line))
     {
-        blacklist.insert(line);
+        std::ifstream in("Blacklist.txt");
+        ASSERT_TRUE(in.is_open());
+
+        std::string line;
+        std::getline(in, line);
+        EXPECT_EQ(line, "www.test5.com");
+
+        EXPECT_FALSE(std::getline(in, line));
     }
 
-    EXPECT_EQ(blacklist.size(), 2);
-    EXPECT_TRUE(blacklist.find("www.test5.com") != blacklist.end());
-    EXPECT_TRUE(blacklist.find("www.test6.com") != blacklist.end());
+    bf.addUrl("www.test6.com");
+    bf.saveBlacklistToFile();
+    {
+        std::ifstream in("Blacklist.txt");
+        ASSERT_TRUE(in.is_open());
+
+        std::string line;
+        std::getline(in, line);
+        EXPECT_EQ(line, "www.test6.com");
+        EXPECT_EQ(line, "www.test5.com");
+
+        EXPECT_FALSE(std::getline(in, line));
+    }
 }
 
 // Ensures that saving an empty blacklist creates an empty file.
