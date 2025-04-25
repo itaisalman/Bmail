@@ -546,7 +546,7 @@ TEST(LoadFromFile, LoadFromNonExistentFile)
 {
     std::string file_name = "Blacklist.txt";
     EXPECT_NO_THROW({
-        std::unordered_set<std::string> urls = loadFromFile();
+        std::unordered_set<std::string> urls = loadFromFile(file_name);
         EXPECT_TRUE(urls.empty());
     });
 }
