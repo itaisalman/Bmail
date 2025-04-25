@@ -117,11 +117,13 @@ TEST(isValidURLRequest, inValidInput5)
 {
     EXPECT_EQ(0, isValidURLRequest("1 WWw.example.com").first);
 
-    std::pair<int, std::string> result = isValidURLRequest("2 WWW.EXAMPLE.COM");
+    std::pair<int, std::string> result;
+
+    result = isValidURLRequest("2 WWW.EXAMPLE.COM");
     EXPECT_EQ(2, result.first);
     EXPECT_EQ("WWW.EXAMPLE.COM", result.second);
 
-    std::pair<int, std::string> result = isValidURLRequest("2 www.exAamWple.com");
+    result = isValidURLRequest("2 www.exAamWple.com");
     EXPECT_EQ(2, result.first);
     EXPECT_EQ("www.exAamWple.com", result.second);
 }
