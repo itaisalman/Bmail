@@ -39,7 +39,7 @@ pair<bool, pair<int, vector<int>>> checkInitInput(string input)
         return {false, {0, hashFunctions}};
     }
 
-    for (size_t i = 0; i < tokens.size(); ++i)
+    for (int i = 0; i < tokens.size(); ++i)
     {
         const string &temp = tokens[i];
         for (char c : temp)
@@ -50,7 +50,7 @@ pair<bool, pair<int, vector<int>>> checkInitInput(string input)
         }
 
         // Stoll converts to integer, if negative - false
-        long long val = stoll(temp);
+        int val = stoll(temp);
         if (val <= 0)
             return {false, {0, hashFunctions}};
 
@@ -64,7 +64,7 @@ pair<bool, pair<int, vector<int>>> checkInitInput(string input)
     return {true, {filterSize, hashFunctions}};
 }
 // Function that checks whether the link command (URL) is valid
-std::pair<int, std::string> isValidURLRequest(std::string input)
+pair<int, string> isValidURLRequest(string input)
 {
 
     istringstream iss(input);
@@ -94,5 +94,5 @@ std::pair<int, std::string> isValidURLRequest(std::string input)
         return {0, ""};
 
     // Returns 1 if it is an addition, 2 if it is a test
-    return (command == "1") ? std::make_pair(1, url) : std::make_pair(2, url);
+    return (command == "1") ? make_pair(1, url) : make_pair(2, url);
 }
