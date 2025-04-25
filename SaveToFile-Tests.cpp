@@ -15,24 +15,36 @@ TEST(SaveToFile, SaveBlacklistSuccess)
         ASSERT_TRUE(in.is_open());
 
         std::string line;
+        // Read the first and only line of input
         std::getline(in, line);
+        // Check that the saved line matches the entered URL
         EXPECT_EQ(line, "www.test5.com");
 
+        // Check that there is no additional row – only one is saved
         EXPECT_FALSE(std::getline(in, line));
     }
 
     bf.addUrl("www.test6.com");
     bf.saveBlacklistToFile();
     {
+        // Reopen the file for re-examination
         std::ifstream in("Blacklist.txt");
         ASSERT_TRUE(in.is_open());
 
+        // Set to store all rows (no duplicates)
+        std::unordered_set<std::string> lines;
         std::string line;
-        std::getline(in, line);
-        EXPECT_EQ(line, "www.test6.com");
-        EXPECT_EQ(line, "www.test5.com");
+        // Read all lines in the file
+        while (std::getline(in, line))
+        {
+            lines.insert(line);
+        }
 
-        EXPECT_FALSE(std::getline(in, line));
+        EXPECT_EQ(lines.size(), 2);
+        // Check that the first URL exists
+        EXPECT_TRUE(lines.find("www.test5.com") != lines.end());
+        // Check that the second URL exists
+        EXPECT_TRUE(lines.find("www.test6.com") != lines.end());
     }
 }
 
