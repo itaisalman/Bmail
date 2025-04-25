@@ -115,9 +115,11 @@ TEST(isValidURLRequest, inValidInput4)
 // upper cases in URL
 TEST(isValidURLRequest, inValidInput5)
 {
-    EXPECT_EQ(0, isValidURLRequest("1 WWw.example.com").first);
-
     std::pair<int, std::string> result;
+
+    result = isValidURLRequest("1 WWw.example.com");
+    EXPECT_EQ(1, result.first);
+    EXPECT_EQ("WWw.example.com", result.second);
 
     result = isValidURLRequest("2 WWW.EXAMPLE.COM");
     EXPECT_EQ(2, result.first);
