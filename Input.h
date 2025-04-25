@@ -1,8 +1,9 @@
 #ifndef INPUT_H
 #define INPUT_H
 #include <string>
+#include <vector>
 
-bool checkInitInput(std::string input);
-int isValidURLRequest(std::string input);
+std::pair<bool, std::pair<int, std::vector<int>>> checkInitInput(std::string input);
+std::pair<int, std::string> isValidURLRequest(std::string input);
 
 #endif
