@@ -556,13 +556,14 @@ TEST(LoadFromFile, LoadFromNonExistentFile)
 // Checks that the URL is correctly saved to a file
 TEST(SaveToFile, SaveURLSuccessfully)
 {
-    // creating a file.
-    std::ofstream outFile("a.txt");
-    ASSERT_TRUE(outFile);
-
-    saveToFile("www.test5.com", "a.txt");
+    const std::string file_name = "/app/data/Blacklist.txt";
+    // open the file (assume empty).
+    std::ifstream in_file(file_name);
+    ASSERT_TRUE(in_file);
+    // should add URL to file.
+    saveToFile("www.test5.com");
     {
-        std::ifstream in("a.txt");
+        std::ifstream in(file_name);
         ASSERT_TRUE(in.is_open());
 
         std::string line;
@@ -579,23 +580,20 @@ TEST(SaveToFile, SaveURLSuccessfully)
 // Check if handles with non existing file.
 TEST(SaveToFile, SaveToNonExistingFile)
 {
-    const std::string file_name = "NonExistingFile.txt";
-    // Ensure the file does not exist before test
-    std::remove(file_name.c_str());
-
-    saveToFile("www.test6.com", file_name);
-
+    const std::string file_name = "/app/data/Blacklist.txt";
+    // Add the URL to end of file.
+    saveToFile("www.test6.com");
     std::fstream in(file_name);
-
     // Verifies that the file is actually opened, otherwise, the test fails
     ASSERT_TRUE(in.is_open());
-
     std::string line;
+    // Make sure previous URL was not deleted.
     std::getline(in, line);
-
+    EXPECT_EQ(line, "www.test5.com");
     // Expect the line written to be exactly what we passed
+    std::getline(in, line);
     EXPECT_EQ(line, "www.test6.com");
-
+    std::ofstream file(file_name, std::ios::trunc);
     in.close();
 }
 
