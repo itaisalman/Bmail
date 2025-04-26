@@ -7,6 +7,6 @@
 #include "BloomFilter.h"
 
 std::unordered_set<std::string> loadFromFile(const std::string &filename);
-void saveToFile(std::string url, const std::string &file_name);
+void saveToFile(std::string url, const std::string &file_path);
 
 #endif

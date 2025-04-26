@@ -13,14 +13,14 @@ FetchContent_Declare(
 
 # Create a list of all test files
 set(TEST_FILES
-  function-tests.cpp  
+  src/function-tests.cpp  
 )
 
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_executable(runTests ${TEST_FILES} BloomFilter.cpp Input.cpp)
+add_executable(runTests ${TEST_FILES} src/Storage.cpp src/BloomFilter.cpp src/Input.cpp)
 
 target_link_libraries(runTests gtest_main)
 
