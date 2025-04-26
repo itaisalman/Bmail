@@ -561,7 +561,7 @@ TEST(SaveToFile, SaveURLSuccessfully)
     std::ifstream in_file(file_name);
     ASSERT_TRUE(in_file);
     // should add URL to file.
-    saveToFile("www.test5.com");
+    saveToFile("www.test5.com", file_name);
     {
         std::ifstream in(file_name);
         ASSERT_TRUE(in.is_open());
@@ -582,7 +582,7 @@ TEST(SaveToFile, SaveToNonExistingFile)
 {
     const std::string file_name = "/app/data/Blacklist.txt";
     // Add the URL to end of file.
-    saveToFile("www.test6.com");
+    saveToFile("www.test6.com", file_name);
     std::fstream in(file_name);
     // Verifies that the file is actually opened, otherwise, the test fails
     ASSERT_TRUE(in.is_open());
