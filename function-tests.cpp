@@ -551,16 +551,16 @@ TEST(LoadFromFile, LoadFromNonExistentFile)
     });
 }
 
-// Checks that the blacklist is correctly saved to a file
-TEST(SaveToFile, SaveBlacklistSuccess)
+// Checks that the URL is correctly saved to a file
+TEST(SaveToFile, SaveURLSuccessfully)
 {
-    std::vector<int> num_hash = {2, 3};
-    BloomFilter bf(64, num_hash);
+    // creating a file.
+    std::ofstream outFile("a.txt");
+    ASSERT_TRUE(outFile);
 
-    bf.addUrl("www.test5.com");
-    bf.saveBlacklistToFile();
+    saveToFile("www.test5.com", "a.txt");
     {
-        std::ifstream in("Blacklist.txt");
+        std::ifstream in("a.txt");
         ASSERT_TRUE(in.is_open());
 
         std::string line;
@@ -572,50 +572,29 @@ TEST(SaveToFile, SaveBlacklistSuccess)
         // Check that there is no additional row – only one is saved
         EXPECT_FALSE(std::getline(in, line));
     }
-
-    bf.addUrl("www.test6.com");
-    bf.saveBlacklistToFile();
-    {
-        // Reopen the file for re-examination
-        std::ifstream in("Blacklist.txt");
-        ASSERT_TRUE(in.is_open());
-
-        // Set to store all rows (no duplicates)
-        std::unordered_set<std::string> lines;
-        std::string line;
-        // Read all lines in the file
-        while (std::getline(in, line))
-        {
-            lines.insert(line);
-        }
-
-        EXPECT_EQ(lines.size(), 2);
-        // Check that the first URL exists
-        EXPECT_TRUE(lines.find("www.test5.com") != lines.end());
-        // Check that the second URL exists
-        EXPECT_TRUE(lines.find("www.test6.com") != lines.end());
-    }
 }
 
-// Ensures that saving an empty blacklist creates an empty file.
-TEST(SaveToFile, SaveEmptyBlacklist)
+// Check if handles with non existing file.
+TEST(SaveToFile, SaveToNonExistingFile)
 {
-    std::vector<int> num_hash = {1, 2, 3};
-    BloomFilter bf(64, num_hash);
-    bf.saveBlacklistToFile();
+    const std::string file_name = "NonExistingFile.txt";
+    // Ensure the file does not exist before test
+    std::remove(file_name.c_str());
 
-    std::ifstream in("Blacklist.txt");
+    saveToFile("www.test6.com", file_name);
+
+    std::fstream in(file_name);
 
     // Verifies that the file is actually opened, otherwise, the test fails
     ASSERT_TRUE(in.is_open());
 
     std::string line;
+    std::getline(in, line);
 
-    // If there was at least one line in the file
-    bool hasLines = static_cast<bool>(std::getline(in, line));
+    // Expect the line written to be exactly what we passed
+    EXPECT_EQ(line, "www.test6.com");
 
-    // Should be empty
-    EXPECT_FALSE(hasLines);
+    in.close();
 }
 
 int main(int argc, char **argv)
