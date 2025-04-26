@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "BloomFilter.h"
 #include "Input.h"
+#include "Storage.h"
+#include <fstream>
 
 using namespace std;
 
