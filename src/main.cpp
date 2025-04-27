@@ -32,10 +32,6 @@ int main(int argc, char const *argv[])
     // Loading the blacklist from the given file.
     loadBlacklistFromFile(our_filter, file_name);
     std::unordered_set<std::string> set = our_filter.getBlacklist();
-    for (auto url : set)
-    {
-        std::cout << url << std::endl;
-    }
     while (true)
     {
         std::getline(std::cin, input);
