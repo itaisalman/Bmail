@@ -46,6 +46,7 @@ int main(int argc, char const *argv[])
         // Adding the given URL to our blacklist.
         case 1:
             our_filter.addUrl(input_pair.second);
+            saveToFile(input_pair.second, file_name);
             continue;
         // No valid key inserted.
         default:
