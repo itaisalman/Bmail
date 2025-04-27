@@ -557,6 +557,11 @@ TEST(LoadFromFile, LoadFromNonExistentFile)
 TEST(SaveToFile, SaveURLSuccessfully)
 {
     const std::string file_name = "/app/data/Blacklist.txt";
+    // Ensure the file is empty before starting the test
+    {
+        std::ofstream out(file_name, std::ofstream::trunc);
+        ASSERT_TRUE(out.is_open());
+    }
     // open the file (assume empty).
     std::ifstream in_file(file_name);
     ASSERT_TRUE(in_file);
