@@ -31,5 +31,4 @@ int main(int argc, char const *argv[])
     const string file_name = "../data/Blacklist.txt";
     // Loading the blacklist from the given file.
     loadBlacklistFromFile(our_filter, file_name);
-    cout << "GoodNight" << endl;
 }
