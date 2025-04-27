@@ -12,4 +12,4 @@ WORKDIR /usr/src/mytest/build
 
 RUN cmake .. && make
 
-CMD [ "./runTests" ]
+CMD ./runTests && ./runMain
