@@ -28,7 +28,28 @@ int main(int argc, char const *argv[])
     int array_size = parsed_input.second.first;
     vector<int> initialize_filter = parsed_input.second.second;
     BloomFilter our_filter(array_size, initialize_filter);
-    const string file_name = "../data/Blacklist.txt";
+    const string file_name = "/app/data/Blacklist.txt";
     // Loading the blacklist from the given file.
     loadBlacklistFromFile(our_filter, file_name);
+    std::unordered_set<std::string> set = our_filter.getBlacklist();
+    for (auto url : set)
+    {
+        std::cout << url << std::endl;
+    }
+    while (true)
+    {
+        std::getline(std::cin, input);
+        // cout << input << endl;
+        pair<int, string> input_pair = isValidURLRequest(input);
+        switch (input_pair.first)
+        {
+        // Adding the given URL to our blacklist.
+        case 1:
+            our_filter.addUrl(input_pair.second);
+            continue;
+        // No valid key inserted.
+        default:
+            continue;
+        }
+    }
 }
