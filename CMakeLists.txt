@@ -21,7 +21,9 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 add_executable(runTests ${TEST_FILES} src/Storage.cpp src/BloomFilter.cpp src/Input.cpp)
+add_executable(runMain src/Storage.cpp src/BloomFilter.cpp src/Input.cpp src/main.cpp)
 
 target_link_libraries(runTests gtest_main)
 
 target_compile_features(runTests PRIVATE cxx_std_11)
+target_compile_features(runMain PRIVATE cxx_std_11)
