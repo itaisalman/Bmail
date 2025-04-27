@@ -32,10 +32,6 @@ int main(int argc, char const *argv[])
     // Loading the blacklist from the given file.
     loadBlacklistFromFile(our_filter, file_name);
     std::unordered_set<std::string> set = our_filter.getBlacklist();
-    for (auto url : set)
-    {
-        std::cout << url << std::endl;
-    }
     while (true)
     {
         std::getline(std::cin, input);
@@ -47,6 +43,10 @@ int main(int argc, char const *argv[])
         case 1:
             our_filter.addUrl(input_pair.second);
             saveToFile(input_pair.second, file_name);
+            continue;
+            // Checking if the URL given exists in our blacklist.
+        case 2:
+            our_filter.checkUrl(input_pair.second);
             continue;
         // No valid key inserted.
         default:
