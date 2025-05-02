@@ -124,24 +124,23 @@ bool BloomFilter::secondUrlCheck(const std::string url)
 
 // Checks if given URL exists in the blacklist.
 // Prints results accordingly
-void BloomFilter::checkUrl(const std::string url)
+std::string BloomFilter::checkUrl(const std::string url)
 {
     // First-checking.
     if (firstUrlCheck(url))
     {
-        std::cout << "true ";
         // Double-checking.
         if (secondUrlCheck(url))
         {
-            std::cout << "true" << std::endl;
+            return "true true\n";
         }
         else
         {
-            std::cout << "false" << std::endl;
+            return "true false\n";
         }
     }
     else
     {
-        std::cout << "false" << std::endl;
+        return "false\n";
     }
 }
