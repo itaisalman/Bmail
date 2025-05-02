@@ -1,3 +1,5 @@
+#ifndef COMMAND_H
+#define COMMAND_H
 #include "BloomFilter.h"
 #include <string>
 #include <iostream>
@@ -13,3 +15,5 @@ public:
     // for each case and according to each function.
     virtual void output(const std::string &out);
 };
+
+#endif
