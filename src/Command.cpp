@@ -3,7 +3,7 @@
 #include <string>
 
 // Default implementation for output function
-void output(const std::string &out)
+void Command::output(const std::string &out)
 {
     std::cout << out;
 }
