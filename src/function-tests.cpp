@@ -304,16 +304,10 @@ TEST(CheckURLTest, ExistingURL)
     BloomFilter bf(128, num_hash);
     std::string url = "www.test1.com";
     bf.addUrl(url);
-    {
-        std::stringstream buffer;
-        std::streambuf *old = std::cout.rdbuf(buffer.rdbuf());
 
-        bf.checkUrl(url);
+    std::string result = bf.checkUrl(url);
 
-        std::cout.rdbuf(old);
-
-        EXPECT_EQ(buffer.str(), "true true\n");
-    }
+    EXPECT_EQ(result, "true true\n");
 }
 
 // Test for a URL that is not exist blacklist.
@@ -323,16 +317,9 @@ TEST(CheckURLTest, NonExistingURL)
     std::vector<int> num_hash = {3, 5};
     BloomFilter bf(8, num_hash);
     std::string url = "www.test2.com";
-    {
-        std::stringstream buffer;
-        std::streambuf *old = std::cout.rdbuf(buffer.rdbuf());
+    std::string result = bf.checkUrl(url);
 
-        bf.checkUrl(url);
-
-        std::cout.rdbuf(old);
-
-        EXPECT_EQ(buffer.str(), "false\n");
-    }
+    EXPECT_EQ(result, "false\n");
 }
 
 // Test for a URL that is FalsePositive.
@@ -360,16 +347,7 @@ TEST(CheckURLTest, FalsePositive)
     bf.getBitArray()[result_h1] = 1;
     bf.getBitArray()[result_h2] = 1;
 
-    {
-        std::stringstream buffer;
-        std::streambuf *old = std::cout.rdbuf(buffer.rdbuf());
-
-        bf.checkUrl(real_url);
-
-        std::cout.rdbuf(old);
-        // Should print "true true" → found in Bloom Filter and passes second check
-        EXPECT_EQ(buffer.str(), "true true\n");
-    }
+    EXPECT_EQ(bf.checkUrl(real_url), "true true\n");
 
     // Compute the hash positions for the fake (false-positive) URL
     size_t result_f1 = h1(false_positive_url);
@@ -379,20 +357,9 @@ TEST(CheckURLTest, FalsePositive)
     // Only test false positive behavior if the fake URL happens to hash to the same indices
     if (result_h1 == result_f1 && result_h2 == result_f2)
     {
-
-        {
-            std::stringstream buffer;
-            std::streambuf *old = std::cout.rdbuf(buffer.rdbuf());
-
-            bf.checkUrl(false_positive_url);
-
-            std::cout.rdbuf(old);
-
-            EXPECT_EQ(buffer.str(), "true false\n");
-        }
+        EXPECT_EQ(bf.checkUrl(false_positive_url), "true false\n");
     }
 }
-
 // sanity test
 TEST(isValidURLRequest, ValidInput)
 {
