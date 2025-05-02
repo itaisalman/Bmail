@@ -21,7 +21,7 @@ public:
     BloomFilter(long int size, std::vector<int> num_times_vector);
     ~BloomFilter();
     void addUrl(const std::string url);
-    void checkUrl(const std::string url);
+    std::string checkUrl(const std::string url);
     int *getBitArray();
     std::unordered_set<std::string> getBlacklist();
     std::vector<std::pair<std::function<std::size_t(const std::string &)>, int>> getHashFuncVector();
