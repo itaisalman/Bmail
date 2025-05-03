@@ -6,10 +6,15 @@ def main():
         print("Usage: python client.py <server_ip> <port>")
         return
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_ip = sys.argv[1]
     server_port = int(sys.argv[2])
-    sock.connect((server_ip, server_port))
+
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect((server_ip, server_port))
+    except Exception as e:
+        print(f"Connection failed: {e}")
+        return
 
     msg = input("Message to send (quit for exit): ")
     while not msg == 'quit':
