@@ -13,7 +13,8 @@ FetchContent_Declare(
 
 # Create a list of all test files
 set(TEST_FILES
-  src/function-tests.cpp  
+  src/function-tests.cpp
+  src/server-tests.cpp  
 )
 
 # For Windows: Prevent overriding the parent project's compiler/linker settings
