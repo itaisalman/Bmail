@@ -22,6 +22,7 @@ public:
     ~BloomFilter();
     void addUrl(const std::string url);
     std::string checkUrl(const std::string url);
+    void deleteUrl(const std::string url);
     int *getBitArray();
     std::unordered_set<std::string> getBlacklist();
     std::vector<std::pair<std::function<std::size_t(const std::string &)>, int>> getHashFuncVector();

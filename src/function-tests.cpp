@@ -569,6 +569,37 @@ TEST(SaveToFile, SaveToNonExistingFile)
     in.close();
 }
 
+// Make sure that when a URL is deleted from the blacklist, it is actually removed.
+TEST(deleteUrl, deleteExistingFile)
+{
+    vector<int> num_hash = {2, 1};
+    BloomFilter bf(8, num_hash);
+    string url = "www.testdelete.com";
+    bf.addUrl(url);
+    bf.deleteUrl(url);
+    unordered_set<string> blacklist = bf.getBlacklist();
+    EXPECT_FALSE(blacklist.find(url) != blacklist.end());
+}
+
+// Make sure that no error is thrown when trying to delete a URL that doesn't exist in the blacklist.
+TEST(deleteUrl, deleteNonExistingFile)
+{
+    vector<int> num_hash = {2, 3};
+    BloomFilter bf(8, num_hash);
+    string url = "www.testdelete.com";
+    string non_existing_url = "www.notexist.com";
+    bf.addUrl(url);
+    EXPECT_NO_THROW(bf.deleteUrl(non_existing_url));
+}
+
+// Make sure that no error is thrown when trying to delete a URL from an empty blacklist.
+TEST(deleteUrl, deleteWhenListEmpty)
+{
+    vector<int> num_hash = {1, 3};
+    BloomFilter bf(8, num_hash);
+    EXPECT_NO_THROW(bf.deleteUrl("www.notexist.com"));
+}
+
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
