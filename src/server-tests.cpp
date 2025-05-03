@@ -42,9 +42,3 @@ TEST(ServerTests, ConnectionTest)
     ASSERT_GE(client_socket, 0) << "Socket creation or connection failed";
     close(client_socket);
 }
-
-// int main(int argc, char **argv)
-// {
-//     ::testing::InitGoogleTest(&argc, argv);
-//     return RUN_ALL_TESTS();
-// }
