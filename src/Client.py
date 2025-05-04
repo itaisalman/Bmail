@@ -4,7 +4,7 @@ import sys
 def main():
     # Check for getting exactly 2 command line arguments(IP and port).
     if len(sys.argv) != 3:
-        print("Usage: python client.py <server_ip> <port>")
+        print("Expecting exactly 2 arguments: IP and port\n")
         return
 
     # Declare server IP and port.
