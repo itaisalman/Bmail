@@ -20,19 +20,19 @@ def main():
         
         # Loop for communicating with server.
         while True:
-            msg = input("Enter your request: ")
-            sock.sendall(msg.encode('utf-8'))
+            msg = input("Message to send: ")
+            sock.send(bytes(msg, 'utf-8'))
             data = sock.recv(4096)
-            print("Server sent:", data.decode('utf-8'))
+            print("Server sent: ", data.decode('utf-8'))
 
     # Handle with termination.
     except KeyboardInterrupt:
-        print("\nClient terminated with keyboard interrupt (Ctrl+C).")
+        print("\nProgram Terminated")
 
     # Handle with errors like connection failure.
     except Exception as e:
         print(f"An error occurred: {e}")
-        
+
     # Performs graceful exit if the socket is still open
     finally:
         if sock:
