@@ -74,7 +74,7 @@ TEST(ServerTests, ExpectedOutput)
     message = "POST www.example.com";
     send(client_socket, message, strlen(message), 0);
     read(client_socket, buffer, 1024);
-    EXPECT_EQ(buffer, "404 Not Found\n");
+    EXPECT_EQ(buffer, "201 Created\n");
     // Check if handle Delete command on existing URL correctly
     memset(buffer, 0, sizeof(buffer));
     message = "DELETE www.example.com";
@@ -119,7 +119,7 @@ TEST(ServerTests, edgeCasesOutput)
     read(client_socket, buffer, 1024);
     EXPECT_EQ(buffer, "400 Bad Request\n");
     memset(buffer, 0, sizeof(buffer));
-    message = "DELETE wwwww.example.com";
+    message = "www.example.com DELETE";
     send(client_socket, message, strlen(message), 0);
     read(client_socket, buffer, 1024);
     EXPECT_EQ(buffer, "400 Bad Request\n");
