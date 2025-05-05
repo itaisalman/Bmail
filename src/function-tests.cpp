@@ -600,6 +600,67 @@ TEST(deleteUrl, deleteWhenListEmpty)
     EXPECT_NO_THROW(bf.deleteUrl("www.notexist.com"));
 }
 
+TEST(deleteFromFile, DeleteExistingURL)
+{
+    const std::string file_name = "/app/data/Blacklist.txt";
+
+    // Write two Urls to the blacklist
+    saveToFile("www.delete.com", file_name);
+    saveToFile("www.stay.com", file_name);
+    // Deleting one Url
+    deleteFromFile("www.delete.com", file_name);
+
+    // Verify that the file exists and that it contains only the second url
+    std::ifstream in(file_name);
+    ASSERT_TRUE(in.is_open());
+    std::string line;
+    std::getline(in, line);
+    EXPECT_EQ(line, "www.stay.com");
+
+    // File cleaning
+    std::remove(file_name.c_str());
+}
+
+TEST(deleteFromFile, DeleteNonExistingURL)
+{
+    const std::string file_name = "/app/data/Blacklist.txt";
+
+    // Write Url to the blacklist
+    saveToFile("www.stay.com", file_name);
+
+    deleteFromFile("www.NonExisting.com", file_name);
+
+    // Verify that the file opened and that it contains only the existing url
+    std::ifstream in(file_name);
+    ASSERT_TRUE(in.is_open());
+    std::string line;
+    std::getline(in, line);
+    EXPECT_EQ(line, "www.stay.com");
+
+    // File cleaning
+    std::remove(file_name.c_str());
+}
+
+TEST(deleteFromFile, DeleteSameURLTwice)
+{
+    const std::string file_name = "/app/data/Blacklist.txt";
+
+    // Write Url to the blacklist
+    saveToFile("www.twice.com", file_name);
+
+    // First deletion
+    deleteFromFile("www.twice.com", file_name);
+
+    // Second deletion
+    deleteFromFile("www.twice.com", file_name);
+
+    // Checking that the blacklist is empty
+    std::ifstream in(file_name);
+    ASSERT_TRUE(in.is_open());
+    std::string line;
+    EXPECT_FALSE(std::getline(in, line));
+}
+
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
