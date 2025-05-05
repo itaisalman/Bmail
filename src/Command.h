@@ -9,11 +9,7 @@ class Command
 public:
     // Pure virtual function that Add, Check, and Delete classes will need to implement execute(),
     // which performs their actions on the bloom filter.
-    virtual void execute(const std::string &url, BloomFilter &bf) = 0;
-
-    // A function that will be responsible for printing the appropriate outputs
-    // for each case and according to each function.
-    virtual void output(const std::string &out);
+    virtual std::string execute(const std::string &url, BloomFilter &bf) = 0;
 };
 
 #endif

@@ -4,7 +4,7 @@
 #include <iostream>
 
 // The Add class execution function – responsible for adding a URL to the blacklist
-void Add::execute(const std::string &url, BloomFilter &bf)
+std::string Add::execute(const std::string &url, BloomFilter &bf)
 {
     if (bf.getBlacklist().find(url) == bf.getBlacklist().end())
     {
