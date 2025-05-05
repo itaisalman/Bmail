@@ -43,3 +43,41 @@ void saveToFile(std::string url, const std::string &file_path)
     out_file << url << '\n';
     out_file.close();
 }
+
+void deleteFromFile(std::string url, const std::string &file_path)
+{
+    // Open the file for reading.
+    std::ifstream in_file(file_path);
+    if (!in_file.is_open())
+    {
+        std::cerr << "Failed to open file for reading: " << file_path << std::endl;
+        return;
+    }
+    std::string line;
+    std::vector<std::string> list;
+    // Loop through each line in the file
+    while (std::getline(in_file, line))
+    {
+        // Save all the URL's except the one we want to delete.
+        if (line != url)
+        {
+            list.push_back(line);
+        }
+    }
+    in_file.close();
+
+    // Open again the file for writing.
+    std::ofstream out_file(file_path, std::ios::trunc);
+    if (!out_file.is_open())
+    {
+        std::cerr << "Failed to open file for writing: " << file_path << std::endl;
+        return;
+    }
+
+    // Write over the file all of the URL's without the one we skipped on.
+    for (std::string file_line : list)
+    {
+        out_file << file_line << '\n';
+    }
+    out_file.close();
+}
