@@ -6,6 +6,10 @@
 
 using namespace std;
 
+//
+// Add URL Tests
+//
+
 // Returning URL example.
 std::string exampleUrl()
 {
@@ -124,6 +128,10 @@ TEST(AdditionTest, ArraySize)
     unordered_set<string> blacklist = bf.getBlacklist();
     EXPECT_TRUE(isBlacklisted(blacklist, url));
 }
+
+//
+// Check Init Input Tests
+//
 
 // sanity test
 TEST(checkInitInput, ValidInput)
@@ -266,6 +274,10 @@ TEST(checkInitInput, InValidInput5)
     EXPECT_FALSE(checkInitInput("207 8 3 4 0.1").first);
 }
 
+//
+// BloomFilter Setters Tests
+//
+
 // Checks if the setBlacklist fucntion inserts the URL list correctly to the blacklist field.
 TEST(SetterTest, UpdateBlacklist)
 {
@@ -278,6 +290,10 @@ TEST(SetterTest, UpdateBlacklist)
         EXPECT_TRUE(isBlacklisted(bf.getBlacklist(), url));
     }
 }
+
+//
+// BloomFilter Getters Tests
+//
 
 // Creating an instance and check if succeeded by comparing expected values to the fields.
 TEST(BloomFilterTests, getters)
@@ -295,6 +311,10 @@ TEST(BloomFilterTests, getters)
     EXPECT_EQ(bf.getHashFuncVector()[1].second, 1);
     EXPECT_EQ(bf.getHashFuncVector()[2].second, 3);
 }
+
+//
+// Check URL Tests
+//
 
 // Test for a URL that is in the blacklist.
 // Should return True in both checks → prints "true true\n"
@@ -360,6 +380,11 @@ TEST(CheckURLTest, FalsePositive)
         EXPECT_EQ(bf.checkUrl(false_positive_url), "true false\n");
     }
 }
+
+//
+// Valid URL Tests
+//
+
 // sanity test
 TEST(isValidURLRequest, ValidInput)
 {
@@ -488,6 +513,10 @@ TEST(isValidURLRequest, inValidInput5)
     EXPECT_EQ("www.exAamWple.com", result.second);
 }
 
+//
+// Load From File Tests
+//
+
 // The BloomFilter correctly loads URLs from a file
 TEST(LoadFromFile, LoadBlacklistFromFile)
 {
@@ -519,6 +548,10 @@ TEST(LoadFromFile, LoadFromNonExistentFile)
         EXPECT_TRUE(urls.empty());
     });
 }
+
+//
+// Save To File Tests
+//
 
 // Checks that the URL is correctly saved to a file
 TEST(SaveToFile, SaveURLSuccessfully)
@@ -569,6 +602,10 @@ TEST(SaveToFile, SaveToNonExistingFile)
     in.close();
 }
 
+//
+// Delete URL Tests
+//
+
 // Make sure that when a URL is deleted from the blacklist, it is actually removed.
 TEST(deleteUrl, deleteExistingFile)
 {
@@ -604,6 +641,10 @@ TEST(deleteUrl, deleteWhenListEmpty)
     EXPECT_NO_THROW(output = bf.deleteUrl("www.notexist.com"));
     EXPECT_EQ("404 Not Found\n", output);
 }
+
+//
+// Delete From File Tests
+//
 
 TEST(deleteFromFile, DeleteExistingURL)
 {
