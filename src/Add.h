@@ -6,7 +6,7 @@
 class Add : public Command
 {
 public:
-    void execute(const std::string &url, BloomFilter &bf) override;
+    std::string execute(const std::string &url, BloomFilter &bf) override;
 };
 
 #endif
