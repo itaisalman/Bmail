@@ -310,6 +310,7 @@ TEST(BloomFilterTests, getters)
     EXPECT_EQ(bf.getHashFuncVector()[0].second, 2);
     EXPECT_EQ(bf.getHashFuncVector()[1].second, 1);
     EXPECT_EQ(bf.getHashFuncVector()[2].second, 3);
+    EXPECT_EQ(bf.getFilePath(), "/app/data/Blacklist.txt");
 }
 
 //
