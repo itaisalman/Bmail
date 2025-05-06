@@ -149,14 +149,3 @@ std::string BloomFilter::checkUrl(const std::string url)
         return "false\n";
     }
 }
-
-#include "Storage.h"
-
-std::string BloomFilter::deleteUrl(const std::string url)
-{
-    if (blacklist.find(url) == blacklist.end())
-    {
-        std::cout << "404 Not Found\n";
-    }
-    blacklist.erase(url);
-}
