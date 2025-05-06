@@ -398,6 +398,10 @@ TEST(isValidURLRequest, ValidInput)
     result = isValidURLRequest("GET www.example.com");
     EXPECT_EQ("GET", result.first);
     EXPECT_EQ("www.example.com", result.second);
+
+    result = isValidURLRequest("DELETE www.example.com");
+    EXPECT_EQ("DELETE", result.first);
+    EXPECT_EQ("www.example.com", result.second);
 }
 
 // a bit different URL's but still valid
@@ -409,8 +413,8 @@ TEST(isValidURLRequest, ValidInput1)
     EXPECT_EQ("POST", result.first);
     EXPECT_EQ("www.example34278.com", result.second);
 
-    result = isValidURLRequest("POST www.342sf78example.com");
-    EXPECT_EQ("POST", result.first);
+    result = isValidURLRequest("DELETE www.342sf78example.com");
+    EXPECT_EQ("DELETE", result.first);
     EXPECT_EQ("www.342sf78example.com", result.second);
 
     result = isValidURLRequest("GET www.exampleexample.com");
@@ -434,6 +438,10 @@ TEST(isValidURLRequest, ValidInput2)
     result = isValidURLRequest("GET www.fbejfnmvllknvjdfbkgdlml436743784mmkfmkmfkmkfdfd28472vj.com");
     EXPECT_EQ("GET", result.first);
     EXPECT_EQ("www.fbejfnmvllknvjdfbkgdlml436743784mmkfmkmfkmkfdfd28472vj.com", result.second);
+
+    result = isValidURLRequest("DELETE www.fbejfnmdnfibudivoi88888888888888888mkfdfd28472vj.com");
+    EXPECT_EQ("DELETE", result.first);
+    EXPECT_EQ("www.fbejfnmdnfibudivoi88888888888888888mkfdfd28472vj.com", result.second);
 }
 
 // different numbers for first argumnet
@@ -443,6 +451,14 @@ TEST(isValidURLRequest, inValidInput)
     EXPECT_EQ("", isValidURLRequest("0 www.example.com").first);
     EXPECT_EQ("", isValidURLRequest("11 www.example.com").first);
     EXPECT_EQ("", isValidURLRequest("GRT www.example.com").first);
+    EXPECT_EQ("", isValidURLRequest("get www.example.com").first);
+    EXPECT_EQ("", isValidURLRequest("Get www.example.com").first);
+    EXPECT_EQ("", isValidURLRequest("post www.example.com").first);
+    EXPECT_EQ("", isValidURLRequest("postget www.example.com").first);
+    EXPECT_EQ("", isValidURLRequest("POSTGET www.example.com").first);
+    EXPECT_EQ("", isValidURLRequest("Delete www.example.com").first);
+    EXPECT_EQ("", isValidURLRequest("DELET www.example.com").first);
+    EXPECT_EQ("", isValidURLRequest("DGP www.example.com").first);
     EXPECT_EQ("", isValidURLRequest("# www.example.com").first);
     EXPECT_EQ("", isValidURLRequest("' www.example.com").first);
 }
@@ -488,9 +504,9 @@ TEST(isValidURLRequest, inValidInput4)
     EXPECT_EQ("", isValidURLRequest("POST www.example:com").first);
     EXPECT_EQ("", isValidURLRequest("GET www.ex'ample.com").first);
     EXPECT_EQ("", isValidURLRequest("GET www.example.co;m").first);
-    EXPECT_EQ("", isValidURLRequest("GET www.example.co6m").first);
-    EXPECT_EQ("", isValidURLRequest("GET w?ww.example.com").first);
-    EXPECT_EQ("", isValidURLRequest("GET www..example.com").first);
+    EXPECT_EQ("", isValidURLRequest("DELETE www.example.co6m").first);
+    EXPECT_EQ("", isValidURLRequest("DELETE w?ww.example.com").first);
+    EXPECT_EQ("", isValidURLRequest("DELETE www..example.com").first);
     EXPECT_EQ("", isValidURLRequest("POST www.example..com").first);
     EXPECT_EQ("", isValidURLRequest("POST .www.example.com").first);
     EXPECT_EQ("", isValidURLRequest("POST www.example.com.").first);
@@ -509,8 +525,8 @@ TEST(isValidURLRequest, inValidInput5)
     EXPECT_EQ("GET", result.first);
     EXPECT_EQ("WWW.EXAMPLE.COM", result.second);
 
-    result = isValidURLRequest("GET www.exAamWple.com");
-    EXPECT_EQ("GET", result.first);
+    result = isValidURLRequest("DELETE www.exAamWple.com");
+    EXPECT_EQ("DELETE", result.first);
     EXPECT_EQ("www.exAamWple.com", result.second);
 }
 
