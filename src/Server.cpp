@@ -55,5 +55,21 @@ int main(int argc, char const *argv[])
         perror("error accepting client");
     }
 
+    char buffer[4096];
+    int expected_data_len = sizeof(buffer);
+    // Read data from the client socket into the buffer
+    int read_bytes = recv(client_socket, buffer, expected_data_len, 0);
+
+    // The client closed the connection
+    if (read_bytes == 0)
+    {
+        std::cout << "Client disconnected." << std::endl;
+    }
+    // Communication error
+    else if (read_bytes < 0)
+    {
+        perror("error receiving from client");
+    }
+
     return 0;
 }
