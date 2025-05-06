@@ -4,6 +4,6 @@
 #include <vector>
 
 std::pair<bool, std::pair<int, std::vector<int>>> checkInitInput(std::string input);
-std::pair<int, std::string> isValidURLRequest(std::string input);
+std::pair<std::string, std::string> isValidURLRequest(std::string input);
 
 #endif
