@@ -64,7 +64,7 @@ pair<bool, pair<int, vector<int>>> checkInitInput(string input)
     return {true, {filterSize, hashFunctions}};
 }
 // Function that checks whether the link command (URL) is valid
-pair<int, string> isValidURLRequest(string input)
+pair<string, string> isValidURLRequest(string input)
 {
 
     istringstream iss(input);
@@ -75,24 +75,24 @@ pair<int, string> isValidURLRequest(string input)
 
     // If one of them is empty – the input is invalid
     if (command.empty() || url.empty())
-        return {0, ""};
+        return {"", ""};
 
     // Check that there are no more tokens beyond two
     string extra;
     if (iss >> extra)
-        return {0, ""};
+        return {"", ""};
 
     // Only two commands are allowed.
-    if (command != "1" && command != "2")
-        return {0, ""};
+    if (command != "POST" && command != "GET" && command != "DELETE")
+        return {"", ""};
 
     // Checking the validity of a URL using a regular expression
     regex url_regex(R"(^(https?:\/\/)?www\.[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+[0-9]*$)", regex_constants::icase);
 
     // If the URL does not match the template – rejected
     if (!regex_match(url, url_regex))
-        return {0, ""};
+        return {"", ""};
 
     // Returns 1 if it is an addition, 2 if it is a test
-    return (command == "1") ? make_pair(1, url) : make_pair(2, url);
+    return make_pair(command, url);
 }
