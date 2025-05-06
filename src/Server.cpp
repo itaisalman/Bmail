@@ -71,5 +71,13 @@ int main(int argc, char const *argv[])
         perror("error receiving from client");
     }
 
+    std::string response = "200 Ok\n";
+    int sent_bytes = send(client_socket, response.c_str(), response.length(), 0);
+    // Check if the send failed
+    if (sent_bytes < 0)
+    {
+        perror("error sending to client");
+    }
+
     return 0;
 }
