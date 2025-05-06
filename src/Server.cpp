@@ -44,5 +44,16 @@ int main(int argc, char const *argv[])
         perror("error listening to a socket");
     }
 
+    // Create a structure that will contain the information of the client that will connect
+    struct sockaddr_in client_sin;
+    unsigned int addr_len = sizeof(client_sin);
+    int client_socket = accept(sock, (struct sockaddr *)&client_sin, &addr_len);
+
+    // Check if an error occurred while receiving the client
+    if (client_socket < 0)
+    {
+        perror("error accepting client");
+    }
+
     return 0;
 }
