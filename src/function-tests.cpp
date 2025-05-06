@@ -557,19 +557,20 @@ TEST(LoadFromFile, LoadFromNonExistentFile)
 // Checks that the URL is correctly saved to a file
 TEST(SaveToFile, SaveURLSuccessfully)
 {
-    const std::string file_name = "/app/data/Blacklist.txt";
+    vector<int> num_hash = {1, 3};
+    BloomFilter bf(8, num_hash);
     // Ensure the file is empty before starting the test
     {
-        std::ofstream out(file_name, std::ofstream::trunc);
+        std::ofstream out(bf.getFilePath(), std::ofstream::trunc);
         ASSERT_TRUE(out.is_open());
     }
     // open the file (assume empty).
-    std::ifstream in_file(file_name);
+    std::ifstream in_file(bf.getFilePath());
     ASSERT_TRUE(in_file);
     // should add URL to file.
-    saveToFile("www.test5.com", file_name);
+    saveToFile("www.test5.com", bf.getFilePath());
     {
-        std::ifstream in(file_name);
+        std::ifstream in(bf.getFilePath());
         ASSERT_TRUE(in.is_open());
 
         std::string line;
@@ -586,10 +587,12 @@ TEST(SaveToFile, SaveURLSuccessfully)
 // Check if handles with non existing file.
 TEST(SaveToFile, SaveToNonExistingFile)
 {
-    const std::string file_name = "/app/data/Blacklist.txt";
+    vector<int> num_hash = {1, 3};
+    BloomFilter bf(8, num_hash);
+
     // Add the URL to end of file.
-    saveToFile("www.test6.com", file_name);
-    std::fstream in(file_name);
+    saveToFile("www.test6.com", bf.getFilePath());
+    std::fstream in(bf.getFilePath());
     // Verifies that the file is actually opened, otherwise, the test fails
     ASSERT_TRUE(in.is_open());
     std::string line;
@@ -599,7 +602,7 @@ TEST(SaveToFile, SaveToNonExistingFile)
     // Expect the line written to be exactly what we passed
     std::getline(in, line);
     EXPECT_EQ(line, "www.test6.com");
-    std::ofstream file(file_name, std::ios::trunc);
+    std::ofstream file(bf.getFilePath(), std::ios::trunc);
     in.close();
 }
 
@@ -649,60 +652,62 @@ TEST(deleteUrl, deleteWhenListEmpty)
 
 TEST(deleteFromFile, DeleteExistingURL)
 {
-    const std::string file_name = "/app/data/Blacklist.txt";
-
+    vector<int> num_hash = {1, 3};
+    BloomFilter bf(8, num_hash);
     // Write two Urls to the blacklist
-    saveToFile("www.delete.com", file_name);
-    saveToFile("www.stay.com", file_name);
+    saveToFile("www.delete.com", bf.getFilePath());
+    saveToFile("www.stay.com", bf.getFilePath());
     // Deleting one Url
-    deleteFromFile("www.delete.com", file_name);
+    deleteFromFile("www.delete.com", bf.getFilePath());
 
     // Verify that the file exists and that it contains only the second url
-    std::ifstream in(file_name);
+    std::ifstream in(bf.getFilePath());
     ASSERT_TRUE(in.is_open());
     std::string line;
     std::getline(in, line);
     EXPECT_EQ(line, "www.stay.com");
 
     // File cleaning
-    std::remove(file_name.c_str());
+    std::remove(bf.getFilePath().c_str());
 }
 
 TEST(deleteFromFile, DeleteNonExistingURL)
 {
-    const std::string file_name = "/app/data/Blacklist.txt";
+    vector<int> num_hash = {1, 3};
+    BloomFilter bf(8, num_hash);
 
     // Write Url to the blacklist
-    saveToFile("www.stay.com", file_name);
+    saveToFile("www.stay.com", bf.getFilePath());
 
-    deleteFromFile("www.NonExisting.com", file_name);
+    deleteFromFile("www.NonExisting.com", bf.getFilePath());
 
     // Verify that the file opened and that it contains only the existing url
-    std::ifstream in(file_name);
+    std::ifstream in(bf.getFilePath());
     ASSERT_TRUE(in.is_open());
     std::string line;
     std::getline(in, line);
     EXPECT_EQ(line, "www.stay.com");
 
     // File cleaning
-    std::remove(file_name.c_str());
+    std::remove(bf.getFilePath().c_str());
 }
 
 TEST(deleteFromFile, DeleteSameURLTwice)
 {
-    const std::string file_name = "/app/data/Blacklist.txt";
+    vector<int> num_hash = {1, 3};
+    BloomFilter bf(8, num_hash);
 
     // Write Url to the blacklist
-    saveToFile("www.twice.com", file_name);
+    saveToFile("www.twice.com", bf.getFilePath());
 
     // First deletion
-    deleteFromFile("www.twice.com", file_name);
+    deleteFromFile("www.twice.com", bf.getFilePath());
 
     // Second deletion
-    deleteFromFile("www.twice.com", file_name);
+    deleteFromFile("www.twice.com", bf.getFilePath());
 
     // Checking that the blacklist is empty
-    std::ifstream in(file_name);
+    std::ifstream in(bf.getFilePath());
     ASSERT_TRUE(in.is_open());
     std::string line;
     EXPECT_FALSE(std::getline(in, line));

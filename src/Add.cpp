@@ -8,9 +8,8 @@ std::string Add::execute(const std::string &url, BloomFilter &bf)
 {
     if (bf.getBlacklist().find(url) == bf.getBlacklist().end())
     {
-        const std::string file_name = "/app/data/Blacklist.txt";
         bf.addUrl(url);
-        saveToFile(url, file_name);
+        saveToFile(url, bf.getFilePath());
     }
     return "201 Created\n";
 }
