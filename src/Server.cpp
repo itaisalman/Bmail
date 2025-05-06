@@ -39,7 +39,7 @@ int main(int argc, char const *argv[])
         perror("error binding socket");
     }
     // Start listening on the socket
-    if (listen(sock, 5) < 0)
+    if (listen(sock, 1) < 0)
     {
         perror("error listening to a socket");
     }
