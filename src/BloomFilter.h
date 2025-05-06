@@ -10,6 +10,7 @@ class BloomFilter
 private:
     int *bit_array;
     std::unordered_set<std::string> blacklist;
+    std::string file_path;
     std::vector<std::pair<std::function<std::size_t(const std::string &)>, int>> hash_functions_vector;
     long int bit_array_size;
     int getIndexAfterHash(std::function<std::size_t(const std::string &)> hashFunc, int times, std::string url);
@@ -24,6 +25,7 @@ public:
     std::string checkUrl(const std::string url);
     std::string deleteUrl(const std::string url);
     int *getBitArray();
+    std::string getFilePath();
     std::unordered_set<std::string> getBlacklist();
     std::vector<std::pair<std::function<std::size_t(const std::string &)>, int>> getHashFuncVector();
     long int getSize();

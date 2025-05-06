@@ -16,6 +16,7 @@ BloomFilter::BloomFilter(long int size, std::vector<int> num_times_vector)
     {
         this->hash_functions_vector.push_back(make_pair(std::hash<std::string>(), times));
     }
+    this->file_path = "/app/data/Blacklist.txt";
 }
 
 // Destructor
@@ -23,7 +24,11 @@ BloomFilter::~BloomFilter()
 {
     delete[] this->bit_array;
 }
-
+// Returns the file path
+std::string BloomFilter::getFilePath()
+{
+    return this->file_path;
+}
 // Returns a pointer to the internal bit array used by the Bloom filter
 int *BloomFilter::getBitArray()
 {
@@ -143,4 +148,15 @@ std::string BloomFilter::checkUrl(const std::string url)
     {
         return "false\n";
     }
+}
+
+#include "Storage.h"
+
+std::string BloomFilter::deleteUrl(const std::string url)
+{
+    if (blacklist.find(url) == blacklist.end())
+    {
+        std::cout << "404 Not Found\n";
+    }
+    blacklist.erase(url);
 }
