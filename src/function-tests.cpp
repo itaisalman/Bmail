@@ -633,8 +633,8 @@ TEST(deleteUrl, deleteExistingFile)
     BloomFilter bf(8, num_hash);
     string url = "www.testdelete.com";
     bf.addUrl(url);
-    std::string output = bf.deleteUrl(url);
-    EXPECT_EQ("204 No Content\n", output);
+    int output = bf.deleteUrl(url);
+    EXPECT_EQ(1, output);
     unordered_set<string> blacklist = bf.getBlacklist();
     EXPECT_FALSE(blacklist.find(url) != blacklist.end());
 }
@@ -647,9 +647,9 @@ TEST(deleteUrl, deleteNonExistingFile)
     string url = "www.testdelete.com";
     string non_existing_url = "www.notexist.com";
     bf.addUrl(url);
-    std::string output;
+    int output;
     EXPECT_NO_THROW(output = bf.deleteUrl(non_existing_url));
-    EXPECT_EQ("404 Not Found\n", output);
+    EXPECT_EQ(0, output);
 }
 
 // Make sure that no error is thrown when trying to delete a URL from an empty blacklist.
@@ -657,9 +657,9 @@ TEST(deleteUrl, deleteWhenListEmpty)
 {
     vector<int> num_hash = {1, 3};
     BloomFilter bf(8, num_hash);
-    std::string output;
+    int output;
     EXPECT_NO_THROW(output = bf.deleteUrl("www.notexist.com"));
-    EXPECT_EQ("404 Not Found\n", output);
+    EXPECT_EQ(0, output);
 }
 
 //
