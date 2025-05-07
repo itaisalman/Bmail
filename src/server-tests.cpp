@@ -51,43 +51,43 @@ TEST(ServerTest, SingleClientPostRequest)
     ASSERT_GT(bytesRead, 0) << "No response from server";
 
     string response(shared_buffer);
-    EXPECT_EQ(response, "201 Created\n");
+    EXPECT_EQ(response, "201 Created");
 
     message = "GET www.example.com";
     send(shared_socket, message, strlen(message), 0);
     memset(shared_buffer, 0, sizeof(shared_buffer));
     read(shared_socket, shared_buffer, 1024);
-    EXPECT_EQ(string(shared_buffer), "200 Ok\n\ntrue true\n");
+    EXPECT_EQ(string(shared_buffer), "200 Ok\n\ntrue true");
 
     message = "GET www.example.com0";
     send(shared_socket, message, strlen(message), 0);
     memset(shared_buffer, 0, sizeof(shared_buffer));
     read(shared_socket, shared_buffer, 1024);
-    EXPECT_EQ(string(shared_buffer), "200 Ok\n\nfalse\n");
+    EXPECT_EQ(string(shared_buffer), "200 Ok\n\nfalse");
 
     message = "POST www.example.com";
     send(shared_socket, message, strlen(message), 0);
     memset(shared_buffer, 0, sizeof(shared_buffer));
     read(shared_socket, shared_buffer, 1024);
-    EXPECT_EQ(string(shared_buffer), "201 Created\n");
+    EXPECT_EQ(string(shared_buffer), "201 Created");
 
     message = "DELETE www.example.com";
     send(shared_socket, message, strlen(message), 0);
     memset(shared_buffer, 0, sizeof(shared_buffer));
     read(shared_socket, shared_buffer, 1024);
-    EXPECT_EQ(string(shared_buffer), "204 No Content\n");
+    EXPECT_EQ(string(shared_buffer), "204 No Content");
 
     message = "DELETE www.example.com1";
     send(shared_socket, message, strlen(message), 0);
     memset(shared_buffer, 0, sizeof(shared_buffer));
     read(shared_socket, shared_buffer, 1024);
-    EXPECT_EQ(string(shared_buffer), "404 Not Found\n");
+    EXPECT_EQ(string(shared_buffer), "404 Not Found");
 
     message = "DELETE www.example.com";
     send(shared_socket, message, strlen(message), 0);
     memset(shared_buffer, 0, sizeof(shared_buffer));
     read(shared_socket, shared_buffer, 1024);
-    EXPECT_EQ(string(shared_buffer), "404 Not Found\n");
+    EXPECT_EQ(string(shared_buffer), "404 Not Found");
 
     const char *bad_messages[] = {
         "DELETE wwwww.example.com",
@@ -100,7 +100,7 @@ TEST(ServerTest, SingleClientPostRequest)
         send(shared_socket, bad, strlen(bad), 0);
         memset(shared_buffer, 0, sizeof(shared_buffer));
         read(shared_socket, shared_buffer, 1024);
-        EXPECT_EQ(string(shared_buffer), "400 Bad Request\n");
+        EXPECT_EQ(string(shared_buffer), "400 Bad Request");
     }
 
     close(shared_socket);
