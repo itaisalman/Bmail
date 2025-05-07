@@ -6,8 +6,12 @@
 // Delete the given URL from the BloomFilter's blacklist.
 std::string Delete::execute(const std::string &url, BloomFilter &bf)
 {
-    std::string delete_output = bf.deleteUrl(url);
+    int delete_output = bf.deleteUrl(url);
     const std::string file_name = bf.getFilePath();
-    deleteFromFile(url, file_name);
-    return delete_output;
+    if (delete_output)
+    {
+        deleteFromFile(url, file_name);
+        return "204 No Content";
+    }
+    return "404 Not Found";
 }
