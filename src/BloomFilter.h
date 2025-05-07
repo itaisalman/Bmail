@@ -23,7 +23,7 @@ public:
     ~BloomFilter();
     void addUrl(const std::string url);
     std::string checkUrl(const std::string url);
-    std::string deleteUrl(const std::string url);
+    int deleteUrl(const std::string url);
     int *getBitArray();
     std::string getFilePath();
     std::unordered_set<std::string> getBlacklist();
