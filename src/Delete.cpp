@@ -8,9 +8,9 @@ std::string Delete::execute(const std::string &url, BloomFilter &bf)
 {
     int delete_output = bf.deleteUrl(url);
     const std::string file_name = bf.getFilePath();
-    deleteFromFile(url, file_name);
     if (delete_output)
     {
+        deleteFromFile(url, file_name);
         return "204 No Content";
     }
     return "404 Not Found";
