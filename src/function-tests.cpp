@@ -328,7 +328,7 @@ TEST(CheckURLTest, ExistingURL)
 
     std::string result = bf.checkUrl(url);
 
-    EXPECT_EQ(result, "true true\n");
+    EXPECT_EQ(result, "true true");
 }
 
 // Test for a URL that is not exist blacklist.
@@ -340,7 +340,7 @@ TEST(CheckURLTest, NonExistingURL)
     std::string url = "www.test2.com";
     std::string result = bf.checkUrl(url);
 
-    EXPECT_EQ(result, "false\n");
+    EXPECT_EQ(result, "false");
 }
 
 // Test for a URL that is FalsePositive.
@@ -368,7 +368,7 @@ TEST(CheckURLTest, FalsePositive)
     bf.getBitArray()[result_h1] = 1;
     bf.getBitArray()[result_h2] = 1;
 
-    EXPECT_EQ(bf.checkUrl(real_url), "true true\n");
+    EXPECT_EQ(bf.checkUrl(real_url), "true true");
 
     // Compute the hash positions for the fake (false-positive) URL
     size_t result_f1 = h1(false_positive_url);
@@ -378,7 +378,7 @@ TEST(CheckURLTest, FalsePositive)
     // Only test false positive behavior if the fake URL happens to hash to the same indices
     if (result_h1 == result_f1 && result_h2 == result_f2)
     {
-        EXPECT_EQ(bf.checkUrl(false_positive_url), "true false\n");
+        EXPECT_EQ(bf.checkUrl(false_positive_url), "true false");
     }
 }
 
