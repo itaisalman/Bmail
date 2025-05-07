@@ -1,13 +1,16 @@
 #include <gtest/gtest.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include <fstream>
-#include "BloomFilter.h"
-#include "Input.h"
-#include "Storage.h"
+#include <cstring>
+#include <string>
+#include <unistd.h>
 
 #define PORT 8080
+
 using namespace std;
+
+int shared_socket;
+char shared_buffer[1024];
 
 int createDemoClient(const std::string &ip, int port)
 {
@@ -35,92 +38,70 @@ int createDemoClient(const std::string &ip, int port)
     return sock;
 }
 
-// Test the connection to the server
-TEST(ServerTests, ConnectionTest)
+TEST(ServerTest, SingleClientPostRequest)
 {
-    // Create client
-    int client_socket = createDemoClient("127.0.0.1", 8080);
-    ASSERT_GE(client_socket, 0) << "Socket creation or connection failed";
-    close(client_socket);
-}
+    shared_socket = createDemoClient("127.0.0.1", PORT);
+    ASSERT_NE(shared_socket, -1) << "Failed to connect to server";
 
-// Test how the server handles various of valid inputs
-TEST(ServerTests, ExpectedOutput)
-{
-    // Create client
-    int client_socket = createDemoClient("127.0.0.1", 8080);
-    ASSERT_GE(client_socket, 0) << "Socket creation or connection failed";
-    // Send messages to server and see how he handles them
-    char buffer[1024] = {0};
-    // Check if handle addition of non-existing URL to the blacklist correctly
     const char *message = "POST www.example.com";
-    send(client_socket, message, strlen(message), 0);
-    read(client_socket, buffer, 1024);
-    EXPECT_EQ(buffer, "201 Created\n");
-    // Check if handle GET command on an existing URL correctly
-    memset(buffer, 0, sizeof(buffer));
-    message = "GET www.example.com";
-    send(client_socket, message, strlen(message), 0);
-    read(client_socket, buffer, 1024);
-    EXPECT_EQ(buffer, "200 Ok\n");
-    // Check if handle GET command on non-existing URL correctly
-    memset(buffer, 0, sizeof(buffer));
-    message = "GET www.example.com0";
-    send(client_socket, message, strlen(message), 0);
-    read(client_socket, buffer, 1024);
-    EXPECT_EQ(buffer, "404 Not Found\n");
-    // Check if handle Add command on existing URL correctly
-    memset(buffer, 0, sizeof(buffer));
-    message = "POST www.example.com";
-    send(client_socket, message, strlen(message), 0);
-    read(client_socket, buffer, 1024);
-    EXPECT_EQ(buffer, "201 Created\n");
-    // Check if handle Delete command on existing URL correctly
-    memset(buffer, 0, sizeof(buffer));
-    message = "DELETE www.example.com";
-    send(client_socket, message, strlen(message), 0);
-    read(client_socket, buffer, 1024);
-    EXPECT_EQ(buffer, "204 No Content\n");
-    // Check if handle Delete command on non-existing URL correctly
-    memset(buffer, 0, sizeof(buffer));
-    message = "DELETE www.example.com1";
-    send(client_socket, message, strlen(message), 0);
-    read(client_socket, buffer, 1024);
-    EXPECT_EQ(buffer, "404 Not Found\n");
-}
+    ASSERT_GT(send(shared_socket, message, strlen(message), 0), 0) << "Failed to send message";
 
-// Test how the server handles various of invalid inputs
-TEST(ServerTests, edgeCasesOutput)
-{
-    // Create client
-    int client_socket = createDemoClient("127.0.0.1", 8080);
-    ASSERT_GE(client_socket, 0) << "Socket creation or connection failed";
-    // Send messages to server and see how he handles them
-    char buffer[1024] = {0};
-    // Check if handle Delte command on an empty blacklist
-    const char *message = "DELETE www.example.com";
-    send(client_socket, message, strlen(message), 0);
-    read(client_socket, buffer, 1024);
-    EXPECT_EQ(buffer, "404 Not Found\n");
-    // Check if handle undefined commands correctly
-    memset(buffer, 0, sizeof(buffer));
-    message = "DELETE wwwww.example.com";
-    send(client_socket, message, strlen(message), 0);
-    read(client_socket, buffer, 1024);
-    EXPECT_EQ(buffer, "400 Bad Request\n");
-    memset(buffer, 0, sizeof(buffer));
-    message = "DELETEEE www.example.com";
-    send(client_socket, message, strlen(message), 0);
-    read(client_socket, buffer, 1024);
-    EXPECT_EQ(buffer, "400 Bad Request\n");
-    memset(buffer, 0, sizeof(buffer));
-    message = "DELETEwww.example.com";
-    send(client_socket, message, strlen(message), 0);
-    read(client_socket, buffer, 1024);
-    EXPECT_EQ(buffer, "400 Bad Request\n");
-    memset(buffer, 0, sizeof(buffer));
-    message = "www.example.com DELETE";
-    send(client_socket, message, strlen(message), 0);
-    read(client_socket, buffer, 1024);
-    EXPECT_EQ(buffer, "400 Bad Request\n");
+    memset(shared_buffer, 0, sizeof(shared_buffer));
+    ssize_t bytesRead = read(shared_socket, shared_buffer, sizeof(shared_buffer) - 1);
+    ASSERT_GT(bytesRead, 0) << "No response from server";
+
+    string response(shared_buffer);
+    EXPECT_EQ(response, "201 Created\n");
+
+    message = "GET www.example.com";
+    send(shared_socket, message, strlen(message), 0);
+    memset(shared_buffer, 0, sizeof(shared_buffer));
+    read(shared_socket, shared_buffer, 1024);
+    EXPECT_EQ(string(shared_buffer), "200 Ok\n\ntrue true\n");
+
+    message = "GET www.example.com0";
+    send(shared_socket, message, strlen(message), 0);
+    memset(shared_buffer, 0, sizeof(shared_buffer));
+    read(shared_socket, shared_buffer, 1024);
+    EXPECT_EQ(string(shared_buffer), "200 Ok\n\nfalse\n");
+
+    message = "POST www.example.com";
+    send(shared_socket, message, strlen(message), 0);
+    memset(shared_buffer, 0, sizeof(shared_buffer));
+    read(shared_socket, shared_buffer, 1024);
+    EXPECT_EQ(string(shared_buffer), "201 Created\n");
+
+    message = "DELETE www.example.com";
+    send(shared_socket, message, strlen(message), 0);
+    memset(shared_buffer, 0, sizeof(shared_buffer));
+    read(shared_socket, shared_buffer, 1024);
+    EXPECT_EQ(string(shared_buffer), "204 No Content\n");
+
+    message = "DELETE www.example.com1";
+    send(shared_socket, message, strlen(message), 0);
+    memset(shared_buffer, 0, sizeof(shared_buffer));
+    read(shared_socket, shared_buffer, 1024);
+    EXPECT_EQ(string(shared_buffer), "404 Not Found\n");
+
+    message = "DELETE www.example.com";
+    send(shared_socket, message, strlen(message), 0);
+    memset(shared_buffer, 0, sizeof(shared_buffer));
+    read(shared_socket, shared_buffer, 1024);
+    EXPECT_EQ(string(shared_buffer), "404 Not Found\n");
+
+    const char *bad_messages[] = {
+        "DELETE wwwww.example.com",
+        "DELETEEE www.example.com",
+        "DELETEwww.example.com",
+        "www.example.com DELETE"};
+
+    for (const char *bad : bad_messages)
+    {
+        send(shared_socket, bad, strlen(bad), 0);
+        memset(shared_buffer, 0, sizeof(shared_buffer));
+        read(shared_socket, shared_buffer, 1024);
+        EXPECT_EQ(string(shared_buffer), "400 Bad Request\n");
+    }
+
+    close(shared_socket);
 }
