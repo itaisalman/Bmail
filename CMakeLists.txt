@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 
 project(Bmail)
 
-# GoogleTest requires at least C++11
-set(CMAKE_CXX_STANDARD 11)
+# GoogleTest requires at least C++14
+set(CMAKE_CXX_STANDARD 14)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -22,9 +22,13 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 add_executable(runTests ${TEST_FILES} src/Storage.cpp src/BloomFilter.cpp src/Input.cpp)
-add_executable(runMain src/Storage.cpp src/BloomFilter.cpp src/Input.cpp src/main.cpp)
+add_executable(runServer src/Server.cpp src/Storage.cpp src/BloomFilter.cpp src/Input.cpp src/Add.cpp src/Check.cpp src/Delete.cpp)
+
+# Add include path for headers in src/
+target_include_directories(runTests PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_include_directories(runServer PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
 target_link_libraries(runTests gtest_main)
 
 target_compile_features(runTests PRIVATE cxx_std_11)
-target_compile_features(runMain PRIVATE cxx_std_11)
+target_compile_features(runServer PRIVATE cxx_std_11)
