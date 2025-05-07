@@ -4,28 +4,85 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <string.h>
+#include "Input.h"
+#include "BloomFilter.h"
+#include <unordered_map>
+#include <memory>
+#include "Command.h"
+#include "Storage.h"
+#include <sstream>
+#include "Add.h"
+#include "Check.h"
+#include "Delete.h"
 
-int main(int argc, char const *argv[])
+using namespace std;
+
+// Recieves output string and wanted socket, and send the output via socket.
+void output(const std::string output, int client_socket)
+{
+    int sent_bytes = send(client_socket, output.c_str(), output.length(), 0);
+    if (sent_bytes < 0)
+    {
+        exit(1);
+    }
+}
+
+// Loading the blacklist from the given file to an unordered set, then copying it into the blacklist.
+void loadBlacklistFromFile(BloomFilter &bf, const string &filename)
+{
+    unordered_set<string> loaded_set = loadFromFile(filename);
+    for (string url : loaded_set)
+    {
+        bf.addUrl(url);
+    }
+}
+
+// Uses the input to init the bloomfilter. Returns null if input isnt valid.
+BloomFilter *initBloomFilter(string input)
+{
+    pair<bool, pair<int, vector<int>>> parsed_input = checkInitInput(input);
+    if (!parsed_input.first)
+    {
+        return nullptr;
+    }
+
+    int array_size = parsed_input.second.first;
+    vector<int> initialize_filter = parsed_input.second.second;
+    BloomFilter *our_filter = new BloomFilter(array_size, initialize_filter);
+    loadBlacklistFromFile(*our_filter, our_filter->getFilePath());
+    return our_filter;
+}
+
+// Extract the arguments from the command line and convert them to a string.
+// If number of arguments is invalid, returns empty string.
+string handleArgs(int argc, char const *argv[])
 {
     // Check num of arguments
-    if (argc != 2)
+    if (argc < 4)
     {
-        std::cerr << "Usage: " << argv[0] << " <port>" << std::endl;
+        return "";
     }
-    // As required in the exercise, the port the server is listening
-    // on will be passed as a parameter to the program
 
-    // Converting a string to int
-    int server_port = std::stoi(argv[1]);
+    // Parsing the arguments
+    ostringstream BloomFilter_parameters;
+    for (int i = 2; i < argc; i++)
+    {
+        BloomFilter_parameters << argv[i] << ' ';
+    }
+    return BloomFilter_parameters.str();
+}
 
+// Creates the socket and listen on port that was given as an argument.
+int setupServerAndAcceptClient(int server_port)
+{
     // Create a TCP socket
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0)
     {
-        perror("error creating socket");
+        exit(1);
     }
 
-    // Set the server address
+    // Set server address
     struct sockaddr_in sin;
     memset(&sin, 0, sizeof(sin));
     sin.sin_family = AF_INET;
@@ -35,49 +92,91 @@ int main(int argc, char const *argv[])
     // Bind between the socket and the address
     if (bind(sock, (struct sockaddr *)&sin, sizeof(sin)) < 0)
     {
-        // Print error if bind fails
-        perror("error binding socket");
-    }
-    // Start listening on the socket
-    if (listen(sock, 1) < 0)
-    {
-        perror("error listening to a socket");
+        close(sock);
+        exit(1);
     }
 
-    // Create a structure that will contain the information of the client that will connect
+    // Start listening
+    if (listen(sock, 1) < 0)
+    {
+        close(sock);
+        exit(1);
+    }
+
+    // Accept a client
     struct sockaddr_in client_sin;
     unsigned int addr_len = sizeof(client_sin);
     int client_socket = accept(sock, (struct sockaddr *)&client_sin, &addr_len);
-
-    // Check if an error occurred while receiving the client
     if (client_socket < 0)
     {
-        perror("error accepting client");
+        close(sock);
+        exit(1);
     }
 
+    return client_socket;
+}
+
+// Builds a map that links command names like "POST" to their corresponding Command object creators.
+unordered_map<string, function<unique_ptr<Command>()>> createCommandFactory()
+{
+    return {
+        {"POST", []
+         { return make_unique<Add>(); }},
+        {"GET", []
+         { return make_unique<Check>(); }},
+        {"DELETE", []
+         { return make_unique<Delete>(); }}};
+}
+
+// Contains the loop of the communication with client. Reads from socket,
+// performs the wanted functionality and sends back via socket to the client the output.
+void handleClientLoop(int client_socket, const unordered_map<string, function<unique_ptr<Command>()>> &factory, BloomFilter *bf)
+{
     char buffer[4096];
     int expected_data_len = sizeof(buffer);
-    // Read data from the client socket into the buffer
-    int read_bytes = recv(client_socket, buffer, expected_data_len, 0);
 
-    // The client closed the connection
-    if (read_bytes == 0)
+    while (true)
     {
-        std::cout << "Client disconnected." << std::endl;
-    }
-    // Communication error
-    else if (read_bytes < 0)
-    {
-        perror("error receiving from client");
-    }
+        int read_bytes = recv(client_socket, buffer, expected_data_len, 0);
 
-    std::string response = "200 Ok\n";
-    int sent_bytes = send(client_socket, response.c_str(), response.length(), 0);
-    // Check if the send failed
-    if (sent_bytes < 0)
-    {
-        perror("error sending to client");
+        if (read_bytes == 0)
+        {
+            break;
+        }
+        else if (read_bytes < 0)
+        {
+            break;
+        }
+        // Extract the request and check if valid.
+        pair<string, string> url_request_pair = isValidURLRequest(buffer);
+        auto it = factory.find(url_request_pair.first);
+        unique_ptr<Command> command;
+        // If valid, executes the command and sends the output of it to the client.
+        // If not, sends bad request output.
+        if (it != factory.end())
+        {
+            command = it->second();
+            output(command->execute(url_request_pair.second, *bf), client_socket);
+        }
+        else
+        {
+            output("400 Bad Request", client_socket);
+        }
+        memset(buffer, 0, sizeof(buffer));
     }
+}
 
+int main(int argc, char const *argv[])
+{
+    int server_port = stoi(argv[1]);
+    string parameters_as_string = handleArgs(argc, argv);
+    BloomFilter *our_filter = initBloomFilter(parameters_as_string);
+    if (!our_filter)
+    {
+        return 0;
+    }
+    auto factory = createCommandFactory();
+    int client_socket = setupServerAndAcceptClient(server_port);
+    handleClientLoop(client_socket, factory, our_filter);
     return 0;
 }
