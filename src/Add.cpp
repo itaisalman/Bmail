@@ -11,5 +11,5 @@ std::string Add::execute(const std::string &url, BloomFilter &bf)
         bf.addUrl(url);
         saveToFile(url, bf.getFilePath());
     }
-    return "201 Created\n";
+    return "201 Created";
 }
