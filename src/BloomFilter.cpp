@@ -137,16 +137,16 @@ std::string BloomFilter::checkUrl(const std::string url)
         // Double-checking.
         if (secondUrlCheck(url))
         {
-            return "true true\n";
+            return "true true";
         }
         else
         {
-            return "true false\n";
+            return "true false";
         }
     }
     else
     {
-        return "false\n";
+        return "false";
     }
 }
 
@@ -155,7 +155,7 @@ std::string BloomFilter::deleteUrl(const std::string url)
     if (this->blacklist.find(url) != this->blacklist.end())
     {
         this->blacklist.erase(url);
-        return "204 No Content\n";
+        return "204 No Content";
     }
-    return "404 Not Found\n";
+    return "404 Not Found";
 }
