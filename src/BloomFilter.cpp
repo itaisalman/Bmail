@@ -150,12 +150,12 @@ std::string BloomFilter::checkUrl(const std::string url)
     }
 }
 
-std::string BloomFilter::deleteUrl(const std::string url)
+int BloomFilter::deleteUrl(const std::string url)
 {
     if (this->blacklist.find(url) != this->blacklist.end())
     {
         this->blacklist.erase(url);
-        return "204 No Content";
+        return 1;
     }
-    return "404 Not Found";
+    return 0;
 }
