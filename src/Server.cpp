@@ -62,6 +62,11 @@ string handleArgs(int argc, char const *argv[])
     {
         return "";
     }
+    int server_port = stoi(argv[1]);
+    if (server_port < 1024 || server_port > 65535)
+    {
+        exit(1);
+    }
 
     // Parsing the arguments
     ostringstream BloomFilter_parameters;
@@ -70,50 +75,6 @@ string handleArgs(int argc, char const *argv[])
         BloomFilter_parameters << argv[i] << ' ';
     }
     return BloomFilter_parameters.str();
-}
-
-// Creates the socket and listen on port that was given as an argument.
-int setupServerAndAcceptClient(int server_port)
-{
-    // Create a TCP socket
-    int sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock < 0)
-    {
-        exit(1);
-    }
-
-    // Set server address
-    struct sockaddr_in sin;
-    memset(&sin, 0, sizeof(sin));
-    sin.sin_family = AF_INET;
-    sin.sin_addr.s_addr = INADDR_ANY;
-    sin.sin_port = htons(server_port);
-
-    // Bind between the socket and the address
-    if (bind(sock, (struct sockaddr *)&sin, sizeof(sin)) < 0)
-    {
-        close(sock);
-        exit(1);
-    }
-
-    // Start listening
-    if (listen(sock, 1) < 0)
-    {
-        close(sock);
-        exit(1);
-    }
-
-    // Accept a client
-    struct sockaddr_in client_sin;
-    unsigned int addr_len = sizeof(client_sin);
-    int client_socket = accept(sock, (struct sockaddr *)&client_sin, &addr_len);
-    if (client_socket < 0)
-    {
-        close(sock);
-        exit(1);
-    }
-
-    return client_socket;
 }
 
 // Builds a map that links command names like "POST" to their corresponding Command object creators.
@@ -139,11 +100,7 @@ void handleClientLoop(int client_socket, const unordered_map<string, function<un
     {
         int read_bytes = recv(client_socket, buffer, expected_data_len, 0);
 
-        if (read_bytes == 0)
-        {
-            break;
-        }
-        else if (read_bytes < 0)
+        if (read_bytes == 0 || read_bytes < 0)
         {
             break;
         }
@@ -176,7 +133,42 @@ int main(int argc, char const *argv[])
         return 0;
     }
     auto factory = createCommandFactory();
-    int client_socket = setupServerAndAcceptClient(server_port);
-    handleClientLoop(client_socket, factory, our_filter);
+
+    // Creates the socket and listen on port that was given as an argument.
+    int server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (server_socket < 0)
+    {
+        exit(1);
+    }
+    struct sockaddr_in sin;
+    memset(&sin, 0, sizeof(sin));
+    sin.sin_family = AF_INET;
+    sin.sin_addr.s_addr = INADDR_ANY;
+    sin.sin_port = htons(server_port);
+    if (bind(server_socket, (struct sockaddr *)&sin, sizeof(sin)) < 0)
+    {
+        close(server_socket);
+        exit(1);
+    }
+    if (listen(server_socket, 5) < 0)
+    {
+        close(server_socket);
+        exit(1);
+    }
+
+    // Loop to keep server always running. Each iteration is for each connection.
+    while (true)
+    {
+        struct sockaddr_in client_sin;
+        unsigned int addr_len = sizeof(client_sin);
+        int client_socket = accept(server_socket, (struct sockaddr *)&client_sin, &addr_len);
+        if (client_socket < 0)
+        {
+            continue;
+        }
+        handleClientLoop(client_socket, factory, our_filter);
+        close(client_socket);
+    }
+    close(server_socket);
     return 0;
 }
