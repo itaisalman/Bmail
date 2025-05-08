@@ -99,8 +99,7 @@ void handleClientLoop(int client_socket, const unordered_map<string, function<un
     while (true)
     {
         int read_bytes = recv(client_socket, buffer, expected_data_len, 0);
-
-        if (read_bytes == 0 || read_bytes < 0)
+        if (read_bytes <= 0)
         {
             break;
         }
