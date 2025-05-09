@@ -102,6 +102,8 @@ In a separate terminal, connect the client to the server using:
 docker exec -it bmail-client-1 python3 src/Client.py <server_ip> <num_of_port>
 ```
 
+The client port must be the same as the server port.
+
 For example,
 
 ```bash
