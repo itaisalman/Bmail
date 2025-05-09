@@ -19,6 +19,9 @@ def main():
         # Loop for communicating with server.
         while True:
             msg = input()
+            # Sends newline in case of empty string was accepted from user.
+            if msg == '':
+                msg = '\n'
             sock.send(bytes(msg, 'utf-8'))
             data = sock.recv(4096)
             print(data.decode('utf-8'))
