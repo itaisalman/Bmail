@@ -20,7 +20,7 @@ This README provides an overview of the project, installation and running instru
 
 The project is built in **C++**, using **CMake** for building and includes a **Dockerfile** for easy containerization.
 
-When the program runs, it loads an existing URL blacklist from `data/Blacklist.txt` if it exists.  
+When the program runs, it loads an existing URL blacklist from `data/Blacklist.txt`.  
 The client connects to the server over TCP sockets and sends commands (POST, GET, DELETE) via a persistent connection.
 
 Each command is entered by the user in the client terminal and sent to the server over the socket. The server processes the command, responds with a corresponding status message, and the client prints it to the console.
@@ -133,17 +133,17 @@ docker exec -it bmail-server-1 ./runTests 8080 8 1 2
 
 ### Build:
 
-<img src="photos/Build.jpg" alt="build" width="500" height="350"/>
+<img src="photos/Build_part2.jpg" width="500" height="350"/>
 
 ### Runs:
 
-<img src="photos/run1.jpg" alt="build" width="350" height="175"/>
+<img src="photos/run1_part2.jpg" alt="build" width="525" height="350"/>
 
-<img src="photos/run2.jpg" alt="build" width="500" height="150"/>
+<img src="photos/run2_part2.jpg" alt="build" width="525" height="350"/>
 
 ### Tests:
 
-<img src="photos/RunTests.jpg" alt="build" width="300" height="250"/>
+<img src="photos/RunTests_part2.jpg" alt="build" width="525" height="350"/>
 
 ## Code resistance to changes according to the Open/Closed principle
 
