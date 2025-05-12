@@ -99,7 +99,7 @@ docker exec -it bmail-server-1 ./runServer 8080 8 1 2
 In a separate terminal, connect the client to the server using:
 
 ```bash
-docker exec -it bmail-client-1 python3 src/Client.py <server_ip> <num_of_port>
+docker exec -it bmail-client-1 python3 src/Client.py server <num_of_port>
 ```
 
 The client port must be the same as the server port.
