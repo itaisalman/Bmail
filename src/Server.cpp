@@ -18,8 +18,9 @@
 using namespace std;
 
 // Recieves output string and wanted socket, and send the output via socket.
-void output(const std::string output, int client_socket)
+void output(std::string output, int client_socket)
 {
+    output = output + "\n";
     int sent_bytes = send(client_socket, output.c_str(), output.length(), 0);
     if (sent_bytes < 0)
     {
