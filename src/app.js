@@ -1,10 +1,11 @@
-const express = require('express')
-const app = express()
+const express = require("express");
+const app = express();
 
-const mails = require('./routes/mails');
+const labels = require("./routes/labels");
+const mails = require("./routes/mails");
 
-app.use(express.json())
-app.use('/api/mails', mails);
+app.use(express.json());
+app.use("/api/mails", mails);
+app.use("/api/labels", labels);
 
-
-app.listen(8080)
+app.listen(8080);
