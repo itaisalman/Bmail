@@ -14,6 +14,8 @@
 #include "Add.h"
 #include "Check.h"
 #include "Delete.h"
+#include <sys/socket.h>
+#include <thread>
 
 using namespace std;
 
@@ -24,7 +26,7 @@ void output(std::string output, int client_socket)
     int sent_bytes = send(client_socket, output.c_str(), output.length(), 0);
     if (sent_bytes < 0)
     {
-        exit(1);
+        close(client_socket);
     }
 }
 
@@ -150,7 +152,7 @@ int main(int argc, char const *argv[])
         close(server_socket);
         exit(1);
     }
-    if (listen(server_socket, 5) < 0)
+    if (listen(server_socket, SOMAXCONN) < 0)
     {
         close(server_socket);
         exit(1);
@@ -166,8 +168,12 @@ int main(int argc, char const *argv[])
         {
             continue;
         }
-        handleClientLoop(client_socket, factory, our_filter);
-        close(client_socket);
+        // For every client accepted, create an indepedent thread
+        std::thread([client_socket, &factory, our_filter]()
+                    {
+            handleClientLoop(client_socket, factory, our_filter);
+            close(client_socket); })
+            .detach();
     }
     close(server_socket);
     return 0;
