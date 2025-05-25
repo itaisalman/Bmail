@@ -6,8 +6,8 @@ const getFiftyMails = () => {
         return mails
     }
     const fifty_mails = []
-    let i = mails.length - 50
-    for (i ; i > mails.length; i++){
+    let i = mails.length - 1
+    for (i ; i > mails.length - 50; i--){
         fifty_mails.push(mails[i]);
     }
     return fifty_mails
