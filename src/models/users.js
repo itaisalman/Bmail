@@ -32,7 +32,10 @@ const isEmailTaken = (mail_address) => {
   return users.some((user) => user.mail_address === mail_address);
 };
 
+const getUserById = (id) => users.find((a) => a.id === id);
+
 module.exports = {
   createUser,
   isEmailTaken,
+  getUserById,
 };
