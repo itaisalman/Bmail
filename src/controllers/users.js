@@ -38,3 +38,13 @@ exports.createUser = (req, res) => {
   );
   res.status(201).json(createdUser);
 };
+
+exports.getUserById = (req, res) => {
+  const user = users.getUserById(parseInt(req.params.id));
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+  // Return user details without the password (for security)
+  const { password, ...safeUser } = user;
+  res.json(safeUser);
+};
