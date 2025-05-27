@@ -4,10 +4,12 @@
 #include <vector>
 #include <string>
 #include <functional>
+#include <mutex>
 
 class BloomFilter
 {
 private:
+    std::mutex mtx;
     int *bit_array;
     std::unordered_set<std::string> blacklist;
     std::string file_path;

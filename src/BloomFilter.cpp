@@ -4,6 +4,7 @@
 #include <functional>
 #include <iostream>
 #include "BloomFilter.h"
+#include <mutex>
 
 // Constructor
 BloomFilter::BloomFilter(long int size, std::vector<int> num_times_vector)
@@ -50,6 +51,7 @@ std::unordered_set<std::string> BloomFilter::getBlacklist()
 // Sets the blacklist from the provided unordered set of strings
 void BloomFilter::setBlacklist(std::unordered_set<std::string> list)
 {
+    std::lock_guard<std::mutex> lock(mtx);
     this->blacklist.clear();
     for (const auto &item : list)
     {
@@ -89,6 +91,7 @@ void BloomFilter::updatingBitArray(std::string url)
 // Updates BloomFilter's bit array and adding the URL to the its blacklist
 void BloomFilter::addUrl(std::string url)
 {
+    std::lock_guard<std::mutex> lock(mtx);
     BloomFilter::updatingBitArray(url);
     this->blacklist.insert(url);
 }
@@ -131,6 +134,7 @@ bool BloomFilter::secondUrlCheck(const std::string url)
 // Prints results accordingly
 std::string BloomFilter::checkUrl(const std::string url)
 {
+    std::lock_guard<std::mutex> lock(mtx);
     // First-checking.
     if (firstUrlCheck(url))
     {
@@ -152,6 +156,7 @@ std::string BloomFilter::checkUrl(const std::string url)
 
 int BloomFilter::deleteUrl(const std::string url)
 {
+    std::lock_guard<std::mutex> lock(mtx);
     if (this->blacklist.find(url) != this->blacklist.end())
     {
         this->blacklist.erase(url);
