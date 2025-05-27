@@ -34,8 +34,15 @@ const isEmailTaken = (mail_address) => {
 
 const getUserById = (id) => users.find((a) => a.id === id);
 
+const findUserByUsernameAndPassword = (mail_address, password) => {
+  return users.find(
+    (u) => u.mail_address === mail_address && u.password === password
+  );
+};
+
 module.exports = {
   createUser,
   isEmailTaken,
   getUserById,
+  findUserByUsernameAndPassword,
 };
