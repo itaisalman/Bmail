@@ -1,4 +1,7 @@
 #include "Storage.h"
+#include <mutex>
+
+std::mutex mtx;
 
 // Loads lines from a file into an unordered set of strings
 std::unordered_set<std::string> loadFromFile(const std::string &filename)
@@ -18,6 +21,7 @@ std::unordered_set<std::string> loadFromFile(const std::string &filename)
 // Save to file the URL if doesn't exist
 void saveToFile(std::string url, const std::string &file_path)
 {
+    std::lock_guard<std::mutex> lock(mtx);
     // Open the file in read mode to check if the URL already exists
     std::ifstream in_file(file_path);
     std::string line;
@@ -46,6 +50,7 @@ void saveToFile(std::string url, const std::string &file_path)
 
 void deleteFromFile(std::string url, const std::string &file_path)
 {
+    std::lock_guard<std::mutex> lock(mtx);
     // Open the file for reading.
     std::ifstream in_file(file_path);
     if (!in_file.is_open())
