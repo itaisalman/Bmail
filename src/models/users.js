@@ -35,8 +35,13 @@ const isEmailTaken = (mail_address) => {
 
 const getUserById = (id) => users.find((a) => a.id === id);
 
+const getAllUsers = () => {
+  return users;
+};
+
 module.exports = {
   createUser,
   isEmailTaken,
   getUserById,
+  getAllUsers,
 };
