@@ -21,6 +21,7 @@ const createUser = (
     image: image,
     received_mails: [],
     sent_mails: [],
+    labels: [],
   };
 
   users.push(newUser);
