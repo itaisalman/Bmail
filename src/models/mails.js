@@ -32,6 +32,26 @@ const getFiftyMails = (user_id) => {
     return findFiftyMails(get_user);
 }
 
+const getSpecificMail = (user_id, mail_id) => {
+    // Return null if this user_id does not exist.
+    const get_user = users.getUserById(user_id);
+    if (!get_user){
+        return null;
+    }
+    // Check if the mail is in received or in sent.
+    // If not in both, return null.
+    const get_mail_from_received = get_user.received_mails.find((mail) => mail.id === mail_id);
+    if (!get_mail_from_received){
+        const get_mail_from_sent = get_user.sent_mails.find((mail) => mail.id === mail_id);
+        if (!get_mail_from_sent){
+            return null;
+        }
+        return get_mail_from_sent; 
+    }
+    return get_mail_from_received;
+}
+
 module.exports = {
-    getFiftyMails
+    getFiftyMails,
+    getSpecificMail
 }
