@@ -1,22 +1,20 @@
-version: "3.8"
 services:
-  server:
+  cpp-server:
     build: .
     ports:
       - "8080:8080"
-    volumes:
-      - ./data:/app/data
     tty: true
     stdin_open: true
-    command: sleep infinity
+    command: ./runServer 8080 8 1 2
 
-  client:
-    image: python:3.11
+  node-client:
+    image: node:20
     volumes:
       - .:/app
     working_dir: /app
     depends_on:
-      - server
+      - cpp-server
     tty: true
     stdin_open: true
-    command: sleep infinity
+    command: node ./src/app.js
+    ports: -"3000:3000"
