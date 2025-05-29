@@ -1,6 +1,24 @@
 const blacklist = require("../models/blacklist");
+const users = require("../models/users");
+
+// Checks if the user_id given is valid (is a number, and is existing)
+function checkIfValid(user_id) {
+  if (!user_id) {
+    return false;
+  }
+  if (!users.getUserById(user_id)) {
+    return false;
+  }
+  return true;
+}
 
 exports.addUrlToBlacklist = (req, res) => {
+  const user_id = parseInt(req.headers["user"]);
+  if (!checkIfValid(user_id)) {
+    return res
+      .status(400)
+      .json({ error: "Missing/Invalid user ID or User not found" });
+  }
   const { url } = req.body;
   // Check if url is missing
   if (!url) {
