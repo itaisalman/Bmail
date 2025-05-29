@@ -1,6 +1,8 @@
 services:
   cpp-server:
     build: .
+    volumes:
+      - ./data:/app/data
     ports:
       - "8080:8080"
     tty: true
