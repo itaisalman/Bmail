@@ -1,5 +1,4 @@
 const labels = require("../models/labels");
-const users = require("../models/users");
 
 exports.getAllLabels = (req, res) => {
   // Extract the user ID from the headers
