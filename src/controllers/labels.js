@@ -80,3 +80,24 @@ exports.updateLabel = (req, res) => {
     return res.status(404).json({ error: "Label not found" });
   res.status(204).send();
 };
+
+exports.deleteLabel = (req, res) => {
+  const user_id = parseInt(req.headers["user"]);
+  // Check if user ID is missing
+  if (!user_id) {
+    return res.status(400).json({ error: "Missing user ID" });
+  }
+  const label_id = parseInt(req.params.id);
+  const deleted_label = labels.deleteLabel(user_id, label_id);
+  // Check if the user ID does not exist
+  if (deleted_label === null)
+    return res.status(404).json({ error: "User not found" });
+  // Check if the label ID is missing
+  if (label_id === undefined) {
+    return res.status(400).json({ error: "Missing label ID" });
+  }
+  // If the label does not exist
+  if (!deleted_label) return res.status(404).json({ error: "Label not found" });
+
+  res.status(204).send();
+};
