@@ -16,14 +16,10 @@ function checkIfValid(user_id){
 exports.getFiftyMails = (req, res) => {
     const user_id = parseInt(req.headers['user']);
     // Check if user_id is given.
-    if (!user_id){
-        return res.status(400).json({ error: 'Missing user ID'})
+    if (!checkIfValid(user_id)){
+        return res.status(400).json({ error: 'Missing/Invalid user ID or User not found'})
     }
     const user_mails = mails.getFiftyMails(user_id);
-    // Check if the user_id given exists.
-    if (!user_mails){
-        return res.status(404).json({ error: 'User not found'})
-    }
     res.json(user_mails);
 }
 
