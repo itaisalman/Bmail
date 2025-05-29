@@ -1,3 +1,4 @@
+let mail_counter = 0;
 const users = require('./users')
 
 // Find the recent 50 mails who have been sent or received by that user.
@@ -32,6 +33,22 @@ const getFiftyMails = (user_id) => {
     return findFiftyMails(get_user);
 }
 
+// Create a new mail
+// Define its properties and add them to both sender and receiver.
+const createMail = (sender, receiver, title, content) => {
+    const new_mail = {
+        id: ++mail_counter,
+        sender: sender,
+        receiver: receiver,
+        title: title,
+        content: content,
+        date: new Date()
+    };
+    users.getUserById(sender).sent_mails.push(new_mail);
+    users.getUserById(receiver).received_mails.push(new_mail);
+}
+
 module.exports = {
-    getFiftyMails
+    getFiftyMails,
+    createMail
 }
