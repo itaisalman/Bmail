@@ -4,4 +4,6 @@ const controller = require("../controllers/labels");
 
 router.route("/").get(controller.getAllLabels).post(controller.createLabel);
 
+router.route("/:id").get(controller.getLabelById);
+
 module.exports = router;
