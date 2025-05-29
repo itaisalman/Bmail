@@ -25,8 +25,21 @@ const createLabel = (user_id, name) => {
   return new_label;
 };
 
+const updateLabel = (user_id, label_id, update_name) => {
+  const user = users.getUserById(user_id);
+  if (!user) return null;
+
+  const label = user.labels.find((label) => label.id === label_id);
+  if (!label) return undefined;
+
+  // Update the label by merging the values ​​from update_name
+  Object.assign(label, update_name);
+  return label;
+};
+
 module.exports = {
   getAllLabels,
   getLabel,
   createLabel,
+  updateLabel,
 };
