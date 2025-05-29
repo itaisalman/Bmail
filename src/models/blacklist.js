@@ -4,24 +4,19 @@ exports.connectToBloomFilterServer = (text, callback) => {
   const HOST = "cpp-server";
   const PORT = "8080";
   const client = new net.Socket();
-  const url = extractUrls(text);
-  if (!url) {
-    return false;
-  }
-  let respone = "";
-  let command = "GET";
+
+  let response = "";
 
   client.connect(PORT, HOST, () => {
-    const payload = `${command} ${url}`;
-    client.write(payload + "\n");
+    client.write(text + "\n");
   });
   client.on("data", (chunk) => {
-    respone += chunk.toString();
-    client.end;
+    response += chunk.toString();
+    client.end();
   });
 
   client.on("end", () => {
-    callback(null, respone);
+    callback(null, response);
   });
 
   client.on("error", (err) => {
