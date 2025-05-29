@@ -7,6 +7,16 @@ const getAllLabels = (user_id) => {
   return user.labels;
 };
 
+const getLabel = (user_id, label_id) => {
+  // Trying to find the user by ID
+  const user = users.getUserById(user_id);
+  // If the user does not exist return null
+  if (!user) return null;
+  // If the user exists search for the label by ID,
+  // If no such label is found, the function will return undefined.
+  return user.labels.find((label) => label.id === label_id);
+};
+
 const createLabel = (user_id, name) => {
   const user = users.getUserById(user_id);
   if (!user) return null;
@@ -17,5 +27,6 @@ const createLabel = (user_id, name) => {
 
 module.exports = {
   getAllLabels,
+  getLabel,
   createLabel,
 };
