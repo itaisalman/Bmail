@@ -37,9 +37,24 @@ const updateLabel = (user_id, label_id, update_name) => {
   return label;
 };
 
+const deleteLabel = (user_id, label_id) => {
+  const user = users.getUserById(user_id);
+  if (!user) return null;
+
+  // Search for the label index in the user's label array
+  const label_index = user.labels.findIndex((label) => label.id === label_id);
+  // Label does not exist return undefined
+  if (label_index === -1) return undefined;
+
+  // Remove from array by index
+  user.labels.splice(label, 1);
+  return true;
+};
+
 module.exports = {
   getAllLabels,
   getLabel,
   createLabel,
   updateLabel,
+  deleteLabel,
 };
