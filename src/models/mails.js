@@ -48,7 +48,33 @@ const createMail = (sender, receiver, title, content) => {
     users.getUserById(receiver).received_mails.push(new_mail);
 }
 
+const deleteSpecificMail = (user_id, mail_id) => {
+    const get_user = users.getUserById(user_id);
+    // Check if the mail is in received or in sent.
+    // If not in both, return null.
+    const get_mail_from_received = get_user.received_mails.find((mail) => mail.id === mail_id);
+    if (!get_mail_from_received){
+        const get_mail_from_sent = get_user.sent_mails.find((mail) => mail.id === mail_id);
+        if (!get_mail_from_sent){
+            return null;
+        }
+        // Find the mail that the user want to delete.
+        // Delete it from the user's sent_mails.
+        // Return the deleted mail.
+        const sent_index = get_user.sent_mails.findIndex((mail) => mail.id === mail_id);
+        const deleted_mail = get_user.sent_mails.splice(sent_index,1);
+        return deleted_mail;
+    }
+    // Find the mail that the user want to delete.
+    // Delete it from the user's received_mails.
+    // Return the deleted mail.
+    const received_index = get_user.received_mails.findIndex((mail) => mail.id === mail_id);
+    const deleted_mail = get_user.received_mails.splice(received_index,1);
+    return deleted_mail;
+}
+
 module.exports = {
     getFiftyMails,
-    createMail
+    createMail,
+    deleteSpecificMail
 }
