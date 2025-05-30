@@ -91,3 +91,18 @@ exports.addMail = async (req, res) => {
         return res.status(500).json({ error: 'Internal server error while checking blacklist' });
     }
 };
+
+exports.getMailById = (req, res) => {
+    const user_id = parseInt(req.headers['user']);
+    console.log(user_id);
+    // Check if user_id is valid.
+    if (!checkIfValid(user_id)){
+        return res.status(400).json({ error: 'Missing/Invalid user ID or User not found'})
+    }
+    // Search the mail in the user's mails.
+    const mail = mails.getSpecificMail(user_id, parseInt(req.params.id));
+    if (!mail){
+        return res.status(404).json({ error: 'Mail not found'})
+    }
+    res.json(mail);
+}
