@@ -12,23 +12,7 @@ function checkIfValid(user_id) {
   return true;
 }
 
-exports.addUrlToBlacklist = (req, res) => {
-  const user_id = parseInt(req.headers["user"]);
-  if (!checkIfValid(user_id)) {
-    return res
-      .status(400)
-      .json({ error: "Missing/Invalid user ID or User not found" });
-  }
-  const { url } = req.body;
-  // Check if url is missing
-  if (!url) {
-    return res.status(400).json({ error: "Missing url" });
-  }
-  post_request = "POST " + url;
-  this.passRequestToServer(post_request, res);
-};
-
-exports.passRequestToServer = (req, res) => {
+function passRequestToServer(req, res) {
   blacklist.connectToBloomFilterServer(req, (err, response) => {
     // If error occured
     if (err) {
@@ -42,4 +26,31 @@ exports.passRequestToServer = (req, res) => {
       Answer: response.trim(),
     });
   });
+}
+
+function handleBlacklistOperation(req, res, method) {
+  const user_id = parseInt(req.headers["user"]);
+  if (!checkIfValid(user_id)) {
+    return res
+      .status(400)
+      .json({ error: "Missing/Invalid user ID or User not found" });
+  }
+
+  const { url } = req.body;
+  if (!url) {
+    return res.status(400).json({ error: "Missing url" });
+  }
+
+  const requestString = `${method} ${url}`;
+  passRequestToServer(requestString, res);
+}
+
+exports.addUrlToBlacklist = (req, res) => {
+  handleBlacklistOperation(req, res, "POST");
 };
+
+exports.deleteUrlFromBlacklist = (req, res) => {
+  handleBlacklistOperation(req, res, "DELETE");
+};
+
+exports.passRequestToServer = passRequestToServer;
