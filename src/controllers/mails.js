@@ -94,7 +94,6 @@ exports.addMail = async (req, res) => {
 
 exports.getMailById = (req, res) => {
     const user_id = parseInt(req.headers['user']);
-    console.log(user_id);
     // Check if user_id is valid.
     if (!checkIfValid(user_id)){
         return res.status(400).json({ error: 'Missing/Invalid user ID or User not found'})
