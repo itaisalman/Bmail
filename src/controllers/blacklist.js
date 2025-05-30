@@ -28,6 +28,7 @@ function passRequestToServer(req, res) {
   });
 }
 
+// Pass the wanted request to server and check for validation
 function handleBlacklistOperation(req, res, method) {
   const user_id = parseInt(req.headers["user"]);
   if (!checkIfValid(user_id)) {
@@ -40,7 +41,7 @@ function handleBlacklistOperation(req, res, method) {
   if (!url) {
     return res.status(400).json({ error: "Missing url" });
   }
-
+  // Chain request type and url
   const requestString = `${method} ${url}`;
   passRequestToServer(requestString, res);
 }
