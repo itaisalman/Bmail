@@ -97,6 +97,18 @@ exports.addMail = async (req, res) => {
     }
 };
 
+exports.deleteMailById = (req, res) => {
+    const user_id = parseInt(req.headers['user']);
+    if (!checkIfValid(user_id)){
+        return res.status(400).json({ error: 'Missing/Invalid user ID or User not found'})
+    }
+    // Search the mail in the user's mails.
+    const deleted_mail = mails.deleteSpecificMail(user_id, parseInt(req.params.id));
+    if (!deleted_mail){
+        return res.status(404).json({ error: 'Mail not found'});
+    }
+    res.status(204).end();
+
 exports.getMailById = (req, res) => {
     // Check if user_id is valid.
     if (!checkIfValid(req.headers['user'])){
