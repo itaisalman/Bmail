@@ -5,4 +5,7 @@ const controller = require('../controllers/mails')
 router.route('/')
         .get(controller.getFiftyMails)
         .post(controller.addMail)
+
+router.route('/:id')
+        .get(controller.getMailById)        
 module.exports = router
