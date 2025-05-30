@@ -4,9 +4,14 @@ const users = require('../models/users')
 
 // Checks if the user_id given is valid (is a number, and is existing)
 function checkIfValid(user_id){
-    if (!user_id){
+    if (!user_id || isNaN(user_id)){
         return false;
     }
+    return true;
+}
+
+// Check if the user id exists in the users list.
+function checkIfExist(user_id){
     if (!users.getUserById(user_id)){
         return false;
     }
@@ -93,10 +98,13 @@ exports.addMail = async (req, res) => {
 };
 
 exports.getMailById = (req, res) => {
-    const user_id = parseInt(req.headers['user']);
     // Check if user_id is valid.
-    if (!checkIfValid(user_id)){
-        return res.status(400).json({ error: 'Missing/Invalid user ID or User not found'})
+    if (!checkIfValid(req.headers['user'])){
+        return res.status(400).json({ error: 'Missing/Invalid user ID'})
+    }
+    const user_id = parseInt(req.headers['user']);
+    if (!checkIfExist(user_id)){
+        return res.status(404).json({ error: 'User not found'})
     }
     // Search the mail in the user's mails.
     const mail = mails.getSpecificMail(user_id, parseInt(req.params.id));
