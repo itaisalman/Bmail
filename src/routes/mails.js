@@ -10,4 +10,7 @@ router.route('/:id')
         .delete(controller.deleteMailById)        
         .get(controller.getMailById)        
 
+router.route('/search/:query')
+        .get(controller.searchMails)        
+
 module.exports = router
