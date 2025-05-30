@@ -8,4 +8,6 @@ router.route('/')
 
 router.route('/:id')
         .delete(controller.deleteMailById)        
+        .get(controller.getMailById)        
+
 module.exports = router
