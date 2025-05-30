@@ -58,19 +58,15 @@ const deleteSpecificMail = (user_id, mail_id) => {
         if (!get_mail_from_sent){
             return null;
         }
-        // Find the mail that the user want to delete.
-        // Delete it from the user's sent_mails.
-        // Return the deleted mail.
+        // Find the mail that the user want to delete, and delete it from sent_mails.
         const sent_index = get_user.sent_mails.findIndex((mail) => mail.id === mail_id);
-        const deleted_mail = get_user.sent_mails.splice(sent_index,1);
-        return deleted_mail;
+        get_user.sent_mails.splice(sent_index,1);
+        return 1;
     }
-    // Find the mail that the user want to delete.
-    // Delete it from the user's received_mails.
-    // Return the deleted mail.
+    // Find the mail that the user want to delete, and delete it from received_mails.
     const received_index = get_user.received_mails.findIndex((mail) => mail.id === mail_id);
-    const deleted_mail = get_user.received_mails.splice(received_index,1);
-    return deleted_mail;
+    get_user.received_mails.splice(received_index,1);
+    return 1;
 }
 
 module.exports = {

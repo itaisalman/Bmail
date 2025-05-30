@@ -102,6 +102,6 @@ exports.deleteMailById = (req, res) => {
     if (!deleted_mail){
         return res.status(404).json({ error: 'Mail not found'});
     }
-    res.status(200).json(deleted_mail);
+    res.status(204).end();
 
 }
