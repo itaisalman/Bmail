@@ -108,6 +108,7 @@ exports.deleteMailById = (req, res) => {
         return res.status(404).json({ error: 'Mail not found'});
     }
     res.status(204).end();
+}    
 
 exports.getMailById = (req, res) => {
     // Check if user_id is valid.
