@@ -36,16 +36,24 @@ const getFiftyMails = (user_id) => {
 // Create a new mail
 // Define its properties and add them to both sender and receiver.
 const createMail = (sender, receiver, title, content) => {
+    const sender_user = users.getUserById(sender)
+    const receiver_user = users.getUserById(receiver)
     const new_mail = {
         id: ++mail_counter,
-        sender: sender,
-        receiver: receiver,
+        sender_id: sender,
+        sender_address: sender_user.mail_address,
+        sender_first_name: sender_user.first_name,
+        sender_last_name: sender_user.last_name,
+        receiver_id: receiver,
+        receiver_address: receiver_user.mail_address,
+        receiver_first_name: receiver_user.first_name,
+        receiver_last_name: receiver_user.last_name,
         title: title,
         content: content,
         date: new Date()
     };
-    users.getUserById(sender).sent_mails.push(new_mail);
-    users.getUserById(receiver).received_mails.push(new_mail);
+    sender_user.sent_mails.push(new_mail);
+    receiver_user.received_mails.push(new_mail);
 }
 
 const deleteSpecificMail = (user_id, mail_id) => {
@@ -85,10 +93,65 @@ const getSpecificMail = (user_id, mail_id) => {
     return get_mail_from_received;
 }
 
+// Iterate over each mail in the sent_mails_array.
+// If they contain query, they will be added to the result_array.
+function findMailsInSent(result_array, mails_array, query){
+    for (const mail of mails_array){
+        if (checkIfContainQueryInSent(mail, query)){
+            result_array.push(mail);
+        }
+    }
+}
+
+// Iterate over each mail in the received_mails_array.
+// If they contain query, they will be added to the result_array.
+function findMailsInReceived(result_array, mails_array, query){
+    for (const mail of mails_array){
+        if (checkIfContainQueryInReceived(mail, query)){
+            result_array.push(mail);
+        }
+    }
+}
+
+// Check every relevent field in sent mails if it contains query.
+function checkIfContainQueryInSent(mail, query){
+    if (mail.receiver_address.includes(query) ||
+        mail.receiver_first_name.includes(query) ||
+        mail.receiver_last_name.includes(query) ||
+        mail.title.includes(query) ||
+        mail.content.includes(query)){
+        return true;
+    }
+    return false;
+}
+
+// Check every relevent field in received mails if it contains query.
+function checkIfContainQueryInReceived(mail, query){
+    if (mail.sender_address.includes(query) ||
+        mail.sender_first_name.includes(query) ||
+        mail.sender_last_name.includes(query) ||
+        mail.title.includes(query) ||
+        mail.content.includes(query)){
+        return true;
+    }
+    return false;
+}
+
+// Create the wanted mails array.
+// Search if the mails in sent_mails and received_mails contain the query. 
+const getMailsByQuery = (user_id, query) => {
+    const user = users.getUserById(user_id);
+    const result_array = [];
+    findMailsInSent(result_array, user.sent_mails, query);
+    findMailsInReceived(result_array, user.received_mails, query);
+    return result_array;
+}
+
 
 module.exports = {
     getFiftyMails,
     createMail,
     getSpecificMail,
-    deleteSpecificMail
+    deleteSpecificMail,
+    getMailsByQuery
 }

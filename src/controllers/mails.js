@@ -126,3 +126,17 @@ exports.getMailById = (req, res) => {
     }
     res.json(mail);
 }
+
+exports.searchMails = (req, res) => {
+    // Check if user_id is valid.
+    if (!checkIfValid(req.headers['user'])){
+        return res.status(400).json({ error: 'Missing/Invalid user ID'})
+    }
+    const user_id = parseInt(req.headers['user']);
+    if (!checkIfExist(user_id)){
+        return res.status(404).json({ error: 'User not found'})
+    }
+    const query = req.params.query;
+    const result = mails.getMailsByQuery(user_id, query);
+    res.status(200).json(result);
+}
