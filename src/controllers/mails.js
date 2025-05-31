@@ -70,7 +70,7 @@ exports.getFiftyMails = ({ headers }, res) => {
       .json({ error: returned_json.error });
   }
   const user_mails = mails.getFiftyMails(+user_id);
-  res.json(user_mails);
+  res.json(Array.from(user_mails));
 };
 
 // Create new mail using the arguments passed by the user.

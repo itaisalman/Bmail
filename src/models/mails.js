@@ -5,23 +5,21 @@ const users = require("./users");
 // Using two pointers to the bottom of each array and comparing their dates.
 // Add the most recent mail to the top of the mails array, so that the array will be in descending order.
 function findFiftyMails(get_user) {
-  const fifty_mails_array = [];
+  // Creating a set to avoid duplications (In case a user sends a mail to itself).
+  const fifty_mails_array = new Set();
   let inbox_index = get_user.received_mails.length - 1;
   let sent_index = get_user.sent_mails.length - 1;
   // Add 50 mails (if there are 50 mails sent or received) to the array by comparing the date.
-  while (
-    fifty_mails_array.length < 50 &&
-    (inbox_index >= 0 || sent_index >= 0)
-  ) {
+  while (fifty_mails_array.size < 50 && (inbox_index >= 0 || sent_index >= 0)) {
     const inbox_mail =
       inbox_index >= 0 ? get_user.received_mails[inbox_index] : null;
     const sent_mail = sent_index >= 0 ? get_user.sent_mails[sent_index] : null;
     // Latest mails gets priority.
-    if (inbox_mail && (!sent_mail || inbox_mail.date > sent_mail.date)) {
-      fifty_mails_array.push(inbox_mail);
+    if (inbox_mail && (!sent_mail || inbox_mail.date >= sent_mail.date)) {
+      fifty_mails_array.add(inbox_mail);
       inbox_index--;
     } else if (sent_mail) {
-      fifty_mails_array.push(sent_mail);
+      fifty_mails_array.add(sent_mail);
       sent_index--;
     }
   }
