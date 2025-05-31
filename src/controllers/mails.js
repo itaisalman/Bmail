@@ -55,11 +55,9 @@ function validationCheck(checked_id) {
   return null;
 }
 
-// Generates the loops that checks the urls.
-async function checkUrls(urls, command) {
-  for (const url of urls) {
-    await checkUrlBlacklist(command.concat(url));
-  }
+// For every url, check if the url exists in the blacklist accorading to the server.
+function checkUrls(urls, command) {
+  return Promise.all(urls.map((url) => checkUrlBlacklist(command.concat(url))));
 }
 
 // Return the latest 50 mails from sent and received mails of user.
