@@ -6,7 +6,7 @@ const createUser = (
   last_name,
   birth_date,
   gender,
-  mail_address,
+  username,
   password,
   image
 ) => {
@@ -16,7 +16,7 @@ const createUser = (
     last_name: last_name,
     birth_date: birth_date,
     gender: gender,
-    mail_address: mail_address,
+    username: username + "@bmail.com",
     password: password,
     image: image,
     received_mails: [],
@@ -25,12 +25,11 @@ const createUser = (
   };
 
   users.push(newUser);
-
-  return { id: newUser.id, mail_address: newUser.mail_address };
+  return { id: newUser.id, mail_address: username };
 };
 
-const isEmailTaken = (mail_address) => {
-  return users.some((user) => user.mail_address === mail_address);
+const isEmailTaken = (username) => {
+  return users.some((user) => user.username === username);
 };
 
 const getUserById = (id) => users.find((a) => a.id === id);
