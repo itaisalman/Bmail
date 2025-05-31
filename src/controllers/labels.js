@@ -1,11 +1,19 @@
 const labels = require("../models/labels");
 
-exports.getAllLabels = (req, res) => {
+const getValidatedUserId = (req, res) => {
   // Extract the user ID from the headers
   const user_id = parseInt(req.headers["user"]);
   if (!user_id) {
-    return res.status(400).json({ error: "Missing user ID" });
+    res.status(400).json({ error: "Missing user ID" });
+    return null;
   }
+  // If the user's id is valid
+  return user_id;
+};
+
+exports.getAllLabels = (req, res) => {
+  const user_id = getValidatedUserId(req, res);
+  if (user_id === null) return;
   // Gets all the user's labels by ID
   const userLabels = labels.getAllLabels(user_id);
   if (!userLabels) {
@@ -15,10 +23,8 @@ exports.getAllLabels = (req, res) => {
 };
 
 exports.getLabelById = (req, res) => {
-  const user_id = parseInt(req.headers["user"]);
-  if (!user_id) {
-    return res.status(400).json({ error: "Missing user ID" });
-  }
+  const user_id = getValidatedUserId(req, res);
+  if (user_id === null) return;
   const label = labels.getLabel(user_id, parseInt(req.params.id));
   // If getLabel function return null- the user does not exist.
   if (label === null) {
@@ -33,11 +39,8 @@ exports.getLabelById = (req, res) => {
 };
 
 exports.createLabel = (req, res) => {
-  // Extract the user ID from the headers
-  const user_id = parseInt(req.headers["user"]);
-  if (!user_id) {
-    return res.status(400).json({ error: "Missing user ID" });
-  }
+  const user_id = getValidatedUserId(req, res);
+  if (user_id === null) return;
   const { name } = req.body;
 
   // Check if name is missing or only spaces
@@ -53,11 +56,8 @@ exports.createLabel = (req, res) => {
 };
 
 exports.updateLabel = (req, res) => {
-  const user_id = parseInt(req.headers["user"]);
-  // Check if user ID is missing
-  if (!user_id) {
-    return res.status(400).json({ error: "Missing user ID" });
-  }
+  const user_id = getValidatedUserId(req, res);
+  if (user_id === null) return;
   const update_name = req.body;
   const label_id = parseInt(req.params.id);
   const updated_label = labels.updateLabel(user_id, label_id, update_name);
@@ -82,11 +82,8 @@ exports.updateLabel = (req, res) => {
 };
 
 exports.deleteLabel = (req, res) => {
-  const user_id = parseInt(req.headers["user"]);
-  // Check if user ID is missing
-  if (!user_id) {
-    return res.status(400).json({ error: "Missing user ID" });
-  }
+  const user_id = getValidatedUserId(req, res);
+  if (user_id === null) return;
   const label_id = parseInt(req.params.id);
   const deleted_label = labels.deleteLabel(user_id, label_id);
   // Check if the user ID does not exist
