@@ -165,10 +165,22 @@ const getMailsByQuery = (user_id, query) => {
   return result_array;
 };
 
+// Change the wanted fields in mail.
+const editMail = (mail, title, content) => {
+  if (title.trim() !== "") {
+    mail.title = title;
+  }
+  if (content.trim() !== "") {
+    mail.content = content;
+  }
+  return;
+};
+
 module.exports = {
   getFiftyMails,
   createMail,
   getSpecificMail,
   deleteSpecificMail,
   getMailsByQuery,
+  editMail,
 };

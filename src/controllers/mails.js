@@ -60,6 +60,18 @@ function checkUrls(urls, command) {
   return Promise.all(urls.map((url) => checkUrlBlacklist(command.concat(url))));
 }
 
+// Check the mail ID
+function checkParamsId(id, user_id) {
+  if (id.trim() !== id) {
+    return { statusCode: 400, error: "Invalid mail ID" };
+  }
+  const mail = mails.getSpecificMail(+user_id, +id);
+  if (!mail) {
+    return { statusCode: 404, error: "Mail not found" };
+  }
+  return null;
+}
+
 // Return the latest 50 mails from sent and received mails of user.
 exports.getFiftyMails = ({ headers }, res) => {
   const user_id = headers.user;
@@ -158,4 +170,35 @@ exports.searchMails = ({ headers, params }, res) => {
   const query = params.query;
   const result = mails.getMailsByQuery(+user_id, query);
   res.status(200).json(result);
+};
+
+// Edit fields in the mail.
+exports.patchMail = ({ headers, params, body }, res) => {
+  // Check validation of the user ID passed.
+  const user_id = headers.user;
+  let returned_json = validationCheck(user_id);
+
+  if (returned_json)
+    return res
+      .status(returned_json.statusCode)
+      .json({ error: returned_json.error });
+
+  // Check validation of the id sent by params.
+  const mail_id = params.id;
+  returned_json = checkParamsId(mail_id, user_id);
+
+  if (returned_json)
+    return res
+      .status(returned_json.statusCode)
+      .json({ error: returned_json.error });
+
+  const mail = mails.getSpecificMail(+user_id, +mail_id);
+  // Extract title and content from the body and patch the wanted field or throw appropriate status code.
+  const { title, content } = body;
+
+  if (!title && !content)
+    return res.status(400).json({ error: "Title or Content required" });
+
+  mails.editMail(mail, title, content);
+  res.sendStatus(204);
 };
