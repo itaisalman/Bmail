@@ -1,6 +1,7 @@
 let user_counter = 0;
 const users = [];
 
+// Create new user
 const createUser = (
   first_name,
   last_name,
@@ -23,17 +24,20 @@ const createUser = (
     sent_mails: [],
     labels: [],
   };
-
+  // Add to users array
   users.push(newUser);
   return { id: newUser.id, mail_address: username };
 };
 
+// Check that username is not already in use
 const isEmailTaken = (username) => {
   return users.some((user) => user.username === username);
 };
 
+// Get user by id from users array (if exists)
 const getUserById = (id) => users.find((a) => a.id === id);
 
+// Get users array
 const getAllUsers = () => {
   return users;
 };
