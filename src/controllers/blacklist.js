@@ -8,17 +8,13 @@ function checkIfValid(user_id) {
 
 // Check if the user id exists in the users list.
 function checkIfExist(user_id) {
-  if (!users.getUserById(user_id)) {
-    return false;
-  }
-  return true;
+  return users.getUserById(user_id);
 }
 
 function passRequestToServer(requestString, res, method) {
   blacklist.connectToBloomFilterServer(requestString, (err, response) => {
     // If error occured
     if (err) {
-      console.error("Error communicating with BloomFilter server:", err);
       return res
         .status(500)
         .json({ error: "Failed to communicate with BloomFilter server" });
@@ -46,7 +42,7 @@ function handleBlacklistOperation(req, res, method) {
     return res.status(400).json({ error: "Missing/Invalid user ID" });
   }
   // Check that given id is exist
-  const user_id = parseInt(req.headers["user"], 10);
+  const user_id = parseInt(req.headers["user"]);
   if (!checkIfExist(user_id)) {
     return res.status(404).json({ error: "User not found" });
   }

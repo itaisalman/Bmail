@@ -3,7 +3,7 @@ const moment = require("moment");
 
 // Validate name
 function isValidName(name) {
-  return /^[A-Za-z]+$/.test(name);
+  return /^[A-Za-z]+([-' ][A-Za-z]+)*$/.test(name);
 }
 
 // Validate date format
@@ -14,10 +14,7 @@ function isValidBirthDate(dateString) {
     return false;
   }
   // Checks date is earlier than today
-  if (m.isAfter(moment())) {
-    return false;
-  }
-  return true;
+  return !m.isAfter(moment());
 }
 
 // Validate gender
