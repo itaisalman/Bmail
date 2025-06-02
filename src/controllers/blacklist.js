@@ -38,11 +38,11 @@ function passRequestToServer(requestString, res, method) {
 // Pass the wanted request to server and check for validation
 function handleBlacklistOperation(req, res, method) {
   // Check that got a number
-  if (!checkIfValid(req.headers["user"])) {
-    return res.status(400).json({ error: "Missing/Invalid user ID" });
+  if (!checkIfValid(req.headers["user_id"])) {
+    return res.status(400).json({ error: "Missing/Invalid user_id" });
   }
   // Check that given id is exist
-  const user_id = parseInt(req.headers["user"]);
+  const user_id = parseInt(req.headers["user_id"]);
   if (!checkIfExist(user_id)) {
     return res.status(404).json({ error: "User not found" });
   }
