@@ -1,17 +1,25 @@
 const tokens = require("../models/tokens");
 
 exports.returnUserId = (req, res) => {
-  const { mail_address, password } = req.body;
+  // Extract username and password from body
+  const { username, password } = req.body;
 
-  if (!mail_address || !password) {
-    return res.status(400).json({ error: "Missing mail_address or password" });
+  // Check that arguments are given
+  if (!username || !password) {
+    return res.status(400).json({ error: "Missing username or password" });
   }
 
-  const user = tokens.findUserByUsernameAndPassword(mail_address, password);
+  // Check that email address and password are existed
+  const user = tokens.findUserByUsernameAndPassword(
+    username + "@bmail.com",
+    password
+  );
 
+  // handle user not found
   if (!user) {
     return res.status(404).json({ error: "User Not Found" });
   }
 
+  // return user id
   res.json({ id: user.id });
 };

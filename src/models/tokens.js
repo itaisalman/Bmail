@@ -1,9 +1,10 @@
 const users = require("./users");
 
-const findUserByUsernameAndPassword = (mail_address, password) => {
+// Find user based on username and password from users array
+const findUserByUsernameAndPassword = (username, password) => {
   return users
     .getAllUsers()
-    .find((u) => u.mail_address === mail_address && u.password === password);
+    .find((u) => u.username === username && u.password === password);
 };
 
 module.exports = {
