@@ -8,21 +8,18 @@ function isValidId(user_id) {
 function isValidName(name, res) {
   // Check if name was not defined at all
   if (name === undefined || name === null) {
-    res.status(400).json({ error: "Name is required" });
-    return false;
+    return { status: 400, error: "Name is required" };
   }
   // Convert to string and remove spaces from beginning and end
   const update_name = String(name).trim();
   if (update_name === "") {
-    res.status(400).json({ error: "Name is required" });
-    return false;
+    return { status: 400, error: "Name is required" };
   }
   // Check if the length exceeds the limit
   if (update_name.length > 225) {
-    res.status(400).json({ error: "Name is too long" });
-    return false;
+    return { status: 400, error: "Name is too long" };
   }
-  return true;
+  return null;
 }
 
 const getValidatedUserId = (req, res) => {
@@ -74,7 +71,8 @@ exports.createLabel = (req, res) => {
   if (user_id === null) return;
 
   const { name } = req.body;
-  if (!isValidName(name, res)) return;
+  const error = isValidName(name);
+  if (error) return res.status(error.status).json({ error: error.error });
 
   // Creates a new label for the user
   const new_label = labels.createLabel(user_id, name);
@@ -101,7 +99,8 @@ exports.updateLabel = (req, res) => {
     return res.status(400).json({ error: "Missing/Invalid label ID" });
 
   const { name } = req.body;
-  if (!isValidName(name, res)) return;
+  const error = isValidName(name);
+  if (error) return res.status(error.status).json({ error: error.error });
 
   //Trying to update the label with the new name, after removing spaces
   const updated_label = labels.updateLabel(user_id, Number(label_id), name);
