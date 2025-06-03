@@ -106,11 +106,11 @@ const createMail = (sender, receiver, title, content, draft) => {
   const new_mail = {
     id: ++mail_counter,
     sender_id: sender,
-    sender_address: sender_user.mail_address,
+    sender_address: sender_user.username,
     sender_first_name: sender_user.first_name,
     sender_last_name: sender_user.last_name,
     receiver_id: receiver,
-    receiver_address: receiver_user.mail_address,
+    receiver_address: receiver_user.username,
     receiver_first_name: receiver_user.first_name,
     receiver_last_name: receiver_user.last_name,
     title: title,
