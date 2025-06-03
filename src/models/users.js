@@ -26,7 +26,7 @@ const createUser = (
   };
   // Add to users array
   users.push(newUser);
-  return { id: newUser.id, mail_address: username };
+  return { id: newUser.id, mail_address: newUser.username };
 };
 
 // Check that username is not already in use
