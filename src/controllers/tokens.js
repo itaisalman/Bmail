@@ -42,7 +42,7 @@ exports.returnUserId = (req, res) => {
   }
 
   // Check that email address and password are existed
-  user = tokens.findUserByUsernameAndPassword(
+  const user = tokens.findUserByUsernameAndPassword(
     username + "@bmail.com",
     password
   );
