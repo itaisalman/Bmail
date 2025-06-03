@@ -29,9 +29,9 @@ function findFiftyMails(get_user) {
 const getFiftyMails = (user_id) => {
   // Return null if this user_id does not exist.
   const get_user = users.getUserById(user_id);
-  if (!get_user) {
-    return null;
-  }
+
+  if (!get_user) return null;
+
   return findFiftyMails(get_user);
 };
 
@@ -69,22 +69,22 @@ const deleteSpecificMail = (user_id, mail_id) => {
     const get_mail_from_sent = get_user.sent_mails.find(
       (mail) => mail.id === mail_id
     );
-    if (!get_mail_from_sent) {
-      return false;
-    }
+
+    if (!get_mail_from_sent) return;
+
     // Find the mail that the user want to delete, and delete it from sent_mails.
     const sent_index = get_user.sent_mails.findIndex(
       (mail) => mail.id === mail_id
     );
     get_user.sent_mails.splice(sent_index, 1);
-    return true;
+    return;
   }
   // Find the mail that the user want to delete, and delete it from received_mails.
   const received_index = get_user.received_mails.findIndex(
     (mail) => mail.id === mail_id
   );
   get_user.received_mails.splice(received_index, 1);
-  return true;
+  return;
 };
 
 const getSpecificMail = (user_id, mail_id) => {
@@ -99,9 +99,9 @@ const getSpecificMail = (user_id, mail_id) => {
     const get_mail_from_sent = get_user.sent_mails.find(
       (mail) => mail.id === mail_id
     );
-    if (!get_mail_from_sent) {
-      return null;
-    }
+
+    if (!get_mail_from_sent) return null;
+
     return get_mail_from_sent;
   }
   return get_mail_from_received;
@@ -111,9 +111,7 @@ const getSpecificMail = (user_id, mail_id) => {
 // If they contain query, they will be added to the result_array.
 function findMailsInSent(result_array, mails_array, query) {
   for (const mail of mails_array) {
-    if (checkIfContainQueryInSent(mail, query)) {
-      result_array.push(mail);
-    }
+    if (checkIfContainQueryInSent(mail, query)) result_array.push(mail);
   }
 }
 
@@ -121,9 +119,7 @@ function findMailsInSent(result_array, mails_array, query) {
 // If they contain query, they will be added to the result_array.
 function findMailsInReceived(result_array, mails_array, query) {
   for (const mail of mails_array) {
-    if (checkIfContainQueryInReceived(mail, query)) {
-      result_array.push(mail);
-    }
+    if (checkIfContainQueryInReceived(mail, query)) result_array.push(mail);
   }
 }
 
@@ -135,9 +131,9 @@ function checkIfContainQueryInSent(mail, query) {
     mail.receiver_last_name.includes(query) ||
     mail.title.includes(query) ||
     mail.content.includes(query)
-  ) {
+  )
     return true;
-  }
+
   return false;
 }
 
@@ -149,9 +145,9 @@ function checkIfContainQueryInReceived(mail, query) {
     mail.sender_last_name.includes(query) ||
     mail.title.includes(query) ||
     mail.content.includes(query)
-  ) {
+  )
     return true;
-  }
+
   return false;
 }
 
@@ -167,12 +163,10 @@ const getMailsByQuery = (user_id, query) => {
 
 // Change the wanted fields in mail.
 const editMail = (mail, title, content) => {
-  if (title.trim() !== "") {
-    mail.title = title;
-  }
-  if (content.trim() !== "") {
-    mail.content = content;
-  }
+  if (title) if (title.trim() !== "") mail.title = title;
+
+  if (content) if (content.trim() !== "") mail.content = content;
+
   return;
 };
 
