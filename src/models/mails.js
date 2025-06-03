@@ -29,8 +29,8 @@ function findFiftyMails(get_user) {
 // Remove the draft from the draft's array, and add it to the mail's array.
 function uploadDraft(mail) {
   // Extract the users in order to add the mails to their inbox/sent.
-  sender_id = mail.sender_id;
-  receiver_id = mail.receiver_id;
+  const sender_id = mail.sender_id;
+  const receiver_id = mail.receiver_id;
   const sender_user = users.getUserById(sender_id);
   const receiver_user = users.getUserById(receiver_id);
   const draft_index = sender_user.drafts.findIndex(
