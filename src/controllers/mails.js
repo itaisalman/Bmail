@@ -22,7 +22,7 @@ function extractUrls(text) {
 
 // Check if the requested arguments passed.
 function checkPostArguments({ receiver, title, content, draft }) {
-  if (!draft) {
+  if (draft === undefined || draft === null) {
     return {
       statusCode: 400,
       error: "Missing draft field",
