@@ -31,6 +31,23 @@ function isValidUsername(username) {
     username.length >= 3
   );
 }
+// Validate password - 8-12 chars, at least one uppercase letter, one lowercase letter,
+// one digit, and one special character
+function isValidPassword(password) {
+  const lengthCheck = /^.{8,12}$/;
+  const upperCaseCheck = /[A-Z]/;
+  const lowerCaseCheck = /[a-z]/;
+  const digitCheck = /[0-9]/;
+  const specialCharCheck = /[^A-Za-z0-9]/;
+
+  return (
+    lengthCheck.test(password) &&
+    upperCaseCheck.test(password) &&
+    lowerCaseCheck.test(password) &&
+    digitCheck.test(password) &&
+    specialCharCheck.test(password)
+  );
+}
 
 // Checks if got numeric argument
 function checkIfValid(user_id) {
@@ -66,6 +83,9 @@ function validateUserData(data) {
   // Check username validation
   if (!isValidUsername(username)) {
     return "Invalid username (At least 3 chars, only letters, numbers, hyphens(-), and dots, cannot start or end with dot or hyphen, and no consecutive dots allowed)";
+  }
+  if (!isValidPassword(password)) {
+    return "Invalid password (8-12 chars, at least one uppercase letter, one lowercase letter, one digit, and one special character)";
   }
   // if no errors found
   return null;
