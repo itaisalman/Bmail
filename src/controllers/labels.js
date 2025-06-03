@@ -82,7 +82,7 @@ exports.createLabel = (req, res) => {
     return res.status(404).json({ error: "User not found" });
   }
   if (new_label === undefined) {
-    return res.status(400).json({
+    return res.status(409).json({
       error: "The label name you selected already exists. Try a different name",
     });
   }
@@ -111,7 +111,7 @@ exports.updateLabel = (req, res) => {
 
   // Check if there is already a label with the same name except for the label itself
   if (updated_label === "conflict")
-    return res.status(400).json({
+    return res.status(409).json({
       error: "The label name you selected already exists. Try a different name",
     });
 
