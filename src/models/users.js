@@ -23,6 +23,7 @@ const createUser = (
     received_mails: [],
     sent_mails: [],
     labels: [],
+    drafts: [],
   };
   // Add to users array
   users.push(newUser);
