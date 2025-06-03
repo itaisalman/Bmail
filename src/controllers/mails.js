@@ -22,6 +22,12 @@ function extractUrls(text) {
 
 // Check if the requested arguments passed.
 function checkPostArguments({ receiver, title, content, draft }) {
+  if (!draft) {
+    return {
+      statusCode: 400,
+      error: "Missing draft field",
+    };
+  }
   draft_string = draft.toString();
   if (
     receiver &&
@@ -41,7 +47,7 @@ function checkPostArguments({ receiver, title, content, draft }) {
   }
   return {
     statusCode: 400,
-    error: "Missing/Invalid Title, Content or Draft",
+    error: "Missing/Invalid Title or Content",
   };
 }
 
