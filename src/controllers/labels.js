@@ -1,11 +1,41 @@
 const labels = require("../models/labels");
 
-exports.getAllLabels = (req, res) => {
-  // Extract the user ID from the headers
-  const user_id = parseInt(req.headers["user"]);
-  if (!user_id) {
-    return res.status(400).json({ error: "Missing user ID" });
+// Checks if the id given is valid
+function isValidId(user_id) {
+  return /^\d+$/.test(user_id);
+}
+
+function isValidName(name, res) {
+  // Check if name was not defined at all
+  if (name === undefined || name === null) {
+    return { status: 400, message: "Name is required" };
   }
+  // Convert to string and remove spaces from beginning and end
+  const update_name = String(name).trim();
+  if (update_name === "") {
+    return { status: 400, message: "Name is required" };
+  }
+  // Check if the length exceeds the limit
+  if (update_name.length > 225) {
+    return { status: 400, message: "Name is too long" };
+  }
+  return null;
+}
+
+const getValidatedUserId = (req, res) => {
+  // Extract the user ID from the headers
+  const user_id = req.headers["user"];
+  if (!isValidId(user_id)) {
+    res.status(400).json({ error: "Missing/Invalid user ID" });
+    return null;
+  }
+  // If the user's id is valid
+  return Number(user_id);
+};
+
+exports.getAllLabels = (req, res) => {
+  const user_id = getValidatedUserId(req, res);
+  if (user_id === null) return;
   // Gets all the user's labels by ID
   const userLabels = labels.getAllLabels(user_id);
   if (!userLabels) {
@@ -15,14 +45,18 @@ exports.getAllLabels = (req, res) => {
 };
 
 exports.getLabelById = (req, res) => {
-  const user_id = parseInt(req.headers["user"]);
-  if (!user_id) {
-    return res.status(400).json({ error: "Missing user ID" });
-  }
-  const label = labels.getLabel(user_id, parseInt(req.params.id));
+  const user_id = getValidatedUserId(req, res);
+  if (user_id === null) return;
+
+  const label_id = req.params.id;
+  const label = labels.getLabel(user_id, Number(label_id));
   // If getLabel function return null- the user does not exist.
   if (label === null) {
     return res.status(404).json({ error: "User not found" });
+  }
+
+  if (!isValidId(label_id)) {
+    return res.status(400).json({ error: "Missing/Invalid label ID" });
   }
   // If the function return undefined- this means that the user exists,
   // but no label with the received ID was found.
@@ -33,47 +67,58 @@ exports.getLabelById = (req, res) => {
 };
 
 exports.createLabel = (req, res) => {
-  // Extract the user ID from the headers
-  const user_id = parseInt(req.headers["user"]);
-  if (!user_id) {
-    return res.status(400).json({ error: "Missing user ID" });
-  }
-  const { name } = req.body;
+  const user_id = getValidatedUserId(req, res);
+  if (user_id === null) return;
 
-  // Check if name is missing or only spaces
-  if (!name || name.trim() === "")
-    return res.status(400).json({ error: "Name is required" });
+  const { name } = req.body;
+  const validate_error = isValidName(name);
+  if (validate_error)
+    return res
+      .status(validate_error.status)
+      .json({ error: validate_error.message });
 
   // Creates a new label for the user
   const new_label = labels.createLabel(user_id, name);
-  if (!new_label) {
+  if (new_label === null) {
     return res.status(404).json({ error: "User not found" });
   }
+  if (new_label === undefined) {
+    return res.status(409).json({
+      error: "The label name you selected already exists. Try a different name",
+    });
+  }
+
   res.status(201).location(`/api/labels/${new_label.id}`).end();
 };
 
 exports.updateLabel = (req, res) => {
-  const user_id = parseInt(req.headers["user"]);
-  // Check if user ID is missing
-  if (!user_id) {
-    return res.status(400).json({ error: "Missing user ID" });
-  }
-  const update_name = req.body;
-  const label_id = parseInt(req.params.id);
-  const updated_label = labels.updateLabel(user_id, label_id, update_name);
+  // Gets and validates the user ID from the headers
+  const user_id = getValidatedUserId(req, res);
+  if (user_id === null) return;
+
+  const label_id = req.params.id;
+  // Checks if the label ID is not a standard number
+  if (!isValidId(label_id))
+    return res.status(400).json({ error: "Missing/Invalid label ID" });
+
+  const { name } = req.body;
+  const validate_error = isValidName(name);
+  if (validate_error)
+    return res
+      .status(validate_error.status)
+      .json({ error: validate_error.message });
+
+  //Trying to update the label with the new name, after removing spaces
+  const updated_label = labels.updateLabel(user_id, Number(label_id), name);
   // If the user is not found
   if (updated_label === null)
     return res.status(404).json({ error: "User not found" });
-  // Validation checks if there is no body or the Name field does not exist
-  //  and if the name is empty or contains only spaces
-  if (!update_name || !update_name.name || update_name.name.trim() === "") {
-    return res.status(400).json({ error: "Name is required" });
-  }
 
-  // Check if the label ID is missing
-  if (label_id === undefined) {
-    return res.status(400).json({ error: "Missing label ID" });
-  }
+  // Check if there is already a label with the same name except for the label itself
+  if (updated_label === "conflict")
+    return res.status(409).json({
+      error: "The label name you selected already exists. Try a different name",
+    });
 
   // If the label is not found
   if (updated_label === undefined)
@@ -82,20 +127,18 @@ exports.updateLabel = (req, res) => {
 };
 
 exports.deleteLabel = (req, res) => {
-  const user_id = parseInt(req.headers["user"]);
-  // Check if user ID is missing
-  if (!user_id) {
-    return res.status(400).json({ error: "Missing user ID" });
+  const user_id = getValidatedUserId(req, res);
+  if (user_id === null) return;
+
+  const label_id = req.params.id;
+  if (!isValidId(label_id)) {
+    return res.status(400).json({ error: "Missing/Invalid label ID" });
   }
-  const label_id = parseInt(req.params.id);
-  const deleted_label = labels.deleteLabel(user_id, label_id);
+
+  const deleted_label = labels.deleteLabel(user_id, Number(label_id));
   // Check if the user ID does not exist
   if (deleted_label === null)
     return res.status(404).json({ error: "User not found" });
-  // Check if the label ID is missing
-  if (label_id === undefined) {
-    return res.status(400).json({ error: "Missing label ID" });
-  }
   // If the label does not exist
   if (!deleted_label) return res.status(404).json({ error: "Label not found" });
 

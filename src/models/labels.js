@@ -1,6 +1,16 @@
 let idCounter = 0;
 const users = require("./users");
 
+// A helper function that checks before updating or creating
+//  whether a label with the same name already exists.
+const isDuplicateLabelName = (labels, name, ignoreId = null) => {
+  const update_name = name.toLowerCase().trim();
+  return labels.some(
+    (label) =>
+      label.name.toLowerCase().trim() === update_name && label.id !== ignoreId
+  );
+};
+
 const getAllLabels = (user_id) => {
   const user = users.getUserById(user_id);
   if (!user) return null;
@@ -20,20 +30,26 @@ const getLabel = (user_id, label_id) => {
 const createLabel = (user_id, name) => {
   const user = users.getUserById(user_id);
   if (!user) return null;
+
+  // Check if a label with the same name already exists
+  if (isDuplicateLabelName(user.labels, name)) return undefined;
+
   const new_label = { id: ++idCounter, name };
   user.labels.push(new_label);
   return new_label;
 };
 
-const updateLabel = (user_id, label_id, update_name) => {
+const updateLabel = (user_id, label_id, name) => {
   const user = users.getUserById(user_id);
   if (!user) return null;
 
+  if (isDuplicateLabelName(user.labels, name, label_id)) return "conflict";
+
+  // Find the label you want to update
   const label = user.labels.find((label) => label.id === label_id);
   if (!label) return undefined;
 
-  // Update the label by merging the values ​​from update_name
-  Object.assign(label, update_name);
+  label.name = name.trim();
   return label;
 };
 
