@@ -1,23 +1,37 @@
+version: "3.9"
+
 services:
   cpp-server:
     build: .
+    container_name: cpp-server
     volumes:
       - ./data:/app/data
     ports:
-      - "8080:8080"
+      - "8081:8080"
     tty: true
     stdin_open: true
     command: ./runServer 8080 8 1 2
 
   node-client:
-    image: node:20
-    volumes:
-      - .:/app
-    working_dir: /app
-    depends_on:
-      - cpp-server
-    tty: true
-    stdin_open: true
-    command: node ./src/app.js
+    build:
+      context: .
+      dockerfile: Dockerfile.node
     ports:
       - "3000:3000"
+    depends_on:
+      - cpp-server
+
+
+  react-app:
+    image: node:20
+    container_name: react-app
+    working_dir: /app
+    volumes:
+      - ./client_side:/app
+    command: npm start
+    ports:
+      - "5174:3000"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - node-client
