@@ -106,7 +106,6 @@ function SignupScreen() {
       }
       // If everything is valid, reset errors and navigate to another screen
       setErrors({});
-      users.push(req.body);
       window.location.href = "/inbox";
       // Communication error
     } catch (err) {
