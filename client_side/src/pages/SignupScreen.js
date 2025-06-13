@@ -6,8 +6,8 @@ function SignupScreen() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [birthDay, setBirthDay] = useState("");
-  const [birthMonth, setBirthMonth] = useState("");
-  const [birthYear, setBirthYear] = useState("");
+  const [birthMonth, setBirthMonth] = useState("1");
+  const [birthYear, setBirthYear] = useState("January");
   const [gender, setGender] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
