@@ -5,9 +5,9 @@ import logo from "../logo.jpg";
 function SignupScreen() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [birthDay, setBirthDay] = useState("");
-  const [birthMonth, setBirthMonth] = useState("1");
-  const [birthYear, setBirthYear] = useState("January");
+  const [birthDay, setBirthDay] = useState("1");
+  const [birthMonth, setBirthMonth] = useState("January");
+  const [birthYear, setBirthYear] = useState("2000");
   const [gender, setGender] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -106,6 +106,7 @@ function SignupScreen() {
       }
       // If everything is valid, reset errors and navigate to another screen
       setErrors({});
+      users.push(req.body);
       window.location.href = "/inbox";
       // Communication error
     } catch (err) {
