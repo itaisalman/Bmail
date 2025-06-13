@@ -130,10 +130,12 @@ input::placeholder {
   cursor: pointer;
 }
 
-.gender-option input[type="radio"] {
+.gender-option input[type="radio"]:checked {
   width: 18px;
   height: 18px;
-  accent-color: hsl(248, 63%, 44%);
+  outline: 2px solid #ff6f00;
+  outline-offset: 1.5px;
+  border-radius: 50%;
 }
 
 /* Password and show toggle row */
@@ -162,4 +164,16 @@ input::placeholder {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.error-message {
+  color: #d32f2f;
+  font-size: 0.85rem;
+  margin-top: 0.2rem;
+  margin-left: 0.3rem;
+}
+
+.input-error {
+  border: 1px solid red;
+  background-color: #ffe5e5;
 }
