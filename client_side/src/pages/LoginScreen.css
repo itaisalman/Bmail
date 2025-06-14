@@ -1,0 +1,106 @@
+.loginScreen * {
+  margin: 5px;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.loginScreen {
+  background-color: white;
+  height: calc(100vh - 55px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loginScreen .container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background-color: white;
+  border: none;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loginScreen .logo-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+/* Logo at top */
+.loginScreen .Bmail-logo {
+  height: 200px;
+
+}
+
+.loginScreen .title {
+  font-size: 40px;
+  font-weight: 600;
+  color: #022a60;
+  margin-bottom: 30px;
+  text-align: center;
+  margin-top: -50px;
+}
+
+.loginScreen .input {
+  width: 100%;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #333;
+}
+
+.loginScreen .input::placeholder {
+  color: #999;
+}
+
+.loginScreen .button {
+  padding: 1.3em 3em;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  font-weight: 500;
+  color: #000;
+  background-color: #fff;
+  border: none;
+  border-radius: 45px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease 0s;
+  cursor: pointer;
+  outline: none;
+  display: block;
+  margin: 0 auto;
+}
+
+.loginScreen .button:hover {
+  background-color: #ff6f00;
+  box-shadow: 0px 15px 20px hsl(26, 89%, 64%);
+  color: #fff;
+  transform: translateY(-7px);
+}
+
+.loginScreen .register-link {
+  font-size: 14px;
+  color: #022a60;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.loginScreen .register-link a {
+  color: #00aaff;
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.loginScreen .register-link a:hover {
+  text-decoration: underline;
+}
