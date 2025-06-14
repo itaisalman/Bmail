@@ -129,6 +129,18 @@
   cursor: pointer;
 }
 
+.loginScreen .error-message {
+  color: #d32f2f;
+  font-size: 0.85rem;
+  margin-top: 0.2rem;
+  margin-left: 0.3rem;
+}
+
+.input-error {
+  border: 1px solid #d32f2f;
+  background-color: #fff5f5;
+}
+
 /* Fade-in animation */
 @keyframes fadeInUp {
   0% {
