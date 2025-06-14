@@ -8,6 +8,28 @@ function LoginScreen() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    const payload = {
+      username: username,
+      password: password,
+    };
+
+    try {
+      const res = await fetch("/api/tokens", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        alert("Error: " + data.error);
+      } else {
+        window.location.href = "/inbox";
+      }
+    } catch (err) {
+      alert("Server error: " + err.message);
+    }
   };
 
   return (
@@ -32,7 +54,9 @@ function LoginScreen() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <div className="register-link">Don't have an account? register</div>
+          <div className="register-link">
+            Don't have an account? <a href="/signup">register</a>
+          </div>
 
           <button className="button" type="submit">
             Login
