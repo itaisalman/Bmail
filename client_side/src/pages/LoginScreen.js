@@ -5,6 +5,7 @@ import logo from "../logo.jpg";
 function LoginScreen() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -49,15 +50,24 @@ function LoginScreen() {
           />
           <input
             className="input"
-            type="password"
+            type={showPassword ? "text" : "password"}
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <div className="register-link">
-            Don't have an account? <a href="/signup">register</a>
+          <div className="bottom-row">
+            <div className="register-link">
+              Don't have an account? <a href="/signup">register</a>
+            </div>
+            <label className="show-password-row">
+              <input
+                type="checkbox"
+                checked={showPassword}
+                onChange={(e) => setShowPassword(e.target.checked)}
+              />
+              Show
+            </label>
           </div>
-
           <button className="button" type="submit">
             Login
           </button>
