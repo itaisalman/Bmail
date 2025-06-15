@@ -131,6 +131,8 @@
 
 .loginScreen .error-message {
   color: #d32f2f;
+  text-align: center;
+  padding: 20px;
   font-size: 0.85rem;
   margin-top: 0.2rem;
   margin-left: 0.3rem;
