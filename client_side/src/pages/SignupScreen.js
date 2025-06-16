@@ -106,7 +106,7 @@ function SignupScreen() {
       }
       // If everything is valid, reset errors and navigate to another screen
       setErrors({});
-      window.location.href = "/inbox";
+      window.location.href = "/main";
       // Communication error
     } catch (err) {
       setErrors({ general: "Server error: " + err.message });

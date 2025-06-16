@@ -49,7 +49,7 @@ function LoginScreen() {
       }
 
       setErrors({});
-      window.location.href = "/inbox";
+      window.location.href = "/main";
     } catch (err) {
       setErrors({ general: "Server error: " + err.message });
     }

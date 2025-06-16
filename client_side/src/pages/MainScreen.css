@@ -1,7 +1,8 @@
 .main-container {
   display: flex;
   height: calc(100vh - 16px);
-  background-color: #f0f2f5;
+  background-color: #f1f3f6;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .main-content {
