@@ -13,7 +13,11 @@ function SignupScreen() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [errors, setErrors] = useState({});
+  const removeSelectedImage = () => {
+    setSelectedFile(null);
+  };
 
   // Mapping month names to two-digit numbers – to build a date in dd/mm/yyyy format
   const monthMap = {
@@ -61,22 +65,24 @@ function SignupScreen() {
     }
 
     // Preparing the object to be sent to the server – including all necessary fields
-    const payload = {
-      first_name: firstName,
-      last_name: lastName,
-      birth_date,
-      gender,
-      username,
-      password,
-      image: "",
-    };
+    // Sent in the format required for sending files
+    const formData = new FormData();
+    formData.append("first_name", firstName);
+    formData.append("last_name", lastName);
+    formData.append("birth_date", birth_date);
+    formData.append("gender", gender);
+    formData.append("username", username);
+    formData.append("password", password);
+    // Only if the user selects an image is it attached
+    if (selectedFile) {
+      formData.append("image", selectedFile);
+    }
 
     try {
       // Sending the request to the server
       const res = await fetch("/api/users", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: formData,
       });
       // Attempt to read the server response in JSON format
       const data = await res.json();
@@ -267,6 +273,40 @@ function SignupScreen() {
             />
             Show
           </label>
+        </div>
+        {/* Handle image */}
+        <div className="image-upload">
+          <label htmlFor="fileInput" className="image-upload-label">
+            {/* The caption is dynamically updated depending on whether an image has already been selected */}
+            {selectedFile ? "Change image" : "Upload profile image"}
+          </label>
+          {/* Allows you to select only image file types */}
+          <input
+            id="fileInput"
+            type="file"
+            accept="image/*"
+            onChange={(e) => setSelectedFile(e.target.files[0])}
+            className="image-upload-input"
+          />
+
+          {selectedFile && (
+            <>
+              {/* Show image preview if a file was selected */}
+              <img
+                src={URL.createObjectURL(selectedFile)}
+                alt="preview"
+                className="image-preview"
+              />
+              {/* Button to remove selected image */}
+              <button
+                type="button"
+                className="remove-image-button"
+                onClick={removeSelectedImage}
+              >
+                Remove image
+              </button>
+            </>
+          )}
         </div>
 
         {/* Register button */}

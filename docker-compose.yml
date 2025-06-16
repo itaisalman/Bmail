@@ -6,6 +6,7 @@ services:
     container_name: cpp-server
     volumes:
       - ./data:/app/data
+      - ./upload:/app/data/upload
     ports:
       - "8081:8080"
     tty: true
@@ -18,6 +19,8 @@ services:
       dockerfile: Dockerfile.node
     ports:
       - "3000:3000"
+    volumes:
+       - ./data/upload:/app/data/upload
     depends_on:
       - cpp-server
 
