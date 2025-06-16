@@ -65,9 +65,7 @@ function LoginScreen() {
 
       // Clear previous errors
       setErrors({});
-
-      // Redirect to inbox page after successful login
-      window.location.href = "/inbox";
+      window.location.href = "/main";
     } catch (err) {
       // Handle fetch/network errors
       setErrors({ general: "Server error: " + err.message });

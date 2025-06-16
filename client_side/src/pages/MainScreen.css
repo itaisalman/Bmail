@@ -1,0 +1,12 @@
+.main-container {
+  display: flex;
+  height: calc(100vh - 16px);
+  background-color: #f1f3f6;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
