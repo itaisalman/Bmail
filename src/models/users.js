@@ -9,7 +9,7 @@ const createUser = (
   gender,
   username,
   password,
-  image
+  imagePath
 ) => {
   const newUser = {
     id: ++user_counter,
@@ -19,7 +19,7 @@ const createUser = (
     gender: gender,
     username: username + "@bmail.com",
     password: password,
-    image: image,
+    image: imagePath,
     received_mails: [],
     sent_mails: [],
     labels: [],

@@ -3,39 +3,51 @@ import "./LoginScreen.css";
 import logo from "../logo.jpg";
 
 function LoginScreen() {
+  // State variables for user input and UI control
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
+  // Handle form submission
   const handleLogin = async (e) => {
     e.preventDefault();
 
     const newErrors = {};
+
+    // Basic client-side validation
     if (!username) newErrors.username = "Username is required";
     if (!password) newErrors.password = "Password is required";
 
+    // If there are validation errors, stop here
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
+    // Prepare payload for login request
     const payload = {
       username: username,
       password: password,
     };
 
     try {
+      // Send login request
       const res = await fetch("/api/tokens", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
+      // Parse response
       const data = await res.json();
+
+      // Handle unsuccessful login
       if (!res.ok) {
         const errorMessage = data?.error || "Login failed";
         const newErrors = {};
+
+        // Map error message to appropriate field
         if (errorMessage.toLowerCase().includes("username")) {
           newErrors.username = errorMessage;
         } else if (errorMessage.toLowerCase().includes("password")) {
@@ -48,9 +60,14 @@ function LoginScreen() {
         return;
       }
 
+      // save jwt
+      localStorage.setItem("jwt", data.id);
+
+      // Clear previous errors
       setErrors({});
       window.location.href = "/main";
     } catch (err) {
+      // Handle fetch/network errors
       setErrors({ general: "Server error: " + err.message });
     }
   };
