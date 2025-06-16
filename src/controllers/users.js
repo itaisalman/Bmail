@@ -113,13 +113,13 @@ exports.createUser = (req, res) => {
   let finalImage;
   if (!imageFile) {
     if (gender.toLowerCase() === "female") {
-      finalImage = "upload/default_female.jpg";
+      finalImage = "upload/default_female.png";
     } else {
-      finalImage = "upload/default_male.jpg";
+      finalImage = "upload/default_male.jpeg";
     }
   } else {
     // If an image was uploaded, use the image's path that saved by Multer
-    finalImage = imageFile.path;
+    finalImage = "upload/" + imageFile.filename;
   }
 
   const createdUser = users.createUser(
