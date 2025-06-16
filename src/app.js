@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const app = express();
 
 const mails = require("./routes/mails");
@@ -13,5 +14,6 @@ app.use("/api/users", users);
 app.use("/api/tokens", tokens);
 app.use("/api/labels", labels);
 app.use("/api/blacklist", blacklist);
+app.use("/upload", express.static(path.join(__dirname, "../data/upload")));
 
 app.listen(3000);

@@ -92,15 +92,11 @@ function validateUserData(data) {
 }
 
 exports.createUser = (req, res) => {
-  const {
-    first_name,
-    last_name,
-    birth_date,
-    gender,
-    username,
-    password,
-    image,
-  } = req.body;
+  const { first_name, last_name, birth_date, gender, username, password } =
+    req.body;
+
+  // // Extract the uploaded file from the request
+  const imageFile = req.file;
 
   // Check all needed arguments were given (image is permission)
   const validationError = validateUserData(req.body);
@@ -115,14 +111,15 @@ exports.createUser = (req, res) => {
 
   // Handle image field
   let finalImage;
-  if (!image || image.trim() === "") {
+  if (!imageFile) {
     if (gender.toLowerCase() === "female") {
       finalImage = "upload/default_female.jpg";
     } else {
       finalImage = "upload/default_male.jpg";
     }
   } else {
-    finalImage = image;
+    // If an image was uploaded, use the image's path that saved by Multer
+    finalImage = imageFile.path;
   }
 
   const createdUser = users.createUser(
