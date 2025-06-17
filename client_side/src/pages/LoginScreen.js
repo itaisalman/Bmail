@@ -61,7 +61,7 @@ function LoginScreen() {
       }
 
       // save jwt
-      localStorage.setItem("jwt", data.id);
+      localStorage.setItem("jwt", data.token);
 
       // Clear previous errors
       setErrors({});

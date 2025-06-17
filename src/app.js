@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const app = express();
+require("dotenv").config();
 
 const mails = require("./routes/mails");
 const users = require("./routes/users");
