@@ -20,10 +20,7 @@ exports.returnUserId = (req, res) => {
   if (!user) {
     return res.status(404).json({ error: "User Not Found" });
   }
-  console.log(user.id);
-  console.log(process.env.TOKEN);
   const token = jwt.sign({ id: user.id }, process.env.TOKEN);
-  console.log(token);
   // return user id
   res.json({ token });
 };
