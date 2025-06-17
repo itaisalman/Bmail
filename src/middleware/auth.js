@@ -6,9 +6,9 @@ const isLoggedIn = (req, res, next) => {
   if (req.headers.authorization) {
     const token = req.headers.authorization.split(" ")[1];
     try {
-      const user_id = jwt.verify(token, process.env.TOKEN);
-      if (users.getUserById(user_id.id)) {
-        req.headers["user"] = user_id.id;
+      const token = jwt.verify(token, process.env.TOKEN);
+      if (users.getUserById(token.id)) {
+        req.headers["user"] = token.id;
         return next();
       }
     } catch (err) {
