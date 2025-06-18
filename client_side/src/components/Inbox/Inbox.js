@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "../Inbox/Inbox.css";
 import { FiRefreshCw } from "react-icons/fi";
-import { MdOutlineFlag, MdFlag } from "react-icons/md"; // אייקונים של דגל
+import { MdOutlineFlag, MdFlag } from "react-icons/md";
 
 function InboxScreen() {
   const [messages, setMessages] = useState([]);
@@ -19,6 +19,7 @@ function InboxScreen() {
         headers: {
           "Content-Type": "application/json",
           authorization: "bearer " + token,
+          label: "Inbox",
         },
       });
 

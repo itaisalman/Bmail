@@ -112,13 +112,14 @@ function checkUrls(urls, command) {
 // Return the latest 50 mails from sent and received mails of user.
 exports.getFiftyMails = ({ headers }, res) => {
   const user_id = headers.user;
+  const label = headers.label;
   const returned_json = validationCheck(user_id);
   if (returned_json)
     return res
       .status(returned_json.statusCode)
       .json({ error: returned_json.error });
 
-  const user_mails = mails.getFiftyMails(+user_id);
+  const user_mails = mails.getFiftyMails(+user_id, label);
   res.json(Array.from(user_mails));
 };
 
