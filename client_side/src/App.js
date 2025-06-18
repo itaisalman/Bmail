@@ -4,9 +4,9 @@ import SignupScreen from "./pages/SignupScreen";
 import LoginScreen from "./pages/LoginScreen";
 import MainScreen from "./pages/MainScreen";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import InboxScreen from "./components/Inbox/Inbox";
 
 // Temporary components
-const Inbox = () => <h1>Inbox</h1>;
 const Sent = () => <h1>Sent</h1>;
 const Spam = () => <h1>Spam</h1>;
 const Drafts = () => <h1>Drafts</h1>;
@@ -29,7 +29,7 @@ function App() {
         }
       >
         <Route index element={<Navigate to="inbox" replace />} />
-        <Route path="inbox" element={<Inbox />} />
+        <Route path="inbox" element={<InboxScreen />} />
         <Route path="sent" element={<Sent />} />
         <Route path="spam" element={<Spam />} />
         <Route path="drafts" element={<Drafts />} />
