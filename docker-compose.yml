@@ -20,21 +20,21 @@ services:
     ports:
       - "3000:3000"
     volumes:
-       - ./data/upload:/app/data/upload
+      - ./data/upload:/app/data/upload
     depends_on:
       - cpp-server
 
-
   react-app:
-    image: node:20
+    build:
+      context: ./client_side
+      dockerfile: Dockerfile.react
     container_name: react-app
     working_dir: /app
     volumes:
       - ./client_side:/app
+      - /app/node_modules
     command: npm start
     ports:
       - "5174:3000"
     environment:
       - CHOKIDAR_USEPOLLING=true
-    depends_on:
-      - node-client
