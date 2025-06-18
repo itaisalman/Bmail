@@ -65,7 +65,7 @@ function MailComposer({ onClose }) {
         <span>New Message</span>
         <button onClick={handleClose}>✖</button>
       </div>
-      <form className="composer-form">
+      <form className="composer-form" onSubmit={handleSend}>
         <input
           type="text"
           placeholder="To"
@@ -78,13 +78,13 @@ function MailComposer({ onClose }) {
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
         />
-        <input
+        <textarea
           type="text"
           placeholder="Message..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
-        <button onClick={handleSend}>Send</button>
+        <button type="submit">Send</button>
       </form>
     </div>
   );
