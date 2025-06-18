@@ -70,3 +70,46 @@
 .link-text {
   transition: opacity 0.3s ease;
 }
+
+.top-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.new-mail-button {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 40px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.new-mail-button:hover {
+  padding: 0 10px;
+  width: auto;
+}
+
+.new-mail-text {
+  margin-left: 0.3em;
+  opacity: 0;
+  width: 0px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.new-mail-button:hover .new-mail-text {
+  opacity: 1;
+  width: auto;
+}

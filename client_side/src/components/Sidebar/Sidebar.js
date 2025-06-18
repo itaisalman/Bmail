@@ -8,6 +8,7 @@ import {
   MdLabel,
   MdStar,
   MdPriorityHigh,
+  MdCreate,
 } from "react-icons/md";
 import "./Sidebar.css";
 
@@ -24,8 +25,14 @@ const links = [
 function Sidebar() {
   return (
     <nav className="sidebar">
-      <div className="logo-container">
-        <img src={logo} alt="Bmail logo" className="logo" />
+      <div className="top-container">
+        <div className="logo-container">
+          <img src={logo} alt="Bmail logo" className="logo" />
+        </div>
+        <button className="new-mail-button">
+          <MdCreate size={20} />
+          <span className="new-mail-text">New Mail</span>
+        </button>
       </div>
       {links.map(({ name, path, icon }) => (
         <NavLink
