@@ -34,7 +34,7 @@ const createLabel = (user_id, name) => {
   // Check if a label with the same name already exists
   if (isDuplicateLabelName(user.labels, name)) return undefined;
 
-  const new_label = { id: ++idCounter, name };
+  const new_label = { id: ++idCounter, name, mails: [] };
   user.labels.push(new_label);
   return new_label;
 };

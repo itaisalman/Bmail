@@ -1,29 +1,27 @@
 let mail_counter = 0;
 const users = require("./users");
 
-// Find the recent 50 mails who have been sent or received by that user.
-// Using two pointers to the bottom of each array and comparing their dates.
-// Add the most recent mail to the top of the mails array, so that the array will be in descending order.
-function findFiftyMails(get_user) {
-  // Creating a set to avoid duplications (In case a user sends a mail to itself).
-  const fifty_mails_array = new Set();
-  let inbox_index = get_user.received_mails.length - 1;
-  let sent_index = get_user.sent_mails.length - 1;
-  // Add 50 mails (if there are 50 mails sent or received) to the array by comparing the date.
-  while (fifty_mails_array.size < 50 && (inbox_index >= 0 || sent_index >= 0)) {
-    const inbox_mail =
-      inbox_index >= 0 ? get_user.received_mails[inbox_index] : null;
-    const sent_mail = sent_index >= 0 ? get_user.sent_mails[sent_index] : null;
-    // Latest mails gets priority.
-    if (inbox_mail && (!sent_mail || inbox_mail.date >= sent_mail.date)) {
-      fifty_mails_array.add(inbox_mail);
-      inbox_index--;
-    } else if (sent_mail) {
-      fifty_mails_array.add(sent_mail);
-      sent_index--;
-    }
+function findFiftyMails(get_user, label_name) {
+  const labelMap = {
+    Inbox: get_user.received_mails,
+    Sent: get_user.sent_mails,
+    Spam: get_user.spam,
+    Draft: get_user.drafts,
+    Starred: get_user.starred,
+    Important: get_user.important,
+  };
+
+  let mails = labelMap[label_name];
+  // Check if got a label created by the user
+  if (!mails) {
+    const label = get_user.labels.find((label) => label.name === label_name);
+    if (!label || !Array.isArray(label.mails)) return null;
+    mails = label.mails;
   }
-  return fifty_mails_array;
+
+  // Takes most recent fifty mails
+  const latestMails = mails.slice(-50).reverse();
+  return latestMails;
 }
 
 // Remove the draft from the draft's array, and add it to the mail's array.
@@ -89,13 +87,13 @@ function checkIfContainQueryInReceived(mail, query) {
   return false;
 }
 
-const getFiftyMails = (user_id) => {
+const getFiftyMails = (user_id, label) => {
   // Return null if this user_id does not exist.
   const get_user = users.getUserById(user_id);
 
   if (!get_user) return null;
 
-  return findFiftyMails(get_user);
+  return findFiftyMails(get_user, label);
 };
 
 // Create a new mail
