@@ -3,6 +3,7 @@ const multer = require("multer");
 const path = require("path");
 var router = express.Router();
 const controller = require("../controllers/users");
+const middleware = require("../middleware/auth");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -17,9 +18,11 @@ const storage = multer.diskStorage({
     cb(null, uniqueName);
   },
 });
+
 const upload = multer({ storage: storage });
 
 router.route("/").post(upload.single("image"), controller.createUser);
+router.route("/").get(middleware.isLoggedIn, controller.getUserById);
 
 router.route("/:id").get(controller.getUserById);
 

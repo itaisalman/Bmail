@@ -136,11 +136,11 @@ exports.createUser = (req, res) => {
 
 exports.getUserById = (req, res) => {
   // Check that got valid user_id
-  if (!checkIfValid(req.params.id)) {
+  if (!checkIfValid(req.headers["user"])) {
     return res.status(400).json({ error: "Missing/Invalid user ID" });
   }
   // Check if exist
-  const user = users.getUserById(parseInt(req.params.id));
+  const user = users.getUserById(parseInt(req.headers["user"]));
   if (!user) {
     return res.status(404).json({ error: "User not found" });
   }

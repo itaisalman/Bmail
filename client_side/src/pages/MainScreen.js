@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar/Sidebar";
+import Topbar from "../components/Topbar/Topbar";
 import MailComposer from "../components/MailComposer/MailComposer";
 import "./MainScreen.css";
 
@@ -15,6 +16,7 @@ function MainScreen() {
     <div className="main-container">
       <Sidebar onNewMailClick={toggleComposer} />
       <main className="main-content">
+        <Topbar />
         <Outlet />
       </main>
       {showComposer && <MailComposer onClose={toggleComposer} />}
