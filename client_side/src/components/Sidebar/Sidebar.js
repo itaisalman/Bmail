@@ -22,14 +22,14 @@ const links = [
   { name: "Labels", path: "/main/labels", icon: <MdLabel /> },
 ];
 
-function Sidebar() {
+function Sidebar({ onNewMailClick }) {
   return (
     <nav className="sidebar">
       <div className="top-container">
         <div className="logo-container">
           <img src={logo} alt="Bmail logo" className="logo" />
         </div>
-        <button className="new-mail-button">
+        <button className="new-mail-button" onClick={onNewMailClick}>
           <MdCreate size={20} />
           <span className="new-mail-text">New Mail</span>
         </button>
