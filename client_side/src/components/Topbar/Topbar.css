@@ -73,9 +73,12 @@
 body.dark .inbox-header,
 body.dark .search-input,
 body.dark .logout-button,
-body.dark .theme-toggle-button,
-body.dark .sidebar {
-  background-color: #000000;
-  color: #ffffff;
-  border-color: #444;
+body.dark .theme-toggle-button {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+body.dark .search-input,
+body.dark .logout-button {
+  border-color: #ffffff;
 }

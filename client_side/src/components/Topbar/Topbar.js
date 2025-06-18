@@ -1,10 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { ThemeContext } from "../../ThemeContext";
 import "./Topbar.css";
 
 function Topbar() {
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
+  const { toggleTheme } = useContext(ThemeContext);
 
   // Function that performs a fetch request for user data
   const fetchTopbar = async () => {
@@ -30,6 +33,11 @@ function Topbar() {
   useEffect(() => {
     fetchTopbar();
   }, []);
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("jwt");
+    navigate("/login");
+  };
 
   return (
     <div className="inbox-header">
@@ -57,10 +65,14 @@ function Topbar() {
       </div>
 
       {/* Logout button */}
-      <button className="logout-button">Logout</button>
+      <button className="logout-button" onClick={handleLogout}>
+        Logout
+      </button>
 
       {/* Display mode toggle button */}
-      <button className="theme-toggle-button">🔆</button>
+      <button className="theme-toggle-button" onClick={toggleTheme}>
+        🔆
+      </button>
     </div>
   );
 }

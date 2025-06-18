@@ -112,3 +112,7 @@
   opacity: 1;
   width: auto;
 }
+
+body.dark .sidebar {
+  background-color: #000000;
+}

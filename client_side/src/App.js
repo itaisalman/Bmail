@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { ThemeProvider } from "./ThemeContext";
 import HomeScreen from "./pages/HomeScreen";
 import SignupScreen from "./pages/SignupScreen";
 import LoginScreen from "./pages/LoginScreen";
@@ -16,28 +17,30 @@ const Important = () => <h1>Important</h1>;
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<HomeScreen />} />
-      <Route path="/signup" element={<SignupScreen />} />
-      <Route path="/login" element={<LoginScreen />} />
-      <Route
-        path="/main"
-        element={
-          <ProtectedRoute>
-            <MainScreen />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<Navigate to="inbox" replace />} />
-        <Route path="inbox" element={<InboxScreen />} />
-        <Route path="sent" element={<Sent />} />
-        <Route path="spam" element={<Spam />} />
-        <Route path="drafts" element={<Drafts />} />
-        <Route path="labels" element={<Labels />} />
-        <Route path="starred" element={<Starred />} />
-        <Route path="important" element={<Important />} />
-      </Route>
-    </Routes>
+    <ThemeProvider>
+      <Routes>
+        <Route path="/" element={<HomeScreen />} />
+        <Route path="/signup" element={<SignupScreen />} />
+        <Route path="/login" element={<LoginScreen />} />
+        <Route
+          path="/main"
+          element={
+            <ProtectedRoute>
+              <MainScreen />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Navigate to="inbox" replace />} />
+          <Route path="inbox" element={<InboxScreen />} />
+          <Route path="sent" element={<Sent />} />
+          <Route path="spam" element={<Spam />} />
+          <Route path="drafts" element={<Drafts />} />
+          <Route path="labels" element={<Labels />} />
+          <Route path="starred" element={<Starred />} />
+          <Route path="important" element={<Important />} />
+        </Route>
+      </Routes>
+    </ThemeProvider>
   );
 }
 

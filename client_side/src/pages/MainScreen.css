@@ -10,3 +10,21 @@
   padding: 24px;
   overflow-y: auto;
 }
+
+/* Light Mode */
+body.light {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+}
+
+/* Dark Mode */
+body.dark {
+  --bg-color: #262626;
+  --text-color: #ffffff;
+}
+
+.main-container {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  min-height: 100vh;
+}
