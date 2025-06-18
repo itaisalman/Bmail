@@ -15,12 +15,11 @@
 
 .logo-container {
   text-align: center;
-  padding-bottom: 16px;
 }
 
 .logo {
-  max-height: 48px;
-  max-width: 80%;
+  max-height: 52px;
+  max-width: 100%;
   border-radius: 8px;
   transition: transform 0.25s ease-in-out;
 }
