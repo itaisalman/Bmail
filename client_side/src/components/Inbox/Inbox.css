@@ -118,3 +118,8 @@
 .header-icons {
   width: 60px;
 }
+
+body.dark .mail-list-header,
+body.dark .refresh-button {
+  color: var(--text-color);
+}

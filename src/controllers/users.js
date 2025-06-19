@@ -148,3 +148,20 @@ exports.getUserById = (req, res) => {
   const { password, ...safeUser } = user;
   res.json(safeUser);
 };
+
+exports.updateUserTheme = (req, res) => {
+  const userId = req.headers["user"];
+  const { theme } = req.body;
+
+  if (!userId || (theme !== "dark" && theme !== "light")) {
+    return res.status(400).json({ error: "Invalid request" });
+  }
+
+  const user = users.getUserById(parseInt(userId));
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  user.theme = theme;
+  return res.status(200).json({ theme });
+};

@@ -89,3 +89,14 @@
   border: 1px solid red;
   border-radius: 4px;
 }
+
+body.dark .composer-form,
+body.dark .composer-form textarea {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+body.dark .composer-header {
+  background-color: #000;
+  color: var(--text-color);
+}
