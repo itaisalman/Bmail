@@ -48,11 +48,6 @@ function InboxScreen() {
     setSelectedMail(data);
   };
 
-  // const handleMailClick = (id) => {
-  //   const mail = messages.find((m) => m.id === id);
-  //   if (mail) setSelectedMail(mail);
-  // };
-
   const toggleStar = (id) => {
     setStarredMails((prev) => {
       const newSet = new Set(prev);
