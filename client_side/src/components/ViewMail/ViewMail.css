@@ -1,0 +1,152 @@
+.mail-details {
+  border: 1px solid #ddd;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  border-radius: 10px;
+  margin: -11vh 0;
+  width: 100%;
+  font-family: "Segoe UI", sans-serif;
+  position: relative;
+  min-height: 77vh;
+  max-height: calc(100vh - 50px);
+  overflow-y: auto;
+}
+
+/* כפתור סגירה */
+.mail-details .close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.mail-details .close-button svg {
+  color: #555;
+  transition: color 0.2s ease-in-out;
+}
+
+.mail-details .close-button:hover svg {
+  color: #c00;
+}
+
+/* שורת אייקונים */
+.mail-details-icons {
+  display: flex;
+  gap: 12px;
+  font-size: 22px;
+  color: gray;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.mail-details-icons .star-icon,
+.mail-details-icons .flag-icon,
+.mail-details-icons .trash-icon {
+  transition: color 0.2s;
+}
+
+.mail-details-icons .flag-icon.important {
+  color: #d93025;
+}
+
+.mail-details-icons span:hover {
+  color: #555;
+}
+
+/* שורת הפעולות (סגירה + אייקונים) */
+.mail-details-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* כותרת + תאריך */
+.mail-details-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 10px 0 10px;
+  position: relative;
+}
+
+.mail-details-date {
+  font-size: 0.95em;
+  color: #888;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.mail-details-subject {
+  font-size: 1.8em;
+  text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: calc(100% - 40px);
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+/* שורת From */
+.mail-details-label {
+  margin-bottom: 6px;
+  padding-left: 10px;
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #333;
+}
+
+.mail-details-sender-box {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 4px 10px;
+  background-color: #f9f9f9;
+  font-family: monospace;
+  font-size: 0.95em;
+  color: #333;
+  margin: 5px 10px;
+  width: calc(100% - 20px);
+  box-sizing: border-box;
+}
+
+/* תוכן המייל */
+.mail-details-content-body {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 12px;
+  background-color: #f9f9f9;
+  font-size: 1em;
+  color: #333;
+  margin: 0 10px 10px 10px;
+  width: calc(100% - 20px);
+  height: 227px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  box-sizing: border-box;
+}
+
+/* רספונסיביות */
+@media (max-width: 600px) {
+  .mail-details-actions {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+
+  .mail-details-icons {
+    font-size: 20px;
+    gap: 8px;
+  }
+
+  .mail-details .close-button svg {
+    font-size: 20px;
+  }
+}
