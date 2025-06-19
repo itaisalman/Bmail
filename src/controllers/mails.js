@@ -3,13 +3,15 @@ const blacklist = require("../models/blacklist");
 const users = require("../models/users");
 
 // Checks if the user_id given is valid (is a number, and is existing)
-function checkIfValid(user_id) {
-  return /^\d+$/.test(user_id);
+function checkIfValid(username) {
+  // return /^\d+$/.test(user_id);
+  return username.toLowerCase().endsWith("@bmail.com");
 }
 
 // Check if the user id exists in the users list.
-function checkIfExist(user_id) {
-  return users.getUserById(user_id);
+function checkIfExist(username) {
+  // return users.getUserById(user_id);
+  return users.getUserByUsername(username);
 }
 
 // Extract every url from the given text.
@@ -21,7 +23,7 @@ function extractUrls(text) {
 }
 
 // Check if the requested arguments passed.
-function checkPostArguments({ receiver, title, content, draft }) {
+function checkPostArguments({ receiver, draft }) {
   if (draft === undefined || draft === null) {
     return {
       statusCode: 400,
@@ -29,26 +31,40 @@ function checkPostArguments({ receiver, title, content, draft }) {
     };
   }
   draft_string = draft.toString();
-  if (
-    receiver &&
-    title &&
-    content &&
-    title.trim().length &&
-    content.trim().length &&
-    (draft_string.toLowerCase() === "true" ||
-      draft_string.toLowerCase() === "false")
-  ) {
-    if (checkIfValid(receiver)) {
-      if (checkIfExist(+receiver)) return null;
-
-      return { statusCode: 404, error: "Receiver not found" };
-    }
-    return { statusCode: 400, error: "Invalid receiver ID" };
+  if (checkIfValid(receiver) && checkIfExist(receiver)) {
+    if (draft_string.toLowerCase() === "true") return null;
   }
   return {
     statusCode: 400,
-    error: "Missing/Invalid Title or Content",
+    error: "Invalid/Missing Receiver",
   };
+  // // Check if valid draft mail
+  // if (draft_string.toLowerCase() === "true")
+  //   if (receiver || title || content) return null;
+
+  // if (draft_string.toLowerCase() === "false")
+  //   if (checkIfValid(receiver)) if (checkIfExist(receiver)) return null;
+
+  // if (
+  //   receiver &&
+  //   title &&
+  //   content &&
+  //   title.trim().length &&
+  //   content.trim().length &&
+  //   (draft_string.toLowerCase() === "true" ||
+  //     draft_string.toLowerCase() === "false")
+  // ) {
+  //   if (checkIfValid(receiver)) {
+  //     if (checkIfExist(+receiver)) return null;
+
+  //     return { statusCode: 404, error: "Receiver not found" };
+  //   }
+  //   return { statusCode: 400, error: "Invalid receiver ID" };
+  // }
+  // return {
+  //   statusCode: 400,
+  //   error: "Missing/Invalid Title or Content",
+  // };
 }
 
 // Check the mail ID in the user's mails.
@@ -92,17 +108,17 @@ function checkUrlBlacklist(url) {
 }
 
 // Check if the id given is valid.
-function validationCheck(checked_id) {
-  if (!checkIfValid(checked_id))
-    return { statusCode: 400, error: "Missing/Invalid user ID" };
+// function validationCheck(checked_id) {
+//   if (!checkIfValid(checked_id))
+//     return { statusCode: 400, error: "Missing/Invalid user ID" };
 
-  const user_id = +checked_id;
+//   const user_id = +checked_id;
 
-  if (!checkIfExist(user_id))
-    return { statusCode: 404, error: "User not found" };
+//   if (!checkIfExist(user_id))
+//     return { statusCode: 404, error: "User not found" };
 
-  return null;
-}
+//   return null;
+// }
 
 // For every url, check if the url exists in the blacklist accorading to the server.
 function checkUrls(urls, command) {
@@ -113,11 +129,11 @@ function checkUrls(urls, command) {
 exports.getFiftyMails = ({ headers }, res) => {
   const user_id = headers.user;
   const label = headers.label;
-  const returned_json = validationCheck(user_id);
-  if (returned_json)
-    return res
-      .status(returned_json.statusCode)
-      .json({ error: returned_json.error });
+  // const returned_json = validationCheck(user_id);
+  // if (returned_json)
+  //   return res
+  //     .status(returned_json.statusCode)
+  //     .json({ error: returned_json.error });
 
   const user_mails = mails.getFiftyMails(+user_id, label);
   res.json(Array.from(user_mails));
@@ -127,15 +143,14 @@ exports.getFiftyMails = ({ headers }, res) => {
 // Add it to both sender and receiver mail boxes.
 exports.addMail = async ({ headers, body }, res) => {
   const user_id = headers.user;
-  let returned_json = validationCheck(user_id);
+  // let returned_json = validationCheck(user_id);
 
-  if (returned_json)
-    return res
-      .status(returned_json.statusCode)
-      .json({ error: returned_json.error });
-
+  // if (returned_json)
+  //   return res
+  //     .status(returned_json.statusCode)
+  //     .json({ error: returned_json.error });
   const { receiver, title, content, draft } = body;
-  returned_json = checkPostArguments({ receiver, title, content, draft });
+  let returned_json = checkPostArguments({ receiver, draft });
   // Check if required arguments passed.
 
   if (returned_json)
@@ -146,16 +161,22 @@ exports.addMail = async ({ headers, body }, res) => {
   // Extract every url in title and content.
   const extracted_title = extractUrls(title);
   const extracted_content = extractUrls(content);
+  console.log("Extracted title:", extracted_title);
+  console.log("Extracted content:", extracted_content);
   let command = "GET ";
   try {
     // Check if title or content contain bad url.
-    await checkUrls(extracted_title, command);
-    await checkUrls(extracted_content, command);
+    if (title) {
+      await checkUrls(extracted_title, command);
+    }
+    if (content) {
+      await checkUrls(extracted_content, command);
+    }
 
     // If all checks passed
     const created_mail = mails.createMail(
       +user_id,
-      +receiver,
+      receiver,
       title,
       content,
       draft
@@ -166,7 +187,7 @@ exports.addMail = async ({ headers, body }, res) => {
       return res
         .status(400)
         .json({ error: "Your title or content contain a BLACKLISTED URL !" });
-
+    console.log(err);
     return res
       .status(500)
       .json({ error: "Internal server error while checking blacklist" });
@@ -176,15 +197,15 @@ exports.addMail = async ({ headers, body }, res) => {
 // Delete a specific mail by its id.
 exports.deleteMailById = ({ headers, params }, res) => {
   const user_id = headers.user;
-  let returned_json = validationCheck(user_id);
+  // let returned_json = validationCheck(user_id);
 
-  if (returned_json)
-    return res
-      .status(returned_json.statusCode)
-      .json({ error: returned_json.error });
+  // if (returned_json)
+  //   return res
+  //     .status(returned_json.statusCode)
+  //     .json({ error: returned_json.error });
 
   const mail_id = params.id;
-  returned_json = checkParamsId(mail_id, user_id);
+  let returned_json = checkParamsId(mail_id, user_id);
 
   if (returned_json)
     return res
@@ -199,15 +220,15 @@ exports.deleteMailById = ({ headers, params }, res) => {
 // Return a mail by its id.
 exports.getMailById = ({ headers, params }, res) => {
   const user_id = headers.user;
-  let returned_json = validationCheck(user_id);
+  // let returned_json = validationCheck(user_id);
 
-  if (returned_json)
-    return res
-      .status(returned_json.statusCode)
-      .json({ error: returned_json.error });
+  // if (returned_json)
+  //   return res
+  //     .status(returned_json.statusCode)
+  //     .json({ error: returned_json.error });
 
   const mail_id = params.id;
-  returned_json = checkParamsId(mail_id, user_id);
+  let returned_json = checkParamsId(mail_id, user_id);
 
   if (returned_json)
     return res
@@ -223,12 +244,12 @@ exports.getMailById = ({ headers, params }, res) => {
 // Return an array of all the mails answer the requirement.
 exports.searchMails = ({ headers, params }, res) => {
   const user_id = headers.user;
-  const returned_json = validationCheck(user_id);
+  // const returned_json = validationCheck(user_id);
 
-  if (returned_json)
-    return res
-      .status(returned_json.statusCode)
-      .json({ error: returned_json.error });
+  // if (returned_json)
+  //   return res
+  //     .status(returned_json.statusCode)
+  //     .json({ error: returned_json.error });
 
   const query = params.query;
   const result = mails.getMailsByQuery(+user_id, query);
@@ -239,16 +260,16 @@ exports.searchMails = ({ headers, params }, res) => {
 exports.patchMail = ({ headers, params, body }, res) => {
   // Check validation of the user ID passed.
   const user_id = headers.user;
-  let returned_json = validationCheck(user_id);
+  // let returned_json = validationCheck(user_id);
 
-  if (returned_json)
-    return res
-      .status(returned_json.statusCode)
-      .json({ error: returned_json.error });
+  // if (returned_json)
+  //   return res
+  //     .status(returned_json.statusCode)
+  //     .json({ error: returned_json.error });
 
   // Check validation of the id sent by params.
   const mail_id = params.id;
-  returned_json = isDraft(mail_id, user_id);
+  let returned_json = isDraft(mail_id, user_id);
 
   if (returned_json)
     return res
