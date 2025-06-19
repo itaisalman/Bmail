@@ -15,7 +15,6 @@ function MailDetails({
 
   return (
     <div className="mail-details">
-      {/* שורת הפעולות העליונה */}
       <div className="mail-details-actions">
         <div className="mail-details-icons">
           <span
@@ -50,7 +49,6 @@ function MailDetails({
         </button>
       </div>
 
-      {/* פרטי המייל */}
       <div className="mail-details-header">
         <div className="mail-details-date">{mail.date}</div>
         <h3 className="mail-details-subject">{mail.title}</h3>
