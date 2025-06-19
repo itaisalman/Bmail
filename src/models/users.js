@@ -24,6 +24,10 @@ const createUser = (
     sent_mails: [],
     labels: [],
     drafts: [],
+    starred: [],
+    importanat: [],
+    spam: [],
+    trash: [],
   };
   // Add to users array
   users.push(newUser);

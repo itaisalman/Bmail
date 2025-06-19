@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("jwt");
+  const token = sessionStorage.getItem("jwt");
   return token ? children : <Navigate to="/" replace />;
 };
 

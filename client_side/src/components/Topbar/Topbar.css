@@ -1,0 +1,81 @@
+/* General screen design */
+.inbox-screen {
+  padding: 1rem;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  min-height: 100vh;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Header */
+.inbox-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 20px;
+}
+
+/* Profile image */
+.profile-image {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #022a60;
+}
+
+/* Search */
+.search-container {
+  flex: 1;
+  position: relative;
+}
+
+.search-input {
+  width: 90%;
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+/* lighting mode button */
+.theme-toggle-button {
+  background-color: transparent;
+  border: none;
+  font-size: 25px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.theme-toggle-button:hover {
+  transform: scale(1.2);
+}
+
+.logout-button {
+  background-color: #fff;
+  color: #000;
+  border: 2px solid #022a60;
+  border-radius: 45px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  outline: none;
+  margin-left: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  transform: scale(1.2);
+}
+
+body.dark .inbox-header,
+body.dark .search-input,
+body.dark .logout-button,
+body.dark .theme-toggle-button,
+body.dark .sidebar {
+  background-color: #000000;
+  color: #ffffff;
+  border-color: #444;
+}

@@ -1,0 +1,120 @@
+.mail-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mail-subject {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.mail-date {
+  font-size: 14px;
+  color: gray;
+}
+
+.mail-preview {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.mail-sender {
+  flex: 1;
+  font-weight: bold;
+}
+
+.mail-subject {
+  flex: 2;
+}
+
+.mail-snippet {
+  flex: 3;
+  color: #555;
+  padding-left: 10px;
+}
+
+.mail-date {
+  flex: 0.8;
+  text-align: right;
+  font-size: 0.9em;
+  color: #999;
+  margin-right: 10px;
+}
+
+.refresh-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 10px;
+  padding: 5px;
+  transition: transform 0.2s;
+}
+
+.refresh-button:hover {
+  transform: rotate(90deg);
+}
+
+.mail-icons {
+  display: flex;
+  gap: 10px;
+  cursor: pointer;
+  align-items: center;
+  margin-left: 12px;
+}
+
+.mail-icons span {
+  font-size: 22px;
+  color: gray;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+.mail-icons span.star-icon {
+  font-size: 20px;
+}
+
+.mail-icons span.star-icon:hover,
+.mail-icons span.flag-icon:hover {
+  color: #555;
+}
+
+.mail-icons span.flag-icon.important {
+  color: #d93025;
+}
+
+.mail-list-header {
+  display: flex;
+  padding: 10px;
+  font-weight: bold;
+  border-bottom: 2px solid #ccc;
+  color: #333;
+}
+
+.header-sender {
+  flex: 1;
+}
+
+.header-subject {
+  flex: 2;
+}
+
+.header-snippet {
+  flex: 3;
+  padding-left: 10px;
+}
+
+.header-date {
+  flex: 0.8;
+  text-align: right;
+  margin-right: 40px;
+}
+
+.header-icons {
+  width: 60px;
+}
