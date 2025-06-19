@@ -81,3 +81,11 @@
 .composer-form button[type="submit"]:hover {
   background-color: #0949b2;
 }
+
+.error-message {
+  font-weight: bold;
+  background-color: #ffe6e6;
+  padding: 8px;
+  border: 1px solid red;
+  border-radius: 4px;
+}

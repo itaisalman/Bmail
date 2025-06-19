@@ -5,18 +5,21 @@ function MailComposer({ onClose }) {
   const [to, setTo] = useState("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
-  const handleClose = async (e) => {
+  const handleSend = async (send_type, e) => {
     e.preventDefault();
+    // Clearing previous errors
+    setError("");
+
     if (to || subject || message) {
       const payload = {
         receiver: to,
         title: subject,
         content: message,
-        draft: "true",
+        draft: send_type,
       };
       try {
-        // Send login request
         const token = sessionStorage.getItem("jwt");
         if (!token) return;
         const res = await fetch("/api/mails", {
@@ -29,25 +32,34 @@ function MailComposer({ onClose }) {
         });
 
         const data = await res.json();
+        if (data.error === "Invalid/Missing Receiver") {
+          setError("Invalid/Missing Receiver! Please try another receiver.");
+          return;
+        }
         console.log(data);
       } catch (err) {
-        console.log(err.message);
+        setError("An unexpected error occurred.");
+        return;
       }
     }
     onClose();
-  };
-
-  const handleSend = (e) => {
-    e.preventDefault();
   };
 
   return (
     <div className="composer-container">
       <div className="composer-header">
         <span>New Message</span>
-        <button onClick={handleClose}>✖</button>
+        <button onClick={(e) => handleSend("true", e)}>✖</button>
       </div>
-      <form className="composer-form" onSubmit={handleSend}>
+      {error && (
+        <div
+          className="error-message"
+          style={{ color: "red", marginBottom: "10px" }}
+        >
+          {error}
+        </div>
+      )}
+      <form className="composer-form" onSubmit={(e) => handleSend("false", e)}>
         <input
           type="text"
           placeholder="To"
