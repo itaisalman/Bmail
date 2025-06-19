@@ -6,6 +6,7 @@ import LoginScreen from "./pages/LoginScreen";
 import MainScreen from "./pages/MainScreen";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import InboxScreen from "./components/Inbox/Inbox";
+import LabelView from "./components/Labels/LabelView";
 
 // Temporary components
 const Sent = () => <h1>Sent</h1>;
@@ -38,6 +39,7 @@ function App() {
           <Route path="labels" element={<Labels />} />
           <Route path="starred" element={<Starred />} />
           <Route path="important" element={<Important />} />
+          <Route path="labels/:labelName" element={<LabelView />} />
         </Route>
       </Routes>
     </ThemeProvider>

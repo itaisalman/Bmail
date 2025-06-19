@@ -22,7 +22,7 @@ const links = [
   { name: "Labels", path: "/main/labels", icon: <MdLabel /> },
 ];
 
-function Sidebar({ onNewMailClick }) {
+function Sidebar({ onNewMailClick, onNewLabelClick, labels }) {
   return (
     <nav className="sidebar">
       <div className="top-container">
@@ -34,18 +34,49 @@ function Sidebar({ onNewMailClick }) {
           <span className="new-mail-text">New Mail</span>
         </button>
       </div>
-      {links.map(({ name, path, icon }) => (
+
+      {links.map(({ name, path, icon }) => {
+        const isLabels = name === "Labels";
+        return (
+          <NavLink
+            key={name}
+            to={path}
+            className={({ isActive }) =>
+              `sidebar-link ${isActive ? "active" : ""}`
+            }
+          >
+            <div className="link-main">
+              <div className="link-content">
+                <span className="icon">{icon}</span>
+                <span className="link-text">{name}</span>
+              </div>
+
+              {isLabels && (
+                <button
+                  className="new-label-button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNewLabelClick();
+                  }}
+                >
+                  ➕
+                </button>
+              )}
+            </div>
+          </NavLink>
+        );
+      })}
+
+      {labels.map((label) => (
         <NavLink
-          key={name}
-          to={path}
+          key={label.id}
+          to={`/main/labels/${label.name}`}
           className={({ isActive }) =>
-            `sidebar-link ${isActive ? "active" : ""}`
+            `sidebar-link custom-label ${isActive ? "active" : ""}`
           }
         >
-          <div className="link-content">
-            <span className="icon">{icon}</span>
-            <span className="link-text">{name}</span>
-          </div>
+          <span className="icon">🏷️</span>
+          <span className="link-text">{label.name}</span>
         </NavLink>
       ))}
     </nav>
