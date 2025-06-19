@@ -5,12 +5,39 @@ function MailComposer({ onClose }) {
   const [to, setTo] = useState("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
 
+  // const handleSend = async (send_type, e) => {
+  //   e.preventDefault();
+
+  //   if (to || subject || message) {
+  //     const payload = {
+  //       receiver: to,
+  //       title: subject,
+  //       content: message,
+  //       draft: send_type,
+  //     };
+  //     try {
+  //       const token = sessionStorage.getItem("jwt");
+  //       if (!token) return;
+  //       const res = await fetch("/api/mails", {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           authorization: "bearer " + token,
+  //         },
+  //         body: JSON.stringify(payload),
+  //       });
+
+  //       const data = await res.json();
+  //       onClose();
+  //     } catch (err) {
+  //       return;
+  //     }
+  //   }
+  //   onClose();
+  // };
   const handleSend = async (send_type, e) => {
     e.preventDefault();
-    // Clearing previous errors
-    setError("");
 
     if (to || subject || message) {
       const payload = {
@@ -19,9 +46,11 @@ function MailComposer({ onClose }) {
         content: message,
         draft: send_type,
       };
+
       try {
         const token = sessionStorage.getItem("jwt");
         if (!token) return;
+
         const res = await fetch("/api/mails", {
           method: "POST",
           headers: {
@@ -30,19 +59,18 @@ function MailComposer({ onClose }) {
           },
           body: JSON.stringify(payload),
         });
-
         const data = await res.json();
-        if (data.error === "Invalid/Missing Receiver") {
-          setError("Invalid/Missing Receiver! Please try another receiver.");
-          return;
-        }
-        console.log(data);
+        if (!res.ok || data.error === "Invalid/Missing Receiver")
+          alert(data.error || "Failed to send message.");
+
+        onClose();
       } catch (err) {
-        setError("An unexpected error occurred.");
-        return;
+        alert("Failed to connect to the server. Please try again later.");
+        onClose();
       }
+    } else {
+      onClose();
     }
-    onClose();
   };
 
   return (
@@ -51,14 +79,6 @@ function MailComposer({ onClose }) {
         <span>New Message</span>
         <button onClick={(e) => handleSend("true", e)}>✖</button>
       </div>
-      {error && (
-        <div
-          className="error-message"
-          style={{ color: "red", marginBottom: "10px" }}
-        >
-          {error}
-        </div>
-      )}
       <form className="composer-form" onSubmit={(e) => handleSend("false", e)}>
         <input
           type="text"
