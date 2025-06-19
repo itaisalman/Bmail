@@ -4,13 +4,11 @@ const users = require("../models/users");
 
 // Checks if the user_id given is valid (is a number, and is existing)
 function checkIfValid(username) {
-  // return /^\d+$/.test(user_id);
   return username.toLowerCase().endsWith("@bmail.com");
 }
 
 // Check if the user id exists in the users list.
 function checkIfExist(username) {
-  // return users.getUserById(user_id);
   return users.getUserByUsername(username);
 }
 

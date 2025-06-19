@@ -122,8 +122,6 @@ const createMail = (sender, receiver, title, content, draft) => {
     return { statusCode: 201, message: "Mail created" };
   } else sender_user.drafts.push(new_mail);
   return { statusCode: 201, message: "Mail created in drafts" };
-  // sender_user.sent_mails.push(new_mail);
-  // receiver_user.received_mails.push(new_mail);
 };
 
 const deleteSpecificMail = (user_id, mail_id) => {
