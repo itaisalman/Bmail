@@ -99,8 +99,10 @@ const getFiftyMails = (user_id, label) => {
 // Create a new mail
 // Define its properties and add them to both sender and receiver.
 const createMail = (sender, receiver, title, content, draft) => {
+  // const sender_user = users.getUserById(sender);
+  // const receiver_user = users.getUserById(receiver);
   const sender_user = users.getUserById(sender);
-  const receiver_user = users.getUserById(receiver);
+  const receiver_user = users.getUserByUsername(receiver);
   const new_mail = {
     id: ++mail_counter,
     sender_id: sender,
@@ -120,8 +122,6 @@ const createMail = (sender, receiver, title, content, draft) => {
     return { statusCode: 201, message: "Mail created" };
   } else sender_user.drafts.push(new_mail);
   return { statusCode: 201, message: "Mail created in drafts" };
-  // sender_user.sent_mails.push(new_mail);
-  // receiver_user.received_mails.push(new_mail);
 };
 
 const deleteSpecificMail = (user_id, mail_id) => {
