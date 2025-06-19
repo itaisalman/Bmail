@@ -1,10 +1,11 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { ThemeContext } from "../../ThemeContext";
+import { FaSearch } from "react-icons/fa";
 import "./Topbar.css";
 
 function Topbar() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [query, setQuery] = useState("");
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const { toggleTheme } = useContext(ThemeContext);
@@ -30,14 +31,38 @@ function Topbar() {
     }
   };
 
-  useEffect(() => {
-    fetchTopbar();
-  }, []);
-
   const handleLogout = () => {
     sessionStorage.removeItem("jwt");
     navigate("/login");
   };
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    try {
+      const token = sessionStorage.getItem("jwt");
+      if (!token) return;
+      const res = await fetch(
+        `/api/mails/search/${encodeURIComponent(query)}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: "bearer " + token,
+          },
+        }
+      );
+
+      const data = await res.json();
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+      return;
+    }
+  };
+
+  useEffect(() => {
+    fetchTopbar();
+  }, []);
 
   return (
     <div className="inbox-header">
@@ -52,17 +77,18 @@ function Topbar() {
           <span className="username">{user.first_name}</span>
         </>
       )}
-
-      {/* Search field */}
-      <div className="search-container">
+      <form className="search-container" onSubmit={handleSearch}>
         <input
           type="text"
-          placeholder="🔍 Search in email"
+          placeholder="Search in email"
           className="search-input"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
         />
-      </div>
+        <button type="submit" className="search-button" aria-label="Search">
+          <FaSearch />
+        </button>
+      </form>
 
       {/* Logout button */}
       <button className="logout-button" onClick={handleLogout}>
