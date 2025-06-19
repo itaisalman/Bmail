@@ -28,6 +28,7 @@ const createUser = (
     importanat: [],
     spam: [],
     trash: [],
+    theme: "light",
   };
   // Add to users array
   users.push(newUser);

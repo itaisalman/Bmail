@@ -23,6 +23,7 @@ const upload = multer({ storage: storage });
 
 router.route("/").post(upload.single("image"), controller.createUser);
 router.route("/").get(middleware.isLoggedIn, controller.getUserById);
+router.put("/theme", middleware.isLoggedIn, controller.updateUserTheme);
 
 router.route("/:id").get(controller.getUserById);
 
