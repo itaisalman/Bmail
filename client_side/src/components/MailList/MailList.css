@@ -126,3 +126,13 @@
 .mail-icons span.delete-icon:hover {
   color: #d93025;
 }
+
+.mail-list-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  height: 100%;
+}

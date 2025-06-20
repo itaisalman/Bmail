@@ -133,7 +133,19 @@ function InboxScreen() {
 
       {error && <p className="error-message">{error}</p>}
 
-      {selectedMail ? (
+      {!selectedMail ? (
+        <div className="inbox-body">
+          <MailList
+            mails={messages}
+            starred={starredMails}
+            important={importantMails}
+            onSelect={handleMailClick}
+            onStarToggle={toggleStar}
+            onImportantToggle={toggleImportant}
+            onDelete={toggleDelete}
+          />
+        </div>
+      ) : (
         <MailDetails
           mail={selectedMail}
           onClose={() => setSelectedMail(null)}
@@ -143,36 +155,6 @@ function InboxScreen() {
           starred={starredMails}
           important={importantMails}
         />
-      ) : (
-        <MailList
-          mails={messages}
-          starred={starredMails}
-          important={importantMails}
-          onSelect={handleMailClick}
-          onStarToggle={toggleStar}
-          onImportantToggle={toggleImportant}
-          onDelete={toggleDelete}
-        />
-      )}
-
-      {!selectedMail && (
-        <div className="pagination">
-          <button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-          >
-            ◀ Prev
-          </button>
-
-          <span>Page {currentPage}</span>
-
-          <button
-            onClick={() => setCurrentPage((prev) => prev + 1)}
-            disabled={currentPage * 50 >= totalCount}
-          >
-            Next ▶
-          </button>
-        </div>
       )}
     </div>
   );

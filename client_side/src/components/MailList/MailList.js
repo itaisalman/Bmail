@@ -15,7 +15,7 @@ function MailList({
     return dateString ? dateString.split("T")[0] : "";
   }
   return (
-    <>
+    <div className="mail-list-wrapper">
       <div className="mail-list-header">
         <span className="header-sender">Sender</span>
         <span className="header-subject">Title</span>
@@ -66,7 +66,7 @@ function MailList({
           </div>
         ))}
       </ul>
-    </>
+    </div>
   );
 }
 
