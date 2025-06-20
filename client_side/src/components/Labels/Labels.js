@@ -8,11 +8,6 @@ function Labels({ onClose, onNewLabelCreated }) {
   const handleCreate = async (e) => {
     e.preventDefault();
     const token = sessionStorage.getItem("jwt");
-    if (!token) {
-      setError("Missing token");
-      return;
-    }
-
     try {
       const res = await fetch("/api/labels", {
         method: "POST",
