@@ -2,7 +2,6 @@
   background: none;
   border: none;
   cursor: pointer;
-  margin-bottom: 10px;
   padding: 5px;
   transition: transform 0.2s;
 }
@@ -11,66 +10,64 @@
   transform: rotate(90deg);
 }
 
-.mail-icons {
+body.dark .refresh-button {
+  color: var(--text-color);
+}
+
+.pagination {
   display: flex;
-  gap: 10px;
-  cursor: pointer;
+  justify-content: center;
   align-items: center;
-  margin-left: 12px;
+  gap: 16px;
+  margin: 20px 0;
 }
 
-.mail-icons span {
-  font-size: 22px;
-  color: gray;
-  user-select: none;
-  transition: color 0.2s;
+.pagination-top button {
+  padding: 6px 12px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 6px;
 }
 
-.mail-icons span.star-icon {
-  font-size: 20px;
+.pagination-top button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-.mail-icons span.star-icon:hover,
-.mail-icons span.flag-icon:hover {
+.pagination button {
+  padding: 6px 12px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.inbox-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pagination-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1em;
   color: #555;
 }
 
-.mail-icons span.flag-icon.important {
-  color: #d93025;
-}
-
-.mail-list-header {
-  display: flex;
-  padding: 10px;
-  font-weight: bold;
-  border-bottom: 2px solid #ccc;
-  color: #333;
-}
-
-.header-sender {
-  flex: 1;
-}
-
-.header-subject {
-  flex: 2;
-}
-
-.header-snippet {
-  flex: 3;
-  padding-left: 10px;
-}
-
-.header-date {
-  flex: 0.8;
-  text-align: right;
-  margin-right: 40px;
-}
-
-.header-icons {
-  width: 60px;
-}
-
-body.dark .mail-list-header,
-body.dark .refresh-button {
-  color: var(--text-color);
+.pagination-range {
+  min-width: 130px;
+  text-align: center;
 }

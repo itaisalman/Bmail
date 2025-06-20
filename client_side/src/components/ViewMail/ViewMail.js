@@ -11,7 +11,20 @@ function MailDetails({
   starred,
   important,
 }) {
+  // Don't render anything if no mail is selected
   if (!mail) return null;
+
+  // Format a date string to "YYYY-MM-DD HH:mm"
+  function formatDateTime(dateString) {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+  }
 
   return (
     <div className="mail-details">
@@ -50,7 +63,7 @@ function MailDetails({
       </div>
 
       <div className="mail-details-header">
-        <div className="mail-details-date">{mail.date}</div>
+        <div className="mail-details-date">{formatDateTime(mail.date)}</div>
         <h3 className="mail-details-subject">{mail.title}</h3>
       </div>
 

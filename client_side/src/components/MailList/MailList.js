@@ -10,6 +10,10 @@ function MailList({
   onImportantToggle,
   onDelete,
 }) {
+  // Format date string to "YYYY-MM-DD" (short format)
+  function formatDateShort(dateString) {
+    return dateString ? dateString.split("T")[0] : "";
+  }
   return (
     <>
       <div className="mail-list-header">
@@ -32,7 +36,7 @@ function MailList({
             </div>
             <div className="mail-subject">{mail.title}</div>
             <div className="mail-snippet">{mail.content}</div>
-            <div className="mail-date">{mail.date}</div>
+            <div className="mail-date">{formatDateShort(mail.date)}</div>
 
             <div className="mail-icons" onClick={(e) => e.stopPropagation()}>
               <span

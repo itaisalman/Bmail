@@ -1,7 +1,9 @@
 let mail_counter = 0;
 const users = require("./users");
 
-function findFiftyMails(get_user, label_name) {
+// extract wanted label - where to get the mails from
+function findFiftyMails(get_user, label_name, page) {
+  // For built in labels
   const labelMap = {
     Inbox: get_user.received_mails,
     Sent: get_user.sent_mails,
@@ -12,6 +14,7 @@ function findFiftyMails(get_user, label_name) {
   };
 
   let mails = labelMap[label_name];
+
   // Check if got a label created by the user
   if (!mails) {
     const label = get_user.labels.find((label) => label.name === label_name);
@@ -19,9 +22,16 @@ function findFiftyMails(get_user, label_name) {
     mails = label.mails;
   }
 
-  // Takes most recent fifty mails
-  const latestMails = mails.slice(-50).reverse();
-  return latestMails;
+  const totalCount = mails.length;
+
+  // Calculate the borders of wanted mails indices
+  const pageSize = 50;
+  const start = Math.max(0, mails.length - page * pageSize);
+  const end = mails.length - (page - 1) * pageSize;
+
+  // return wanted fifty mails.
+  const page_mails = mails.slice(start, end).reverse();
+  return { mails: page_mails, totalCount };
 }
 
 // Remove the draft from the draft's array, and add it to the mail's array.
@@ -87,13 +97,13 @@ function checkIfContainQueryInReceived(mail, query) {
   return false;
 }
 
-const getFiftyMails = (user_id, label) => {
+const getFiftyMails = (user_id, label, page = 1) => {
   // Return null if this user_id does not exist.
   const get_user = users.getUserById(user_id);
 
   if (!get_user) return null;
 
-  return findFiftyMails(get_user, label);
+  return findFiftyMails(get_user, label, page);
 };
 
 // Create a new mail
