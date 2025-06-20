@@ -98,9 +98,7 @@ const getFiftyMails = (user_id, label) => {
 
 // Create a new mail
 // Define its properties and add them to both sender and receiver.
-const createMail = (sender, receiver, title, content, draft) => {
-  // const sender_user = users.getUserById(sender);
-  // const receiver_user = users.getUserById(receiver);
+const createMail = (sender, receiver, title, content) => {
   const sender_user = users.getUserById(sender);
   const receiver_user = users.getUserByUsername(receiver);
   const new_mail = {
@@ -117,11 +115,8 @@ const createMail = (sender, receiver, title, content, draft) => {
     content: content,
     date: new Date(),
   };
-  if (draft.toString().toLowerCase() === "false") {
-    pushToMailsArray(sender_user, receiver_user, new_mail);
-    return { statusCode: 201, message: "Mail created" };
-  } else sender_user.drafts.push(new_mail);
-  return { statusCode: 201, message: "Mail created in drafts" };
+  pushToMailsArray(sender_user, receiver_user, new_mail);
+  return { statusCode: 201, message: "Mail created" };
 };
 
 const deleteSpecificMail = (user_id, mail_id) => {

@@ -82,12 +82,14 @@
   background-color: #0949b2;
 }
 
-.error-message {
+.composer-error-message {
   font-weight: bold;
   background-color: #ffe6e6;
-  padding: 8px;
+  padding: 10px 12px;
   border: 1px solid red;
   border-radius: 4px;
+  margin-bottom: 12px;
+  color: #d32f2f;
 }
 
 body.dark .composer-form,

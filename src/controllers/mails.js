@@ -21,21 +21,8 @@ function extractUrls(text) {
 }
 
 // Check if the requested arguments passed.
-function checkPostArguments({ receiver, draft }) {
-  if (draft === undefined || draft === null) {
-    return {
-      statusCode: 400,
-      error: "Missing draft field",
-    };
-  }
-  draft_string = draft.toString();
-  if (checkIfValid(receiver) && checkIfExist(receiver)) {
-    if (
-      draft_string.toLowerCase() === "true" ||
-      draft_string.toLowerCase() === "false"
-    )
-      return null;
-  }
+function checkPostArguments(receiver) {
+  if (checkIfValid(receiver) && checkIfExist(receiver)) return null;
   return {
     statusCode: 400,
     error: "Invalid/Missing Receiver",
@@ -87,6 +74,10 @@ function checkUrls(urls, command) {
   return Promise.all(urls.map((url) => checkUrlBlacklist(command.concat(url))));
 }
 
+function handleDraft(user_id, receiver, title, content) {
+  const user = users.getUserById(user_id);
+}
+
 // Return the latest 50 mails from sent and received mails of user.
 exports.getFiftyMails = ({ headers }, res) => {
   const user_id = headers.user;
@@ -99,10 +90,8 @@ exports.getFiftyMails = ({ headers }, res) => {
 // Add it to both sender and receiver mail boxes.
 exports.addMail = async ({ headers, body }, res) => {
   const user_id = headers.user;
-  const { receiver, title, content, draft } = body;
-  let returned_json = checkPostArguments({ receiver, draft });
-  // Check if required arguments passed.
-
+  const { receiver, title, content } = body;
+  let returned_json = checkPostArguments(receiver);
   if (returned_json)
     return res
       .status(returned_json.statusCode)
@@ -114,21 +103,11 @@ exports.addMail = async ({ headers, body }, res) => {
   let command = "GET ";
   try {
     // Check if title or content contain bad url.
-    if (title) {
-      await checkUrls(extracted_title, command);
-    }
-    if (content) {
-      await checkUrls(extracted_content, command);
-    }
+    if (title) await checkUrls(extracted_title, command);
+    if (content) await checkUrls(extracted_content, command);
 
     // If all checks passed
-    const created_mail = mails.createMail(
-      +user_id,
-      receiver,
-      title,
-      content,
-      draft
-    );
+    const created_mail = mails.createMail(+user_id, receiver, title, content);
     res.status(created_mail.statusCode).json(created_mail.message);
   } catch (err) {
     if (err.message === "BLACKLISTED")
