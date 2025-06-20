@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import "../Inbox/Inbox.css";
 import { FiRefreshCw } from "react-icons/fi";
-import { MdOutlineFlag, MdFlag } from "react-icons/md";
+import MailList from "../MailList/MailList";
+import MailDetails from "../ViewMail/ViewMail";
 
 function InboxScreen() {
   const [messages, setMessages] = useState([]);
   const [error, setError] = useState("");
   const [starredMails, setStarredMails] = useState(new Set());
   const [importantMails, setImportantMails] = useState(new Set());
+  const [selectedMail, setSelectedMail] = useState(null);
 
   const fetchInbox = async () => {
     try {
@@ -35,6 +37,17 @@ function InboxScreen() {
     fetchInbox();
   }, []);
 
+  const handleMailClick = async (id) => {
+    const token = sessionStorage.getItem("jwt");
+    const res = await fetch(`/api/mails/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await res.json();
+    setSelectedMail(data);
+  };
+
   const toggleStar = (id) => {
     setStarredMails((prev) => {
       const newSet = new Set(prev);
@@ -51,52 +64,53 @@ function InboxScreen() {
     });
   };
 
+  const toggleDelete = (id) => {
+    setMessages((prev) => prev.filter((mail) => mail.id !== id));
+    setStarredMails((prev) => {
+      const newSet = new Set(prev);
+      newSet.delete(id);
+      return newSet;
+    });
+    setImportantMails((prev) => {
+      const newSet = new Set(prev);
+      newSet.delete(id);
+      return newSet;
+    });
+    if (selectedMail?.id === id) {
+      setSelectedMail(null);
+    }
+  };
+
   return (
     <div className="inboxScreen">
       <div className="inbox-header">
-        <h2>Inbox</h2>
         <button className="refresh-button" onClick={fetchInbox}>
           <FiRefreshCw size={20} />
         </button>
       </div>
       {error && <p className="error-message">{error}</p>}
 
-      <div className="mail-list-header">
-        <span className="header-sender">Sender</span>
-        <span className="header-subject">Subject</span>
-        <span className="header-snippet">Snippet</span>
-        <span className="header-date">Date</span>
-        <span className="header-icons">Actions</span>
-      </div>
-      <ul className="mail-list">
-        {messages.map((mail) => (
-          <div key={mail.id} className="mail-preview">
-            <div className="mail-sender">{mail.sender.split("@")[0]}</div>
-            <div className="mail-subject">{mail.subject}</div>
-            <div className="mail-snippet">{mail.snippet}</div>
-            <div className="mail-date">{mail.date}</div>
-
-            <div className="mail-icons">
-              <span
-                onClick={() => toggleStar(mail.id)}
-                aria-label="Star mail"
-                className="star-icon"
-              >
-                {starredMails.has(mail.id) ? "⭐" : "☆"}
-              </span>
-              <span
-                onClick={() => toggleImportant(mail.id)}
-                aria-label="Important mail"
-                className={`flag-icon ${
-                  importantMails.has(mail.id) ? "important" : ""
-                }`}
-              >
-                {importantMails.has(mail.id) ? <MdFlag /> : <MdOutlineFlag />}
-              </span>
-            </div>
-          </div>
-        ))}
-      </ul>
+      {selectedMail ? (
+        <MailDetails
+          mail={selectedMail}
+          onClose={() => setSelectedMail(null)}
+          onStarToggle={toggleStar}
+          onImportantToggle={toggleImportant}
+          onDelete={toggleDelete}
+          starred={starredMails}
+          important={importantMails}
+        />
+      ) : (
+        <MailList
+          mails={messages}
+          starred={starredMails}
+          important={importantMails}
+          onSelect={handleMailClick}
+          onStarToggle={toggleStar}
+          onImportantToggle={toggleImportant}
+          onDelete={toggleDelete}
+        />
+      )}
     </div>
   );
 }
