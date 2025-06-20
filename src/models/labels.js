@@ -1,10 +1,23 @@
 let idCounter = 0;
 const users = require("./users");
 
+const DEFAULT_LABEL_NAMES = [
+  "inbox",
+  "starred",
+  "important",
+  "sent",
+  "drafts",
+  "trash",
+  "spam",
+  "labels",
+];
+
 // A helper function that checks before updating or creating
 //  whether a label with the same name already exists.
 const isDuplicateLabelName = (labels, name, ignoreId = null) => {
   const update_name = name.toLowerCase().trim();
+  if (DEFAULT_LABEL_NAMES.includes(update_name)) return true;
+
   return labels.some(
     (label) =>
       label.name.toLowerCase().trim() === update_name && label.id !== ignoreId
