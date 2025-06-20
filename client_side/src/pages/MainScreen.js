@@ -19,8 +19,6 @@ function MainScreen() {
 
   useEffect(() => {
     const token = sessionStorage.getItem("jwt");
-    if (!token) return;
-
     fetch("/api/labels", {
       headers: {
         authorization: "Bearer " + token,

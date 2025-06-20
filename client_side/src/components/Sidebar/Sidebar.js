@@ -35,38 +35,45 @@ function Sidebar({ onNewMailClick, onNewLabelClick, labels }) {
         </button>
       </div>
 
-      {links.map(({ name, path, icon }) => {
-        const isLabels = name === "Labels";
-        return (
-          <NavLink
-            key={name}
-            to={path}
-            className={({ isActive }) =>
-              `sidebar-link ${isActive ? "active" : ""}`
-            }
-          >
-            <div className="link-main">
-              <div className="link-content">
-                <span className="icon">{icon}</span>
-                <span className="link-text">{name}</span>
-              </div>
-
-              {isLabels && (
-                <button
-                  className="new-label-button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onNewLabelClick();
-                  }}
-                >
-                  ➕
-                </button>
-              )}
+      {links.map(({ name, path, icon }) => (
+        <NavLink
+          key={name}
+          to={path}
+          className={({ isActive }) =>
+            `sidebar-link ${isActive ? "active" : ""}`
+          }
+        >
+          <div className="link-main">
+            <div className="link-content">
+              <span className="icon">{icon}</span>
+              <span className="link-text">{name}</span>
             </div>
-          </NavLink>
-        );
-      })}
+          </div>
+        </NavLink>
+      ))}
 
+      {/* Labels section header */}
+      <div className="sidebar-link labels-header">
+        <div className="link-main">
+          <div className="link-content">
+            <span className="icon">
+              <MdLabel />
+            </span>
+            <span className="link-text">Labels</span>
+          </div>
+          <button
+            className="new-label-button"
+            onClick={(e) => {
+              e.preventDefault();
+              onNewLabelClick();
+            }}
+          >
+            ➕
+          </button>
+        </div>
+      </div>
+
+      {/* Custom user-defined labels */}
       {labels.map((label) => (
         <NavLink
           key={label.id}
