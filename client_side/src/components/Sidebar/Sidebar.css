@@ -116,3 +116,33 @@
 body.dark .sidebar {
   background-color: #000000;
 }
+
+.new-label-button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  margin-right: 6px;
+  cursor: pointer;
+  padding: 0;
+}
+.new-label-button:hover {
+  color: #00cfff;
+}
+
+.link-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.custom-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 20px;
+  color: #f3f4f6;
+  font-size: 14px;
+  padding: 4px 8px;
+}
