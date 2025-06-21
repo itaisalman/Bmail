@@ -74,12 +74,21 @@ function checkUrls(urls, command) {
   return Promise.all(urls.map((url) => checkUrlBlacklist(command.concat(url))));
 }
 
-// Return the latest 50 mails from sent and received mails of user.
-exports.getFiftyMails = ({ headers }, res) => {
+// Return 50 mails by label and page.
+exports.getFiftyMails = ({ headers, query }, res) => {
   const user_id = headers.user;
   const label = headers.label;
-  const user_mails = mails.getFiftyMails(+user_id, label);
-  res.json(Array.from(user_mails));
+
+  // Set default page to 1.
+  const page = parseInt(query.page) || 1;
+
+  const user_mails = mails.getFiftyMails(+user_id, label, page);
+  if (!user_mails) return res.status(404).json({ error: "No mails found" });
+
+  res.json({
+    mails: user_mails.mails,
+    totalCount: user_mails.totalCount,
+  });
 };
 
 // Create new mail using the arguments passed by the user.
