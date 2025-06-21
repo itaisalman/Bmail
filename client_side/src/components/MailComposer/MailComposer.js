@@ -1,60 +1,19 @@
-import "./MailComposer.css";
 import { useState } from "react";
+import "./MailComposer.css";
 
-function MailComposer({ onClose }) {
+function MailComposer({ onSend, onClose, errors }) {
   const [to, setTo] = useState("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
-  const [errors, setErrors] = useState("");
 
   const handleDraft = async (e) => {
     e.preventDefault();
+    onClose({ to, subject, message });
   };
 
   const handleSend = async (e) => {
     e.preventDefault();
-    setErrors("");
-    if (to) {
-      const payload = {
-        receiver: to,
-        title: subject,
-        content: message,
-      };
-
-      try {
-        const token = sessionStorage.getItem("jwt");
-        const res = await fetch("/api/mails", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: "bearer " + token,
-          },
-          body: JSON.stringify(payload),
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          if (res.status === 401)
-            setErrors("Token required. Please log in again.");
-          else if (
-            res.status === 400 &&
-            data.error === "Invalid/Missing Receiver"
-          )
-            setErrors("Invalid/Missing receiver!");
-          else setErrors("Server error: " + res.status);
-
-          return;
-        }
-
-        // Success
-        setErrors("");
-        onClose();
-      } catch (err) {
-        setErrors("Failed to connect to the server. Please try again later.");
-      }
-    } else {
-      setErrors("Receiver is required!");
-      return;
-    }
+    onSend({ to, subject, message });
   };
 
   return (
