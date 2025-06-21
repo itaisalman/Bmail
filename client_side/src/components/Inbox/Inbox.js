@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
 import "../Inbox/Inbox.css";
-import { FiRefreshCw } from "react-icons/fi";
 import MailList from "../MailList/MailList";
 import MailDetails from "../ViewMail/ViewMail";
+import MailsControl from "../MailsControl/MailsControl";
 
 function InboxScreen() {
   // State variables for inbox data and UI state
@@ -97,38 +97,12 @@ function InboxScreen() {
   return (
     <div className="inboxScreen">
       {!selectedMail && (
-        <div className="inbox-header">
-          <button
-            className="refresh-button"
-            onClick={() => fetchInbox(currentPage)}
-            aria-label="Refresh inbox"
-          >
-            <FiRefreshCw size={20} />
-          </button>
-
-          <div className="pagination-top">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              aria-label="Previous page"
-            >
-              ◀ Prev
-            </button>
-
-            <span className="pagination-range">
-              {totalCount === 0 ? 0 : (currentPage - 1) * 50 + 1}-
-              {Math.min(currentPage * 50, totalCount)} from {totalCount}
-            </span>
-
-            <button
-              onClick={() => setCurrentPage((prev) => prev + 1)}
-              disabled={currentPage * 50 >= totalCount}
-              aria-label="Next page"
-            >
-              Next ▶
-            </button>
-          </div>
-        </div>
+        <MailsControl
+          currentPage={currentPage}
+          totalCount={totalCount}
+          onRefresh={fetchInbox}
+          onPageChange={setCurrentPage}
+        />
       )}
 
       {error && <p className="error-message">{error}</p>}
