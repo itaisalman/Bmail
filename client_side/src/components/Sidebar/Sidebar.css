@@ -7,7 +7,6 @@
   display: flex;
   flex-direction: column;
   padding: 16px 0;
-  border-radius: 16px;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   font-family: "Rubik", sans-serif;
   transition: width 0.3s ease;
@@ -145,4 +144,60 @@ body.dark .sidebar {
   color: #f3f4f6;
   font-size: 14px;
   padding: 4px 8px;
+}
+
+.sidebar-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 1rem;
+  margin-bottom: 4px;
+}
+
+.label-edit-button,
+.label-delete-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 4px;
+}
+
+.label-edit-button:hover,
+.label-delete-button:hover {
+  color: red;
+}
+.sidebar-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.label-actions button {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+  padding-right: 8px;
+  align-items: center;
+}
+
+.label-edit-input {
+  background: transparent;
+  border: 1px solid #ccc;
+  color: white;
+  font-size: 14px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.labels-list-container {
+  max-height: 100px;
+  overflow-y: auto;
+  padding-right: 5px;
+  scrollbar-width: thin;
+  scrollbar-color: #ffffff #2f3542;
+}
+
+body.dark .labels-list-container {
+  scrollbar-color: #ffffff #000000;
 }
