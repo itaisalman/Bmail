@@ -158,6 +158,34 @@ exports.getMailById = ({ headers, params }, res) => {
   res.status(200).json(mail);
 };
 
+// Check the mail ID in the user's mails.
+function checkDraftId(id, user_id) {
+  if (id.trim() !== id || isNaN(+id))
+    return { statusCode: 400, error: "Invalid draft ID" };
+
+  const draft = mails.getSpecificDraft(+user_id, +id);
+
+  if (!draft) return { statusCode: 404, error: "Draft not found" };
+
+  return null;
+}
+
+// Return a draft by its id.
+exports.getDraftById = ({ headers, params }, res) => {
+  const user_id = headers.user;
+  const draft_id = params.id;
+  let returned_json = checkDraftId(draft_id, user_id);
+
+  if (returned_json)
+    return res
+      .status(returned_json.statusCode)
+      .json({ error: returned_json.error });
+
+  // Search the mail in the user's mails.
+  const draft = mails.getSpecificDraft(+user_id, +draft_id);
+  res.status(200).json(draft);
+};
+
 // Search for all the mails that contain query.
 // Return an array of all the mails answer the requirement.
 exports.searchMails = ({ headers, params }, res) => {

@@ -6,7 +6,8 @@ router.route("/").get(controller.getFiftyMails).post(controller.addMail);
 
 router.route("/draft")
   .post(controller.createNewDraft);
-  
+
+router.route("/draft/:id").get(controller.getDraftById);
 router
   .route("/:id")
   .delete(controller.deleteMailById)
