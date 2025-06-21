@@ -160,7 +160,6 @@ body.dark .sidebar {
   border: none;
   cursor: pointer;
   font-size: 14px;
-  margin-left: 4px;
 }
 
 .label-edit-button:hover,
@@ -174,7 +173,7 @@ body.dark .sidebar {
 }
 
 .label-actions button {
-  display: flex;
+  display: inline;
   gap: 4px;
   margin-left: auto;
   padding-right: 8px;

@@ -75,10 +75,6 @@ function MainScreen() {
       .then((data) => setLabels(data));
   }, []);
 
-  useEffect(() => {
-    console.log("📦 Current labels state:", labels);
-  }, [labels]);
-
   return (
     <div className="main-container">
       <Sidebar
