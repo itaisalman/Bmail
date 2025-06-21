@@ -1,76 +1,12 @@
-.refresh-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  margin-bottom: 10px;
-  padding: 5px;
-  transition: transform 0.2s;
-}
-
-.refresh-button:hover {
-  transform: rotate(90deg);
-}
-
-.mail-icons {
+.inboxScreen {
   display: flex;
-  gap: 10px;
-  cursor: pointer;
-  align-items: center;
-  margin-left: 12px;
+  flex-direction: column;
+  height: 85%;
+  overflow: hidden;
 }
 
-.mail-icons span {
-  font-size: 22px;
-  color: gray;
-  user-select: none;
-  transition: color 0.2s;
-}
-
-.mail-icons span.star-icon {
-  font-size: 20px;
-}
-
-.mail-icons span.star-icon:hover,
-.mail-icons span.flag-icon:hover {
-  color: #555;
-}
-
-.mail-icons span.flag-icon.important {
-  color: #d93025;
-}
-
-.mail-list-header {
-  display: flex;
-  padding: 10px;
-  font-weight: bold;
-  border-bottom: 2px solid #ccc;
-  color: #333;
-}
-
-.header-sender {
+.inbox-body {
   flex: 1;
-}
-
-.header-subject {
-  flex: 2;
-}
-
-.header-snippet {
-  flex: 3;
-  padding-left: 10px;
-}
-
-.header-date {
-  flex: 0.8;
-  text-align: right;
-  margin-right: 40px;
-}
-
-.header-icons {
-  width: 60px;
-}
-
-body.dark .mail-list-header,
-body.dark .refresh-button {
-  color: var(--text-color);
+  overflow-y: auto;
+  height: 100%;
 }

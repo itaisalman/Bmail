@@ -1,42 +1,52 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import "../Inbox/Inbox.css";
-import { FiRefreshCw } from "react-icons/fi";
 import MailList from "../MailList/MailList";
 import MailDetails from "../ViewMail/ViewMail";
+import MailsControl from "../MailsControl/MailsControl";
 
 function InboxScreen() {
+  // State variables for inbox data and UI state
   const [messages, setMessages] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
   const [error, setError] = useState("");
   const [starredMails, setStarredMails] = useState(new Set());
   const [importantMails, setImportantMails] = useState(new Set());
   const [selectedMail, setSelectedMail] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const fetchInbox = async () => {
-    try {
-      const token = sessionStorage.getItem("jwt");
-      if (!token) return;
+  // Fetch inbox data from the server for the current page
+  const fetchInbox = useCallback(
+    async (page = currentPage) => {
+      try {
+        const token = sessionStorage.getItem("jwt");
+        if (!token) return;
 
-      const res = await fetch("/api/mails", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: "bearer " + token,
-          label: "Inbox",
-        },
-      });
+        const res = await fetch(`/api/mails?page=${page}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: "bearer " + token,
+            label: "Inbox",
+          },
+        });
 
-      if (!res.ok) throw new Error("Failed to load inbox");
-      const data = await res.json();
-      setMessages(data);
-    } catch (err) {
-      setError("Error loading inbox: " + err.message);
-    }
-  };
+        if (!res.ok) throw new Error("Failed to load inbox");
+        const data = await res.json();
+        setMessages(data.mails);
+        setTotalCount(data.totalCount);
+      } catch (err) {
+        setError("Error loading inbox: " + err.message);
+      }
+    },
+    [currentPage]
+  );
 
+  // Fetch inbox whenever the page changes
   useEffect(() => {
-    fetchInbox();
-  }, []);
+    fetchInbox(currentPage);
+  }, [fetchInbox, currentPage]);
 
+  // Load and show the full details of a selected mail
   const handleMailClick = async (id) => {
     const token = sessionStorage.getItem("jwt");
     const res = await fetch(`/api/mails/${id}`, {
@@ -48,6 +58,7 @@ function InboxScreen() {
     setSelectedMail(data);
   };
 
+  // Toggle star/unstar a mail by ID
   const toggleStar = (id) => {
     setStarredMails((prev) => {
       const newSet = new Set(prev);
@@ -56,6 +67,7 @@ function InboxScreen() {
     });
   };
 
+  // Toggle mark/unmark a mail as important
   const toggleImportant = (id) => {
     setImportantMails((prev) => {
       const newSet = new Set(prev);
@@ -64,6 +76,7 @@ function InboxScreen() {
     });
   };
 
+  // Remove a mail from the current list and unmark it from starred/important
   const toggleDelete = (id) => {
     setMessages((prev) => prev.filter((mail) => mail.id !== id));
     setStarredMails((prev) => {
@@ -83,14 +96,30 @@ function InboxScreen() {
 
   return (
     <div className="inboxScreen">
-      <div className="inbox-header">
-        <button className="refresh-button" onClick={fetchInbox}>
-          <FiRefreshCw size={20} />
-        </button>
-      </div>
+      {!selectedMail && (
+        <MailsControl
+          currentPage={currentPage}
+          totalCount={totalCount}
+          onRefresh={fetchInbox}
+          onPageChange={setCurrentPage}
+        />
+      )}
+
       {error && <p className="error-message">{error}</p>}
 
-      {selectedMail ? (
+      {!selectedMail ? (
+        <div className="inbox-body">
+          <MailList
+            mails={messages}
+            starred={starredMails}
+            important={importantMails}
+            onSelect={handleMailClick}
+            onStarToggle={toggleStar}
+            onImportantToggle={toggleImportant}
+            onDelete={toggleDelete}
+          />
+        </div>
+      ) : (
         <MailDetails
           mail={selectedMail}
           onClose={() => setSelectedMail(null)}
@@ -99,16 +128,6 @@ function InboxScreen() {
           onDelete={toggleDelete}
           starred={starredMails}
           important={importantMails}
-        />
-      ) : (
-        <MailList
-          mails={messages}
-          starred={starredMails}
-          important={importantMails}
-          onSelect={handleMailClick}
-          onStarToggle={toggleStar}
-          onImportantToggle={toggleImportant}
-          onDelete={toggleDelete}
         />
       )}
     </div>
