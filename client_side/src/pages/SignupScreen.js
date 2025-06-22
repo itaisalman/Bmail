@@ -102,6 +102,11 @@ function SignupScreen() {
           newErrors.username = errorMessage;
         } else if (errorMessage.toLowerCase().includes("password")) {
           newErrors.password = errorMessage;
+        } else if (errorMessage.toLowerCase().includes("name")) {
+          newErrors.firstName = errorMessage;
+          newErrors.lastName = errorMessage;
+        } else if (errorMessage.toLowerCase().includes("birth")) {
+          newErrors.birthDate = errorMessage;
         } else {
           newErrors.general = errorMessage;
         }
@@ -143,9 +148,6 @@ function SignupScreen() {
             onChange={(e) => setLastName(e.target.value)}
             placeholder="Last name"
           />
-          {errors.lastName && (
-            <p className="error-message">{errors.lastName}</p>
-          )}
         </div>
 
         {/* Select date of birth: day, month, year */}
@@ -191,6 +193,9 @@ function SignupScreen() {
               <option key={year}>{year}</option>
             ))}
           </select>
+          {errors.birthDate && (
+            <p className="error-message">{errors.birthDate}</p>
+          )}
         </div>
 
         {/* Gender selection */}
@@ -314,6 +319,7 @@ function SignupScreen() {
           <button type="submit" className="button">
             Sign Up
           </button>
+          {errors.general && <p className="error-message">{errors.general}</p>}
         </div>
       </form>
     </div>
