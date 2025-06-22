@@ -4,7 +4,7 @@ function LabelView() {
   const { labelName } = useParams();
 
   return (
-    <div className="label-view">
+    <div>
       <h2>Label: {labelName}</h2>
     </div>
   );
