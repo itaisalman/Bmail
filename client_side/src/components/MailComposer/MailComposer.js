@@ -1,65 +1,29 @@
-import "./MailComposer.css";
 import { useState } from "react";
+import "./MailComposer.css";
 
-function MailComposer({ onClose }) {
+function MailComposer({ onSend, onClose, errors }) {
   const [to, setTo] = useState("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
 
-  const handleSend = async (send_type, e) => {
+  const handleDraft = async (e) => {
     e.preventDefault();
-    // Clearing previous errors
-    setError("");
+    onClose({ to, subject, message });
+  };
 
-    if (to || subject || message) {
-      const payload = {
-        receiver: to,
-        title: subject,
-        content: message,
-        draft: send_type,
-      };
-      try {
-        const token = sessionStorage.getItem("jwt");
-        if (!token) return;
-        const res = await fetch("/api/mails", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: "bearer " + token,
-          },
-          body: JSON.stringify(payload),
-        });
-
-        const data = await res.json();
-        if (data.error === "Invalid/Missing Receiver") {
-          setError("Invalid/Missing Receiver! Please try another receiver.");
-          return;
-        }
-        console.log(data);
-      } catch (err) {
-        setError("An unexpected error occurred.");
-        return;
-      }
-    }
-    onClose();
+  const handleSend = async (e) => {
+    e.preventDefault();
+    onSend({ to, subject, message });
   };
 
   return (
     <div className="composer-container">
       <div className="composer-header">
         <span>New Message</span>
-        <button onClick={(e) => handleSend("true", e)}>✖</button>
+        <button onClick={(e) => handleDraft(e)}>✖</button>
       </div>
-      {error && (
-        <div
-          className="error-message"
-          style={{ color: "red", marginBottom: "10px" }}
-        >
-          {error}
-        </div>
-      )}
-      <form className="composer-form" onSubmit={(e) => handleSend("false", e)}>
+      <form className="composer-form" onSubmit={(e) => handleSend(e)}>
+        {errors && <div className="composer-error-message">{errors}</div>}
         <input
           type="text"
           placeholder="To"

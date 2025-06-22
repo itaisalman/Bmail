@@ -1,4 +1,5 @@
 let mail_counter = 0;
+let draft_counter = 0;
 const users = require("./users");
 
 // extract wanted label - where to get the mails from
@@ -108,9 +109,7 @@ const getFiftyMails = (user_id, label, page = 1) => {
 
 // Create a new mail
 // Define its properties and add them to both sender and receiver.
-const createMail = (sender, receiver, title, content, draft) => {
-  // const sender_user = users.getUserById(sender);
-  // const receiver_user = users.getUserById(receiver);
+const createMail = (sender, receiver, title, content) => {
   const sender_user = users.getUserById(sender);
   const receiver_user = users.getUserByUsername(receiver);
   const new_mail = {
@@ -127,11 +126,8 @@ const createMail = (sender, receiver, title, content, draft) => {
     content: content,
     date: new Date(),
   };
-  if (draft.toString().toLowerCase() === "false") {
-    pushToMailsArray(sender_user, receiver_user, new_mail);
-    return { statusCode: 201, message: "Mail created" };
-  } else sender_user.drafts.push(new_mail);
-  return { statusCode: 201, message: "Mail created in drafts" };
+  pushToMailsArray(sender_user, receiver_user, new_mail);
+  return { statusCode: 201, message: "Mail created" };
 };
 
 const deleteSpecificMail = (user_id, mail_id) => {
@@ -165,12 +161,12 @@ const deleteSpecificMail = (user_id, mail_id) => {
 
 // Find the specific draft that the user want to modify.
 // Return null if doesnt exist.
-const getSpecificDraft = (user_id, mail_id) => {
+const getSpecificDraft = (user_id, draft_id) => {
   // Return null if this user_id does not exist.
   const user = users.getUserById(user_id);
-  const mail = user.drafts.find((draft) => draft.id === mail_id);
-  if (!mail) return null;
-  return mail;
+  const draft = user.drafts.find((draft) => draft.id === draft_id);
+  if (!draft) return null;
+  return draft;
 };
 
 // Find the specific mail that the user want.
@@ -205,17 +201,27 @@ const getMailsByQuery = (user_id, query) => {
   return result_array;
 };
 
-// Change the wanted fields in mail.
-const editDraft = (mail, title, content, draft) => {
-  if (title) if (title.toString().trim() !== "") mail.title = title.toString();
-
-  if (content)
-    if (content.toString().trim() !== "") mail.content = content.toString();
-
-  if (draft) if (draft.toString().toLowerCase() === "false") uploadDraft(mail);
-
+// Change the wanted fields in draft.
+const editDraft = (draft, receiver, title, content) => {
+  draft.receiver = receiver.toString();
+  draft.title = title.toString();
+  draft.content = content.toString();
   return;
 };
+
+// Create a new draft with the passed arguments.
+const createNewDraft = (sender, receiver, title, content) => {
+  const sender_user = users.getUserById(sender);
+  const new_draft = {
+    id: ++draft_counter,
+    receiver,
+    title,
+    content,
+    date: new Date(),
+  };
+  sender_user.drafts.push(new_draft);
+  return;
+}
 
 module.exports = {
   getFiftyMails,
@@ -225,4 +231,5 @@ module.exports = {
   getMailsByQuery,
   editDraft,
   getSpecificDraft,
+  createNewDraft
 };

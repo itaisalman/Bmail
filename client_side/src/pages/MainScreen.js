@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
+import ButtonMailComposer from "../components/ButtonMailComposer/ButtonMailComposer";
 import Sidebar from "../components/Sidebar/Sidebar";
 import Topbar from "../components/Topbar/Topbar";
-import MailComposer from "../components/MailComposer/MailComposer";
 import Labels from "../components/Labels/Labels";
 import "./MainScreen.css";
 
@@ -40,7 +40,7 @@ function MainScreen() {
         <Topbar />
         <Outlet />
       </main>
-      {showComposer && <MailComposer onClose={toggleComposer} />}
+      {showComposer && <ButtonMailComposer onClose={toggleComposer} />}
       {showLabels && (
         <Labels
           onClose={toggleLabels}
