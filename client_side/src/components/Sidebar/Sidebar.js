@@ -22,7 +22,7 @@ const links = [
   { name: "Labels", path: "/main/labels", icon: <MdLabel /> },
 ];
 
-function Sidebar({ onNewMailClick }) {
+function Sidebar({ onNewMailClick, onNewLabelClick, labels }) {
   return (
     <nav className="sidebar">
       <div className="top-container">
@@ -34,6 +34,7 @@ function Sidebar({ onNewMailClick }) {
           <span className="new-mail-text">New Mail</span>
         </button>
       </div>
+
       {links.map(({ name, path, icon }) => (
         <NavLink
           key={name}
@@ -42,10 +43,47 @@ function Sidebar({ onNewMailClick }) {
             `sidebar-link ${isActive ? "active" : ""}`
           }
         >
-          <div className="link-content">
-            <span className="icon">{icon}</span>
-            <span className="link-text">{name}</span>
+          <div className="link-main">
+            <div className="link-content">
+              <span className="icon">{icon}</span>
+              <span className="link-text">{name}</span>
+            </div>
           </div>
+        </NavLink>
+      ))}
+
+      {/* Labels section header */}
+      <div className="sidebar-link labels-header">
+        <div className="link-main">
+          <div className="link-content">
+            <span className="icon">
+              <MdLabel />
+            </span>
+            <span className="link-text">Labels</span>
+          </div>
+          <button
+            className="new-label-button"
+            onClick={(e) => {
+              e.preventDefault();
+              onNewLabelClick();
+            }}
+          >
+            ➕
+          </button>
+        </div>
+      </div>
+
+      {/* Custom user-defined labels */}
+      {labels.map((label) => (
+        <NavLink
+          key={label.id}
+          to={`/main/labels/${label.name}`}
+          className={({ isActive }) =>
+            `sidebar-link custom-label ${isActive ? "active" : ""}`
+          }
+        >
+          <span className="icon">🏷️</span>
+          <span className="link-text">{label.name}</span>
         </NavLink>
       ))}
     </nav>
