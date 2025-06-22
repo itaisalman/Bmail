@@ -102,8 +102,9 @@ function SignupScreen() {
           newErrors.username = errorMessage;
         } else if (errorMessage.toLowerCase().includes("password")) {
           newErrors.password = errorMessage;
-        } else if (errorMessage.toLowerCase().includes("name")) {
+        } else if (errorMessage.toLowerCase().includes("first")) {
           newErrors.firstName = errorMessage;
+        } else if (errorMessage.toLowerCase().includes("last")) {
           newErrors.lastName = errorMessage;
         } else if (errorMessage.toLowerCase().includes("birth")) {
           newErrors.birthDate = errorMessage;
@@ -148,6 +149,9 @@ function SignupScreen() {
             onChange={(e) => setLastName(e.target.value)}
             placeholder="Last name"
           />
+          {errors.lastName && (
+            <p className="error-message">{errors.lastName}</p>
+          )}
         </div>
 
         {/* Select date of birth: day, month, year */}
