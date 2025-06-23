@@ -31,6 +31,7 @@ function InboxScreen() {
         });
 
         if (!res.ok) throw new Error("Failed to load inbox");
+        setError("");
         const data = await res.json();
         setMessages(data.mails);
         setTotalCount(data.totalCount);
@@ -59,38 +60,89 @@ function InboxScreen() {
   };
 
   // Toggle star/unstar a mail by ID
-  const toggleStar = (id) => {
-    setStarredMails((prev) => {
-      const newSet = new Set(prev);
-      newSet.has(id) ? newSet.delete(id) : newSet.add(id);
-      return newSet;
-    });
+  const toggleStar = async (id) => {
+    try {
+      const token = sessionStorage.getItem("jwt");
+      if (!token) return;
+      const res = await fetch(`/api/mails/star/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: "bearer " + token,
+        },
+      });
+      if (!res.ok) throw new Error("Failed to update star");
+
+      setStarredMails((prev) => {
+        const newSet = new Set(prev);
+        newSet.has(id) ? newSet.delete(id) : newSet.add(id);
+        return newSet;
+      });
+      setError("");
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   // Toggle mark/unmark a mail as important
-  const toggleImportant = (id) => {
-    setImportantMails((prev) => {
-      const newSet = new Set(prev);
-      newSet.has(id) ? newSet.delete(id) : newSet.add(id);
-      return newSet;
-    });
+  const toggleImportant = async (id) => {
+    try {
+      const token = sessionStorage.getItem("jwt");
+      if (!token) return;
+      const res = await fetch(`/api/mails/important/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: "bearer " + token,
+        },
+      });
+      if (!res.ok) throw new Error("Failed to update important");
+
+      setImportantMails((prev) => {
+        const newSet = new Set(prev);
+        newSet.has(id) ? newSet.delete(id) : newSet.add(id);
+        return newSet;
+      });
+      setError("");
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   // Remove a mail from the current list and unmark it from starred/important
-  const toggleDelete = (id) => {
-    setMessages((prev) => prev.filter((mail) => mail.id !== id));
-    setStarredMails((prev) => {
-      const newSet = new Set(prev);
-      newSet.delete(id);
-      return newSet;
-    });
-    setImportantMails((prev) => {
-      const newSet = new Set(prev);
-      newSet.delete(id);
-      return newSet;
-    });
-    if (selectedMail?.id === id) {
-      setSelectedMail(null);
+  const toggleDelete = async (id) => {
+    try {
+      const token = sessionStorage.getItem("jwt");
+      if (!token) return;
+
+      // Delete request to server
+      const res = await fetch(`/api/mails/${id}`, {
+        method: "DELETE",
+        headers: {
+          authorization: "bearer " + token,
+        },
+      });
+
+      if (!res.ok) throw new Error("Failed to delete mail");
+      setError("");
+
+      // local update after delete from server
+      setMessages((prev) => prev.filter((mail) => mail.id !== id));
+      setStarredMails((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(id);
+        return newSet;
+      });
+      setImportantMails((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(id);
+        return newSet;
+      });
+      if (selectedMail?.id === id) {
+        setSelectedMail(null);
+      }
+    } catch (err) {
+      setError(err.message);
     }
   };
 

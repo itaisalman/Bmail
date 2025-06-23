@@ -216,3 +216,33 @@ exports.patchMail = ({ headers, params, body }, res) => {
   mails.editDraft(mail, title, content, draft);
   res.sendStatus(204);
 };
+
+exports.toggleMailStar = ({ headers, params }, res) => {
+  const user_id = headers.user;
+  const mail_id = params.id;
+  let returned_json = checkParamsId(mail_id, user_id);
+  if (returned_json)
+    return res
+      .status(returned_json.statusCode)
+      .json({ error: returned_json.error });
+
+  const result = mails.toggleStarred(+user_id, +mail_id);
+  if (!result) return res.status(404).json({ error: "Mail not found" });
+
+  res.sendStatus(204);
+};
+
+exports.toggleMailImportant = ({ headers, params }, res) => {
+  const user_id = headers.user;
+  const mail_id = params.id;
+  let returned_json = checkParamsId(mail_id, user_id);
+  if (returned_json)
+    return res
+      .status(returned_json.statusCode)
+      .json({ error: returned_json.error });
+
+  const result = mails.toggleImportant(+user_id, +mail_id);
+  if (!result) return res.status(404).json({ error: "Mail not found" });
+
+  res.sendStatus(204);
+};

@@ -12,4 +12,7 @@ router
 
 router.route("/search/:query").get(controller.searchMails);
 
+router.route("/star/:id").patch(controller.toggleMailStar);
+router.route("/important/:id").patch(controller.toggleMailImportant);
+
 module.exports = router;

@@ -134,35 +134,6 @@ const createMail = (sender, receiver, title, content, draft) => {
   return { statusCode: 201, message: "Mail created in drafts" };
 };
 
-const deleteSpecificMail = (user_id, mail_id) => {
-  const get_user = users.getUserById(user_id);
-  // Check if the mail is in received or in sent.
-  // If not in both, return null.
-  const get_mail_from_received = get_user.received_mails.find(
-    (mail) => mail.id === mail_id
-  );
-  if (!get_mail_from_received) {
-    const get_mail_from_sent = get_user.sent_mails.find(
-      (mail) => mail.id === mail_id
-    );
-
-    if (!get_mail_from_sent) return;
-
-    // Find the mail that the user want to delete, and delete it from sent_mails.
-    const sent_index = get_user.sent_mails.findIndex(
-      (mail) => mail.id === mail_id
-    );
-    get_user.sent_mails.splice(sent_index, 1);
-    return;
-  }
-  // Find the mail that the user want to delete, and delete it from received_mails.
-  const received_index = get_user.received_mails.findIndex(
-    (mail) => mail.id === mail_id
-  );
-  get_user.received_mails.splice(received_index, 1);
-  return;
-};
-
 // Find the specific draft that the user want to modify.
 // Return null if doesnt exist.
 const getSpecificDraft = (user_id, mail_id) => {
@@ -217,6 +188,74 @@ const editDraft = (mail, title, content, draft) => {
   return;
 };
 
+const toggleMailInArray = (array, mail) => {
+  const index = array.findIndex((m) => m.id === mail.id);
+  if (index !== -1) {
+    array.splice(index, 1);
+  } else {
+    array.push(mail);
+  }
+};
+
+const toggleStarred = (user_id, mail_id) => {
+  const mail = getSpecificMail(user_id, mail_id);
+  if (!mail) return false;
+  const user = users.getUserById(user_id);
+  toggleMailInArray(user.starred, mail);
+  return true;
+};
+
+const toggleImportant = (user_id, mail_id) => {
+  const mail = getSpecificMail(user_id, mail_id);
+  if (!mail) return false;
+  const user = users.getUserById(user_id);
+  toggleMailInArray(user.important, mail);
+  return true;
+};
+
+const removeMailFromArray = (array, mail_id) => {
+  const index = array.findIndex((mail) => mail.id === mail_id);
+  if (index !== -1) array.splice(index, 1);
+};
+
+// Remove mail from all labels
+const cleanupMailReferences = (user, mail_id) => {
+  removeMailFromArray(user.starred, mail_id);
+  removeMailFromArray(user.important, mail_id);
+
+  user.labels.forEach((label) => {
+    label.mails = label.mails.filter((mail) => mail.id !== mail_id);
+  });
+};
+
+// Remove from inbox or sent and add to trash
+const moveMailToTrash = (user, mail_id) => {
+  // If mail was deleted from inbox
+  const received_index = user.received_mails.findIndex(
+    (mail) => mail.id === mail_id
+  );
+  if (received_index !== -1) {
+    const mail = user.received_mails[received_index];
+    user.trash.push(mail);
+    user.received_mails.splice(received_index, 1);
+    return;
+  }
+
+  // If mail was deleted from sent
+  const sent_index = user.sent_mails.findIndex((mail) => mail.id === mail_id);
+  if (sent_index !== -1) {
+    const mail = user.sent_mails[sent_index];
+    user.trash.push(mail);
+    user.sent_mails.splice(sent_index, 1);
+  }
+};
+
+const deleteSpecificMail = (user_id, mail_id) => {
+  const user = users.getUserById(user_id);
+  cleanupMailReferences(user, mail_id);
+  moveMailToTrash(user, mail_id);
+};
+
 module.exports = {
   getFiftyMails,
   createMail,
@@ -225,4 +264,6 @@ module.exports = {
   getMailsByQuery,
   editDraft,
   getSpecificDraft,
+  toggleStarred,
+  toggleImportant,
 };
