@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../../logo.jpg";
 import {
   MdInbox,
@@ -9,6 +9,7 @@ import {
   MdStar,
   MdPriorityHigh,
   MdCreate,
+  MdDelete,
 } from "react-icons/md";
 import "./Sidebar.css";
 
@@ -23,16 +24,29 @@ const links = [
 ];
 
 function Sidebar({ onNewMailClick, onNewLabelClick, labels }) {
+  const navigate = useNavigate();
+
   return (
     <nav className="sidebar">
       <div className="top-container">
         <div className="logo-container">
           <img src={logo} alt="Bmail logo" className="logo" />
         </div>
-        <button className="new-mail-button" onClick={onNewMailClick}>
-          <MdCreate size={20} />
-          <span className="new-mail-text">New Mail</span>
-        </button>
+
+        <div className="top-actions">
+          <button
+            className="icon-button trash-button"
+            onClick={() => navigate("/main/trash")}
+            title="Trash"
+          >
+            <MdDelete size={20} />
+          </button>
+
+          <button className="new-mail-button" onClick={onNewMailClick}>
+            <MdCreate size={20} />
+            <span className="new-mail-text">New Mail</span>
+          </button>
+        </div>
       </div>
 
       {links.map(({ name, path, icon }) => (
