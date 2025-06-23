@@ -9,6 +9,7 @@ import InboxScreen from "./components/Inbox/Inbox";
 import LabelView from "./components/Labels/LabelView";
 import StarredScreen from "./components/Star/Star";
 import ImportantScreen from "./components/Important/Important";
+import TrashScreen from "./components/Trash/Trash";
 
 // Temporary components
 const Sent = () => <h1>Sent</h1>;
@@ -38,6 +39,7 @@ function App() {
           <Route path="starred" element={<StarredScreen />} />
           <Route path="important" element={<ImportantScreen />} />
           <Route path="labels/:labelName" element={<LabelView />} />
+          <Route path="trash" element={<TrashScreen />} />
         </Route>
       </Routes>
     </ThemeProvider>

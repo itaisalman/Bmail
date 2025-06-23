@@ -142,3 +142,11 @@
     font-size: 20px;
   }
 }
+
+.star-icon.disabled,
+.flag-icon.disabled,
+.trash-icon.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: default;
+}

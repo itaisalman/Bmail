@@ -11,6 +11,7 @@ function findFiftyMails(get_user, label_name, page) {
     Draft: get_user.drafts,
     Starred: get_user.starred,
     Important: get_user.important,
+    Trash: get_user.trash,
   };
 
   let mails = labelMap[label_name];

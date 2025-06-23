@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import logo from "../../logo.jpg";
 import {
   MdInbox,
@@ -24,8 +24,6 @@ const links = [
 ];
 
 function Sidebar({ onNewMailClick, onNewLabelClick, labels }) {
-  const navigate = useNavigate();
-
   return (
     <nav className="sidebar">
       <div className="top-container">
@@ -34,13 +32,15 @@ function Sidebar({ onNewMailClick, onNewLabelClick, labels }) {
         </div>
 
         <div className="top-actions">
-          <button
-            className="icon-button trash-button"
-            onClick={() => navigate("/main/trash")}
+          <NavLink
+            to="/main/trash"
+            className={({ isActive }) =>
+              `icon-button trash-button ${isActive ? "active" : ""}`
+            }
             title="Trash"
           >
             <MdDelete size={20} />
-          </button>
+          </NavLink>
 
           <button className="new-mail-button" onClick={onNewMailClick}>
             <MdCreate size={20} />

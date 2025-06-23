@@ -154,7 +154,7 @@ body.dark .sidebar {
   gap: 8px;
 }
 
-.trash-button {
+.icon-button.trash-button {
   background-color: #6c757d;
   color: white;
   border: none;
@@ -168,6 +168,12 @@ body.dark .sidebar {
   transition: background 0.3s ease;
 }
 
-.trash-button:hover {
+.icon-button.trash-button:hover {
   background-color: #ff4d4d;
+}
+
+.icon-button.trash-button.active {
+  background-color: #1e90ff;
+  box-shadow: 0 2px 10px rgba(30, 144, 255, 0.7);
+  color: white;
 }
