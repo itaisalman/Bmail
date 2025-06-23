@@ -16,11 +16,28 @@ body.dark .refresh-button {
 
 .inbox-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   padding: 10px;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
+}
+
+.empty-trash-button {
+  background-color: #6f6c6c42;
+  border: none;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.empty-trash-button:hover {
+  background-color: #e74c3c;
 }
 
 .pagination-top {
@@ -29,6 +46,7 @@ body.dark .refresh-button {
   gap: 12px;
   font-size: 1em;
   color: #555;
+  margin-left: auto;
 }
 
 .pagination-top button {

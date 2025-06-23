@@ -4,6 +4,8 @@ const controller = require("../controllers/mails");
 
 router.route("/").get(controller.getFiftyMails).post(controller.addMail);
 
+router.route("/trash").delete(controller.emptyTrash);
+
 router
   .route("/:id")
   .delete(controller.deleteMailById)

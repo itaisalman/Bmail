@@ -251,10 +251,19 @@ const moveMailToTrash = (user, mail_id) => {
   }
 };
 
+// delete mail
 const deleteSpecificMail = (user_id, mail_id) => {
   const user = users.getUserById(user_id);
   cleanupMailReferences(user, mail_id);
   moveMailToTrash(user, mail_id);
+};
+
+// Empty the user's trash array
+const emptyUserTrash = (user_id) => {
+  const user = users.getUserById(user_id);
+  if (!user) return false;
+  user.trash = [];
+  return true;
 };
 
 module.exports = {
@@ -267,4 +276,5 @@ module.exports = {
   getSpecificDraft,
   toggleStarred,
   toggleImportant,
+  emptyUserTrash,
 };

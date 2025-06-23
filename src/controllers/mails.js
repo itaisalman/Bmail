@@ -246,3 +246,16 @@ exports.toggleMailImportant = ({ headers, params }, res) => {
 
   res.sendStatus(204);
 };
+
+// Empty the user's trash array
+exports.emptyTrash = ({ headers }, res) => {
+  const user_id = headers.user;
+  if (!user_id) {
+    return res.status(400).json({ error: "Missing user header" });
+  }
+  const result = mails.emptyUserTrash(user_id);
+  if (!result) {
+    return res.status(404).json({ error: "User not found" });
+  }
+  res.sendStatus(204);
+};

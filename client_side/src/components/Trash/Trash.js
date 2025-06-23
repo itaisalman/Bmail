@@ -56,6 +56,7 @@ function TrashScreen() {
 
   // Load and show the full details of a selected mail
   const handleMailClick = async (id) => {
+    if (!id) return;
     const token = sessionStorage.getItem("jwt");
     const res = await fetch(`/api/mails/${id}`, {
       headers: {
@@ -66,6 +67,33 @@ function TrashScreen() {
     setSelectedMail(data);
   };
 
+  // When user clicks empty trash button
+  const handleEmptyTrash = async () => {
+    setError("");
+
+    try {
+      const token = sessionStorage.getItem("jwt");
+      if (!token) return;
+      const res = await fetch("/api/mails/trash", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: "bearer " + token,
+        },
+      });
+
+      if (!res.ok) throw new Error("Failed to empty trash");
+
+      // Updated values after delete all mails from user's trash
+      setSelectedMail(null);
+      setMessages([]);
+      setTotalCount(0);
+      setCurrentPage(1);
+    } catch (err) {
+      setError("Failed empty trash");
+    }
+  };
+
   return (
     <div className="inboxScreen">
       {!selectedMail && (
@@ -74,6 +102,7 @@ function TrashScreen() {
           totalCount={totalCount}
           onRefresh={fetchTrash}
           onPageChange={setCurrentPage}
+          onEmptyTrash={handleEmptyTrash}
         />
       )}
 
