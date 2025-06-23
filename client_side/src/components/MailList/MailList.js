@@ -31,7 +31,7 @@ function MailList({
             className="mail-preview"
             onClick={() => onSelect(mail.id)}
           >
-            {mail.sender_address && (
+            {/* {mail.sender_address && (
               <div className="mail-sender">
                 {mail.sender_address.split("@")[0]}
               </div>
@@ -40,7 +40,18 @@ function MailList({
             {mail.content && <div className="mail-snippet">{mail.content}</div>}
             {mail.date && (
               <div className="mail-date">{formatDateShort(mail.date)}</div>
-            )}
+            )} */}
+            <div className="mail-sender">
+              {mail.sender_address ? mail.sender_address.split("@")[0] : ""}
+            </div>
+
+            <div className="mail-subject">{mail.title ?? ""}</div>
+
+            <div className="mail-snippet">{mail.content ?? ""}</div>
+
+            <div className="mail-date">
+              {mail.date ? formatDateShort(mail.date) : ""}
+            </div>
             {onStarToggle && onImportantToggle && (
               <div className="mail-icons" onClick={(e) => e.stopPropagation()}>
                 <span

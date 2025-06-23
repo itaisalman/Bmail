@@ -1,0 +1,12 @@
+.inboxScreen {
+  display: flex;
+  flex-direction: column;
+  height: 85%;
+  overflow: hidden;
+}
+
+.inbox-body {
+  flex: 1;
+  overflow-y: auto;
+  height: 100%;
+}

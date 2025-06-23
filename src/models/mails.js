@@ -171,10 +171,8 @@ const getSpecificDraft = (user_id, draft_id) => {
 
 const deleteDraftById = (user_id, draft_id) => {
   const user = users.getUserById(user_id);
-  const draft = user.drafts.find((draft) => draft.id === draft_id);
-  if (!draft) return null;
-  const draft_index = user.draft.findIndex((draft) => draft.id === draft_id);
-  user.draft.splice(draft_index, 1);
+  const draft_index = user.drafts.findIndex((draft) => draft.id === draft_id);
+  user.drafts.splice(draft_index, 1);
   return;
 };
 

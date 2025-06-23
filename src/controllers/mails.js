@@ -46,9 +46,8 @@ function isDraft(draft_id, user_id) {
   if (draft_id.trim() !== draft_id || isNaN(+draft_id))
     return { statusCode: 400, error: "Invalid draft ID" };
 
-  const mail = mails.getSpecificDraft(+user_id, +draft_id);
-
-  if (!mail) return { statusCode: 404, error: "Draft not found" };
+  const draft = mails.getSpecificDraft(+user_id, +draft_id);
+  if (!draft) return { statusCode: 404, error: "Draft not found" };
 
   return null;
 }
@@ -119,7 +118,6 @@ exports.addMail = async ({ headers, body }, res) => {
       return res
         .status(400)
         .json({ error: "Your title or content contain a BLACKLISTED URL !" });
-    console.log(err);
     return res
       .status(500)
       .json({ error: "Internal server error while checking blacklist" });
@@ -198,9 +196,8 @@ exports.deleteDraftById = ({ headers, params }, res) => {
       .json({ error: returned_json.error });
 
   // Search the mail in the user's mails.
-  const draft = mails.deleteDraftById(+user_id, +draft_id);
-  if (!draft) return res.status(404).json({ error: "Draft Not Found" });
-  return res.status(200).json(draft);
+  mails.deleteDraftById(+user_id, +draft_id);
+  res.sendStatus(204);
 };
 
 // Search for all the mails that contain query.

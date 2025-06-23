@@ -5,15 +5,16 @@ import MailList from "../MailList/MailList";
 import "./Draft.css";
 
 function Draft() {
-  const [messages, setMessages] = useState([]);
+  const [drafts, setDrafts] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedDraft, setSelectedDraft] = useState(null);
   const [showComposer, setShowComposer] = useState(false);
 
-  const toggleComposer = () => {
+  const toggleComposer = async () => {
     setShowComposer((prev) => !prev);
+    await fetchDraft();
   };
 
   // Fetch inbox data from the server for the current page
@@ -37,18 +38,24 @@ function Draft() {
           setError(data.error);
           return;
         }
-        setMessages(data.mails);
+        setDrafts(data.mails);
         setTotalCount(data.totalCount);
       } catch (err) {
-        setError("Error loading inbox: " + err.message);
+        setError("Error loading draft: " + err.message);
       }
     },
     [currentPage]
   );
-  // Fetch inbox whenever the page changes
+  // Fetch drafts whenever the page changes
   useEffect(() => {
-    fetchDraft(currentPage);
-  }, [fetchDraft, currentPage]);
+    fetchDraft();
+  }, [fetchDraft]);
+
+  // useEffect(() => {
+  //   if (!showComposer) {
+  //     fetchDraft(currentPage); // explicitly pass latest page
+  //   }
+  // }, [showComposer, fetchDraft, currentPage]);
 
   // Load and show the full details of a selected mail
   const handleMailClick = async (id) => {
@@ -70,7 +77,7 @@ function Draft() {
 
   // Remove a mail from the current list and unmark it from starred/important
   const toggleDelete = (id) => {
-    setMessages((prev) => prev.filter((draft) => draft.id !== id));
+    setDrafts((prev) => prev.filter((draft) => draft.id !== id));
     if (selectedDraft?.id === id) {
       setSelectedDraft(null);
     }
@@ -89,7 +96,7 @@ function Draft() {
 
       <div className="inbox-body">
         <MailList
-          mails={messages}
+          mails={drafts}
           onSelect={handleMailClick}
           onDelete={toggleDelete}
         />
