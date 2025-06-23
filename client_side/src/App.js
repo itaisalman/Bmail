@@ -7,12 +7,13 @@ import MainScreen from "./pages/MainScreen";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import InboxScreen from "./components/Inbox/Inbox";
 import LabelView from "./components/Labels/LabelView";
+import StarredScreen from "./components/Star/Star";
 
 // Temporary components
 const Sent = () => <h1>Sent</h1>;
 const Spam = () => <h1>Spam</h1>;
 const Drafts = () => <h1>Drafts</h1>;
-const Starred = () => <h1>Starred</h1>;
+// const Starred = () => <h1>Starred</h1>;
 const Important = () => <h1>Important</h1>;
 
 function App() {
@@ -35,7 +36,7 @@ function App() {
           <Route path="sent" element={<Sent />} />
           <Route path="spam" element={<Spam />} />
           <Route path="drafts" element={<Drafts />} />
-          <Route path="starred" element={<Starred />} />
+          <Route path="starred" element={<StarredScreen />} />
           <Route path="important" element={<Important />} />
           <Route path="labels/:labelName" element={<LabelView />} />
         </Route>

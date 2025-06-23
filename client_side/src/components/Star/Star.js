@@ -5,7 +5,7 @@ import MailList from "../MailList/MailList";
 import MailDetails from "../ViewMail/ViewMail";
 import MailsControl from "../MailsControl/MailsControl";
 
-function InboxScreen() {
+function StarredScreen() {
   // State variables for inbox data and UI state
   const [messages, setMessages] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -21,8 +21,8 @@ function InboxScreen() {
     deleteMail,
   } = useOutletContext();
 
-  // Fetch inbox data from the server for the current page
-  const fetchInbox = useCallback(
+  // Fetch starred mails from the server for the current page
+  const fetchStarred = useCallback(
     async (page = currentPage) => {
       try {
         const token = sessionStorage.getItem("jwt");
@@ -33,26 +33,26 @@ function InboxScreen() {
           headers: {
             "Content-Type": "application/json",
             authorization: "bearer " + token,
-            label: "Inbox",
+            label: "Starred",
           },
         });
 
-        if (!res.ok) throw new Error("Failed to load inbox");
+        if (!res.ok) throw new Error("Failed to load starred");
         setError("");
         const data = await res.json();
         setMessages(data.mails);
         setTotalCount(data.totalCount);
       } catch (err) {
-        setError("Error loading inbox: " + err.message);
+        setError("Failed to load starred");
       }
     },
     [currentPage]
   );
 
-  // Fetch inbox whenever the page changes
+  // Fetch starred whenever the page changes
   useEffect(() => {
-    fetchInbox(currentPage);
-  }, [fetchInbox, currentPage]);
+    fetchStarred(currentPage);
+  }, [fetchStarred, currentPage]);
 
   // Load and show the full details of a selected mail
   const handleMailClick = async (id) => {
@@ -64,6 +64,12 @@ function InboxScreen() {
     });
     const data = await res.json();
     setSelectedMail(data);
+  };
+
+  const handleStarToggle = async (id) => {
+    await toggleStar(id);
+    setMessages((prev) => prev.filter((mail) => mail.id !== id));
+    if (selectedMail?.id === id) setSelectedMail(null);
   };
 
   const handleDelete = async (id) => {
@@ -78,7 +84,7 @@ function InboxScreen() {
         <MailsControl
           currentPage={currentPage}
           totalCount={totalCount}
-          onRefresh={fetchInbox}
+          onRefresh={fetchStarred}
           onPageChange={setCurrentPage}
         />
       )}
@@ -92,7 +98,7 @@ function InboxScreen() {
             starred={starredMails}
             important={importantMails}
             onSelect={handleMailClick}
-            onStarToggle={toggleStar}
+            onStarToggle={handleStarToggle}
             onImportantToggle={toggleImportant}
             onDelete={handleDelete}
           />
@@ -101,7 +107,7 @@ function InboxScreen() {
         <MailDetails
           mail={selectedMail}
           onClose={() => setSelectedMail(null)}
-          onStarToggle={toggleStar}
+          onStarToggle={handleStarToggle}
           onImportantToggle={toggleImportant}
           onDelete={handleDelete}
           starred={starredMails}
@@ -112,4 +118,4 @@ function InboxScreen() {
   );
 }
 
-export default InboxScreen;
+export default StarredScreen;
