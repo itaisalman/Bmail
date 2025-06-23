@@ -31,38 +31,43 @@ function MailList({
             className="mail-preview"
             onClick={() => onSelect(mail.id)}
           >
-            <div className="mail-sender">
-              {mail.sender_address.split("@")[0]}
-            </div>
-            <div className="mail-subject">{mail.title}</div>
-            <div className="mail-snippet">{mail.content}</div>
-            <div className="mail-date">{formatDateShort(mail.date)}</div>
-
-            <div className="mail-icons" onClick={(e) => e.stopPropagation()}>
-              <span
-                onClick={() => onStarToggle(mail.id)}
-                aria-label="Star mail"
-                className="star-icon"
-              >
-                {starred.has(mail.id) ? "⭐" : "☆"}
-              </span>
-              <span
-                onClick={() => onImportantToggle(mail.id)}
-                aria-label="Important mail"
-                className={`flag-icon ${
-                  important.has(mail.id) ? "important" : ""
-                }`}
-              >
-                {important.has(mail.id) ? <MdFlag /> : <MdOutlineFlag />}
-              </span>
-              <span
-                onClick={() => onDelete(mail.id)}
-                aria-label="Delete mail"
-                className="delete-icon"
-              >
-                <MdOutlineDelete />
-              </span>
-            </div>
+            {mail.sender_address && (
+              <div className="mail-sender">
+                {mail.sender_address.split("@")[0]}
+              </div>
+            )}
+            {mail.title && <div className="mail-subject">{mail.title}</div>}
+            {mail.content && <div className="mail-snippet">{mail.content}</div>}
+            {mail.date && (
+              <div className="mail-date">{formatDateShort(mail.date)}</div>
+            )}
+            {onStarToggle && onImportantToggle && (
+              <div className="mail-icons" onClick={(e) => e.stopPropagation()}>
+                <span
+                  onClick={() => onStarToggle(mail.id)}
+                  aria-label="Star mail"
+                  className="star-icon"
+                >
+                  {starred.has(mail.id) ? "⭐" : "☆"}
+                </span>
+                <span
+                  onClick={() => onImportantToggle(mail.id)}
+                  aria-label="Important mail"
+                  className={`flag-icon ${
+                    important.has(mail.id) ? "important" : ""
+                  }`}
+                >
+                  {important.has(mail.id) ? <MdFlag /> : <MdOutlineFlag />}
+                </span>
+                <span
+                  onClick={() => onDelete(mail.id)}
+                  aria-label="Delete mail"
+                  className="delete-icon"
+                >
+                  <MdOutlineDelete />
+                </span>
+              </div>
+            )}
           </div>
         ))}
       </ul>

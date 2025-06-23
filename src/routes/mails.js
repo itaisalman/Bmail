@@ -4,10 +4,13 @@ const controller = require("../controllers/mails");
 
 router.route("/").get(controller.getFiftyMails).post(controller.addMail);
 
-router.route("/draft")
-  .post(controller.createNewDraft);
+router.route("/draft").post(controller.createNewDraft);
 
-router.route("/draft/:id").get(controller.getDraftById);
+router
+  .route("/draft/:id")
+  .get(controller.getDraftById)
+  .delete(controller.deleteDraftById);
+
 router
   .route("/:id")
   .delete(controller.deleteMailById)

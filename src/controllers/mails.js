@@ -186,6 +186,23 @@ exports.getDraftById = ({ headers, params }, res) => {
   res.status(200).json(draft);
 };
 
+// Return a draft by its id.
+exports.deleteDraftById = ({ headers, params }, res) => {
+  const user_id = headers.user;
+  const draft_id = params.id;
+  let returned_json = checkDraftId(draft_id, user_id);
+
+  if (returned_json)
+    return res
+      .status(returned_json.statusCode)
+      .json({ error: returned_json.error });
+
+  // Search the mail in the user's mails.
+  const draft = mails.deleteDraftById(+user_id, +draft_id);
+  if (!draft) return res.status(404).json({ error: "Draft Not Found" });
+  return res.status(200).json(draft);
+};
+
 // Search for all the mails that contain query.
 // Return an array of all the mails answer the requirement.
 exports.searchMails = ({ headers, params }, res) => {
@@ -221,7 +238,8 @@ exports.patchMail = ({ headers, params, body }, res) => {
 exports.createNewDraft = ({ headers, body }, res) => {
   const user_id = headers.user;
   const { receiver, title, content } = body;
-  if (checkIfValid(receiver)) mails.createNewDraft(user_id, receiver, title, content);
+  if (checkIfValid(receiver))
+    mails.createNewDraft(user_id, receiver, title, content);
   else mails.createNewDraft(user_id, "", title, content);
   res.status(201).json({ message: "Draft created" });
-}
+};

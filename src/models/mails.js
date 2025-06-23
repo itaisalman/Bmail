@@ -169,6 +169,15 @@ const getSpecificDraft = (user_id, draft_id) => {
   return draft;
 };
 
+const deleteDraftById = (user_id, draft_id) => {
+  const user = users.getUserById(user_id);
+  const draft = user.drafts.find((draft) => draft.id === draft_id);
+  if (!draft) return null;
+  const draft_index = user.draft.findIndex((draft) => draft.id === draft_id);
+  user.draft.splice(draft_index, 1);
+  return;
+};
+
 // Find the specific mail that the user want.
 // Return null if doesnt exist.
 const getSpecificMail = (user_id, mail_id) => {
@@ -221,7 +230,7 @@ const createNewDraft = (sender, receiver, title, content) => {
   };
   sender_user.drafts.push(new_draft);
   return;
-}
+};
 
 module.exports = {
   getFiftyMails,
@@ -231,5 +240,6 @@ module.exports = {
   getMailsByQuery,
   editDraft,
   getSpecificDraft,
-  createNewDraft
+  createNewDraft,
+  deleteDraftById,
 };
