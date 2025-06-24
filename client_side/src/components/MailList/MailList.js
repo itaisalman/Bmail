@@ -23,6 +23,7 @@ function MailList({
   function formatDateShort(dateString) {
     return dateString ? dateString.split("T")[0] : "";
   }
+
   return (
     <div className="mail-list-wrapper">
       <div className="mail-list-header">
@@ -37,7 +38,7 @@ function MailList({
 
       <ul className="mail-list">
         {mails.map((mail) => (
-          <div
+          <li
             key={mail.id}
             className="mail-preview"
             onClick={() => onSelect(mail.id)}
@@ -47,8 +48,8 @@ function MailList({
                 ? mail.receiver.split("@")[0]
                 : mail.sender_address.split("@")[0]}
             </div>
-            {mail.title && <div className="mail-subject">{mail.title}</div>}
-            {mail.content && <div className="mail-snippet">{mail.content}</div>}
+            <div className="mail-subject">{mail.title || "(no title)"}</div>
+            <div className="mail-snippet">{mail.content || "(empty)"}</div>
             <div className="mail-date">{formatDateShort(mail.date)}</div>
             <div className="mail-icons" onClick={(e) => e.stopPropagation()}>
               <span
@@ -84,7 +85,7 @@ function MailList({
                 <MdOutlineDelete />
               </span>
             </div>
-          </div>
+          </li>
         ))}
       </ul>
     </div>
