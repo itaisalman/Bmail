@@ -21,21 +21,8 @@ function extractUrls(text) {
 }
 
 // Check if the requested arguments passed.
-function checkPostArguments({ receiver, draft }) {
-  if (draft === undefined || draft === null) {
-    return {
-      statusCode: 400,
-      error: "Missing draft field",
-    };
-  }
-  draft_string = draft.toString();
-  if (checkIfValid(receiver) && checkIfExist(receiver)) {
-    if (
-      draft_string.toLowerCase() === "true" ||
-      draft_string.toLowerCase() === "false"
-    )
-      return null;
-  }
+function checkPostArguments(receiver) {
+  if (checkIfValid(receiver) && checkIfExist(receiver)) return null;
   return {
     statusCode: 400,
     error: "Invalid/Missing Receiver",
@@ -55,13 +42,13 @@ function checkParamsId(id, user_id) {
 }
 
 // Check the mail ID in the user's drafts.
-function isDraft(mail_id, user_id) {
-  if (mail_id.trim() !== mail_id || isNaN(+mail_id))
-    return { statusCode: 400, error: "Invalid mail ID" };
+function isDraft(draft_id, user_id) {
+  if (draft_id.trim() !== draft_id || isNaN(+draft_id))
+    return { statusCode: 400, error: "Invalid draft ID" };
 
-  const mail = mails.getSpecificDraft(+user_id, +mail_id);
+  const mail = mails.getSpecificDraft(+user_id, +draft_id);
 
-  if (!mail) return { statusCode: 404, error: "Mail not found" };
+  if (!mail) return { statusCode: 404, error: "Draft not found" };
 
   return null;
 }
@@ -108,10 +95,8 @@ exports.getFiftyMails = ({ headers, query }, res) => {
 // Add it to both sender and receiver mail boxes.
 exports.addMail = async ({ headers, body }, res) => {
   const user_id = headers.user;
-  const { receiver, title, content, draft } = body;
-  let returned_json = checkPostArguments({ receiver, draft });
-  // Check if required arguments passed.
-
+  const { receiver, title, content } = body;
+  let returned_json = checkPostArguments(receiver);
   if (returned_json)
     return res
       .status(returned_json.statusCode)
@@ -123,21 +108,11 @@ exports.addMail = async ({ headers, body }, res) => {
   let command = "GET ";
   try {
     // Check if title or content contain bad url.
-    if (title) {
-      await checkUrls(extracted_title, command);
-    }
-    if (content) {
-      await checkUrls(extracted_content, command);
-    }
+    if (title) await checkUrls(extracted_title, command);
+    if (content) await checkUrls(extracted_content, command);
 
     // If all checks passed
-    const created_mail = mails.createMail(
-      +user_id,
-      receiver,
-      title,
-      content,
-      draft
-    );
+    const created_mail = mails.createMail(+user_id, receiver, title, content);
     res.status(created_mail.statusCode).json(created_mail.message);
   } catch (err) {
     if (err.message === "BLACKLISTED")
@@ -197,23 +172,20 @@ exports.patchMail = ({ headers, params, body }, res) => {
   // Check validation of the user ID passed.
   const user_id = headers.user;
   // Check validation of the id sent by params.
-  const mail_id = params.id;
-  let returned_json = isDraft(mail_id, user_id);
+  const draft_id = params.id;
+  let returned_json = isDraft(draft_id, user_id);
 
   if (returned_json)
     return res
       .status(returned_json.statusCode)
       .json({ error: returned_json.error });
 
-  const mail = mails.getSpecificDraft(+user_id, +mail_id);
+  const draft = mails.getSpecificDraft(+user_id, +draft_id);
   // Extract title and content from the body and patch the wanted field or throw appropriate status code.
-  const { title, content, draft } = body;
-
-  if (!title && !content && !draft)
-    return res.status(400).json({ error: "Title, Content or Draft required" });
-
+  const { receiver, title, content } = body;
   // Modify the draft as the user wished.
-  mails.editDraft(mail, title, content, draft);
+  if (checkIfValid(receiver)) mails.editDraft(draft, receiver, title, content);
+  else mails.editDraft(draft, "", title, content);
   res.sendStatus(204);
 };
 
@@ -258,4 +230,13 @@ exports.emptyTrash = ({ headers }, res) => {
     return res.status(404).json({ error: "User not found" });
   }
   res.sendStatus(204);
+};
+// Creating Draft.
+exports.createNewDraft = ({ headers, body }, res) => {
+  const user_id = headers.user;
+  const { receiver, title, content } = body;
+  if (checkIfValid(receiver))
+    mails.createNewDraft(user_id, receiver, title, content);
+  else mails.createNewDraft(user_id, "", title, content);
+  res.status(201).json({ message: "Draft created" });
 };

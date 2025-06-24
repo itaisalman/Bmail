@@ -103,7 +103,7 @@ input::placeholder {
   font-size: 1rem;
   font-family: "Poppins", sans-serif;
   border-radius: 12px;
-  border: 2px solid #022a60; /* הצבע שלך */
+  border: 2px solid #022a60;
   background-color: white;
   color: black;
   appearance: none;
@@ -175,7 +175,7 @@ input::placeholder {
 
 .input-error {
   border: 1px solid red;
-  background-color: #ffe5e5;
+  background-color: #f18787;
 }
 
 .image-upload {
