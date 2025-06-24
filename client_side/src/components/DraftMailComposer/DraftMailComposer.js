@@ -3,7 +3,7 @@ import MailComposer from "../MailComposer/MailComposer";
 
 // Wrapper component to MailComposer
 // When reaching MailComposer from the Create New Mail button - i want that MailComposer will do the functionality below on Send and X buttons.
-function ButtonMailComposer({ onClose }) {
+function DraftMailComposer({ draft, onClose }) {
   const [errors, setErrors] = useState("");
 
   // Send function.
@@ -17,7 +17,7 @@ function ButtonMailComposer({ onClose }) {
 
       try {
         const token = sessionStorage.getItem("jwt");
-        const res = await fetch("/api/mails", {
+        const post_mail_res = await fetch("/api/mails", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -25,26 +25,29 @@ function ButtonMailComposer({ onClose }) {
           },
           body: JSON.stringify(payload),
         });
-        const data = await res.json();
+        const posted_mail = await post_mail_res.json();
         // Return appropriate error message to the client.
-        if (!res.ok) {
-          if (res.status === 401)
-            setErrors("Token required. Please log in again.");
-          else if (
-            res.status === 400 &&
-            data.error === "Invalid/Missing Receiver"
-          )
-            setErrors("Invalid/Missing receiver!");
-          else setErrors("Server error: " + res.status);
-
+        if (!post_mail_res.ok) {
+          setErrors(posted_mail.error);
           return;
         }
-
+        const delete_draft_res = await fetch(`/api/mails/draft/${draft.id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: "bearer " + token,
+          },
+        });
+        if (!delete_draft_res.ok) {
+          const deleted_draft = await delete_draft_res.json();
+          setErrors(deleted_draft.error);
+          return;
+        }
         // Success
         setErrors("");
         onClose();
       } catch (err) {
-        setErrors("Failed to connect to the server. Please try again later.");
+        setErrors(err.message || "An unexpected error occurred");
       }
     } else {
       setErrors("Receiver is required!");
@@ -61,8 +64,8 @@ function ButtonMailComposer({ onClose }) {
     };
     try {
       const token = sessionStorage.getItem("jwt");
-      const res = await fetch("/api/mails/draft", {
-        method: "POST",
+      const res = await fetch(`/api/mails/${draft.id}`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           authorization: "bearer " + token,
@@ -70,13 +73,14 @@ function ButtonMailComposer({ onClose }) {
         body: JSON.stringify(payload),
       });
       if (!res.ok) {
-        // Server returned an error status
-        setErrors("Failed to save draft. Please try again.");
+        setErrors("Communication error with the server");
         return;
       }
+      // Success
+      setErrors("");
       onClose();
     } catch (err) {
-      setErrors("Failed to connect to the server. Please try again later.");
+      setErrors(err.message || "An unexpected error occurred");
     }
   };
 
@@ -86,11 +90,11 @@ function ButtonMailComposer({ onClose }) {
       onSend={onSend}
       onClose={onMailClose}
       errors={errors}
-      receiver={""}
-      title={""}
-      content={""}
+      receiver={draft.receiver}
+      title={draft.title}
+      content={draft.content}
     />
   );
 }
 
-export default ButtonMailComposer;
+export default DraftMailComposer;

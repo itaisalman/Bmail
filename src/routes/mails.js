@@ -9,6 +9,11 @@ router.route("/trash").delete(controller.emptyTrash);
 router.route("/draft").post(controller.createNewDraft);
 
 router
+  .route("/draft/:id")
+  .get(controller.getDraftById)
+  .delete(controller.deleteDraftById);
+
+router
   .route("/:id")
   .delete(controller.deleteMailById)
   .get(controller.getMailById)

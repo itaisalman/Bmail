@@ -46,9 +46,8 @@ function isDraft(draft_id, user_id) {
   if (draft_id.trim() !== draft_id || isNaN(+draft_id))
     return { statusCode: 400, error: "Invalid draft ID" };
 
-  const mail = mails.getSpecificDraft(+user_id, +draft_id);
-
-  if (!mail) return { statusCode: 404, error: "Draft not found" };
+  const draft = mails.getSpecificDraft(+user_id, +draft_id);
+  if (!draft) return { statusCode: 404, error: "Draft not found" };
 
   return null;
 }
@@ -119,7 +118,6 @@ exports.addMail = async ({ headers, body }, res) => {
       return res
         .status(400)
         .json({ error: "Your title or content contain a BLACKLISTED URL !" });
-    console.log(err);
     return res
       .status(500)
       .json({ error: "Internal server error while checking blacklist" });
@@ -156,6 +154,50 @@ exports.getMailById = ({ headers, params }, res) => {
   // Search the mail in the user's mails.
   const mail = mails.getSpecificMail(+user_id, +mail_id);
   res.status(200).json(mail);
+};
+
+// Check the mail ID in the user's mails.
+function checkDraftId(id, user_id) {
+  if (id.trim() !== id || isNaN(+id))
+    return { statusCode: 400, error: "Invalid draft ID" };
+
+  const draft = mails.getSpecificDraft(+user_id, +id);
+
+  if (!draft) return { statusCode: 404, error: "Draft not found" };
+
+  return null;
+}
+
+// Return a draft by its id.
+exports.getDraftById = ({ headers, params }, res) => {
+  const user_id = headers.user;
+  const draft_id = params.id;
+  let returned_json = checkDraftId(draft_id, user_id);
+
+  if (returned_json)
+    return res
+      .status(returned_json.statusCode)
+      .json({ error: returned_json.error });
+
+  // Search the mail in the user's mails.
+  const draft = mails.getSpecificDraft(+user_id, +draft_id);
+  res.status(200).json(draft);
+};
+
+// Return a draft by its id.
+exports.deleteDraftById = ({ headers, params }, res) => {
+  const user_id = headers.user;
+  const draft_id = params.id;
+  let returned_json = checkDraftId(draft_id, user_id);
+
+  if (returned_json)
+    return res
+      .status(returned_json.statusCode)
+      .json({ error: returned_json.error });
+
+  // Search the mail in the user's mails.
+  mails.deleteDraftById(+user_id, +draft_id);
+  res.sendStatus(204);
 };
 
 // Search for all the mails that contain query.
