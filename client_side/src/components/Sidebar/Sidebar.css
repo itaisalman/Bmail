@@ -200,3 +200,7 @@ body.dark .sidebar {
 body.dark .labels-list-container {
   scrollbar-color: #ffffff #000000;
 }
+
+a.sidebar-link.custom-label.active {
+  width: 50%;
+}

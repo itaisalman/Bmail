@@ -95,7 +95,7 @@ body.dark .label-composer-container {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 130px;
+  max-width: 80px;
   display: inline-block;
   vertical-align: middle;
   font-weight: normal;

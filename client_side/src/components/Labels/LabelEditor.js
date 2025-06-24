@@ -50,7 +50,7 @@ function LabelEditor({
         try {
           await updateLabel(labelToEdit.id, trimmedName);
         } catch (error) {
-          alert(error.message || "Failed to update label");
+          setError(error.message || "Failed to update label");
         }
         onLabelUpdated({ id: labelToEdit.id, name: trimmedName });
       } else {

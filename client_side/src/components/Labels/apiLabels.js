@@ -32,7 +32,6 @@ export const fetchLabels = async () => {
 
     return res.json();
   } catch (err) {
-    alert("Error fetching labels: " + err.message);
     throw err;
   }
 };
@@ -56,7 +55,6 @@ export const createLabel = async (name) => {
     const data = await res.json();
     throw new Error(data.error || "Failed to create label");
   } catch (err) {
-    alert("Error creating label: " + err.message);
     throw err;
   }
 };
@@ -75,7 +73,6 @@ export const updateLabel = async (id, name) => {
       throw new Error(data.error || "Failed to update label");
     }
   } catch (err) {
-    alert("Error updating label: " + err.message);
     throw err;
   }
 };
@@ -93,7 +90,6 @@ export const deleteLabel = async (id) => {
       throw new Error(data.error || "Failed to delete label");
     }
   } catch (err) {
-    alert("Error deleting label: " + err.message);
     throw err;
   }
 };
