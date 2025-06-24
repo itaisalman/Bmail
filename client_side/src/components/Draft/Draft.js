@@ -51,13 +51,6 @@ function Draft() {
     fetchDraft();
   }, [fetchDraft]);
 
-  // useEffect(() => {
-  //   if (!showComposer) {
-  //     fetchDraft(currentPage); // explicitly pass latest page
-  //   }
-  // }, [showComposer, fetchDraft, currentPage]);
-
-  // Load and show the full details of a selected mail
   const handleMailClick = async (id) => {
     const token = sessionStorage.getItem("jwt");
     const res = await fetch(`/api/mails/draft/${id}`, {
@@ -75,11 +68,26 @@ function Draft() {
     setShowComposer((prev) => !prev);
   };
 
-  // Remove a mail from the current list and unmark it from starred/important
-  const toggleDelete = (id) => {
-    setDrafts((prev) => prev.filter((draft) => draft.id !== id));
-    if (selectedDraft?.id === id) {
-      setSelectedDraft(null);
+  // Remove a draft from drafts array.
+  const toggleDelete = async (id) => {
+    try {
+      const token = sessionStorage.getItem("jwt");
+      const delete_draft_res = await fetch(`/api/mails/draft/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: "bearer " + token,
+        },
+      });
+      if (!delete_draft_res.ok) {
+        setError("Communication error with the server");
+        return;
+      }
+      // Success
+      setError("");
+      await fetchDraft();
+    } catch (err) {
+      setError(err.message || "An unexpected error occurred");
     }
   };
 
@@ -99,6 +107,7 @@ function Draft() {
           mails={drafts}
           onSelect={handleMailClick}
           onDelete={toggleDelete}
+          disabledActions={true}
         />
       </div>
       {showComposer && (

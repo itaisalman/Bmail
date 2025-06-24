@@ -25,7 +25,7 @@ const createUser = (
     labels: [],
     drafts: [],
     starred: [],
-    importanat: [],
+    important: [],
     spam: [],
     trash: [],
     theme: "light",

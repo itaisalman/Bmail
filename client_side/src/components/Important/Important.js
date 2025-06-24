@@ -5,8 +5,7 @@ import MailList from "../MailList/MailList";
 import MailDetails from "../ViewMail/ViewMail";
 import MailsControl from "../MailsControl/MailsControl";
 
-function InboxScreen() {
-  // State variables for inbox data and UI state
+function ImportantScreen() {
   const [messages, setMessages] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [error, setError] = useState("");
@@ -20,9 +19,7 @@ function InboxScreen() {
     toggleImportant,
     deleteMail,
   } = useOutletContext();
-
-  // Fetch inbox data from the server for the current page
-  const fetchInbox = useCallback(
+  const fetchImportant = useCallback(
     async (page = currentPage) => {
       try {
         const token = sessionStorage.getItem("jwt");
@@ -33,28 +30,27 @@ function InboxScreen() {
           headers: {
             "Content-Type": "application/json",
             authorization: "bearer " + token,
-            label: "Inbox",
+            label: "Important",
           },
         });
 
-        if (!res.ok) throw new Error("Failed to load inbox");
-        setError("");
+        if (!res.ok) throw new Error("Failed to load important mails");
+
         const data = await res.json();
         setMessages(data.mails);
         setTotalCount(data.totalCount);
+        setError("");
       } catch (err) {
-        setError("Error loading inbox: " + err.message);
+        setError(err.message);
       }
     },
     [currentPage]
   );
 
-  // Fetch inbox whenever the page changes
   useEffect(() => {
-    fetchInbox(currentPage);
-  }, [fetchInbox, currentPage]);
+    fetchImportant();
+  }, [fetchImportant]);
 
-  // Load and show the full details of a selected mail
   const handleMailClick = async (id) => {
     const token = sessionStorage.getItem("jwt");
     const res = await fetch(`/api/mails/${id}`, {
@@ -66,6 +62,14 @@ function InboxScreen() {
     setSelectedMail(data);
   };
 
+  const handleImportantToggle = async (id) => {
+    await toggleImportant(id);
+    // Remove mail localy
+    setMessages((prev) => prev.filter((mail) => mail.id !== id));
+    if (selectedMail?.id === id) setSelectedMail(null);
+  };
+
+  // Delete the mail from all labels
   const handleDelete = async (id) => {
     await deleteMail(id);
     setMessages((prev) => prev.filter((mail) => mail.id !== id));
@@ -78,7 +82,7 @@ function InboxScreen() {
         <MailsControl
           currentPage={currentPage}
           totalCount={totalCount}
-          onRefresh={fetchInbox}
+          onRefresh={fetchImportant}
           onPageChange={setCurrentPage}
         />
       )}
@@ -93,7 +97,7 @@ function InboxScreen() {
             important={importantMails}
             onSelect={handleMailClick}
             onStarToggle={toggleStar}
-            onImportantToggle={toggleImportant}
+            onImportantToggle={handleImportantToggle}
             onDelete={handleDelete}
           />
         </div>
@@ -102,7 +106,7 @@ function InboxScreen() {
           mail={selectedMail}
           onClose={() => setSelectedMail(null)}
           onStarToggle={toggleStar}
-          onImportantToggle={toggleImportant}
+          onImportantToggle={handleImportantToggle}
           onDelete={handleDelete}
           starred={starredMails}
           important={importantMails}
@@ -112,4 +116,4 @@ function InboxScreen() {
   );
 }
 
-export default InboxScreen;
+export default ImportantScreen;

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import "./MailComposer.css";
 
-function MailComposer({ onSend, onClose, errors, title, content }) {
-  const [to, setTo] = useState("");
+function MailComposer({ onSend, onClose, errors, receiver, title, content }) {
+  const [to, setTo] = useState(receiver);
   const [subject, setSubject] = useState(title);
   const [message, setMessage] = useState(content);
 

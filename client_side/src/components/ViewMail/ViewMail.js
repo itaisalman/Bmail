@@ -10,6 +10,7 @@ function MailDetails({
   onImportantToggle,
   starred,
   important,
+  disabledActions = false,
 }) {
   // Don't render anything if no mail is selected
   if (!mail) return null;
@@ -31,22 +32,32 @@ function MailDetails({
       <div className="mail-details-actions">
         <div className="mail-details-icons">
           <span
-            onClick={() => onStarToggle(mail.id)}
-            className="star-icon"
+            onClick={() => {
+              if (!disabledActions) onStarToggle(mail.id);
+            }}
+            className={`star-icon ${starred.has(mail.id) ? "active" : ""} ${
+              disabledActions ? "disabled" : ""
+            }`}
             title="Star"
           >
             {starred.has(mail.id) ? "⭐" : "☆"}
           </span>
           <span
-            onClick={() => onImportantToggle(mail.id)}
-            className={`flag-icon ${important.has(mail.id) ? "important" : ""}`}
+            onClick={() => {
+              if (!disabledActions) onImportantToggle(mail.id);
+            }}
+            className={`flag-icon ${
+              important.has(mail.id) ? "important" : ""
+            } ${disabledActions ? "disabled" : ""}`}
             title="Important"
           >
             {important.has(mail.id) ? <MdFlag /> : <MdOutlineFlag />}
           </span>
           <span
-            onClick={() => onDelete(mail.id)}
-            className="trash-icon"
+            onClick={() => {
+              if (!disabledActions) onDelete(mail.id);
+            }}
+            className={`trash-icon ${disabledActions ? "disabled" : ""}`}
             title="Delete"
           >
             <MdOutlineDelete />

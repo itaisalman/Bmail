@@ -1,7 +1,18 @@
 import { FiRefreshCw } from "react-icons/fi";
+import { useLocation } from "react-router-dom";
 import "./MailsControl.css";
 
-function MailsControl({ currentPage, totalCount, onRefresh, onPageChange }) {
+function MailsControl({
+  currentPage,
+  totalCount,
+  onRefresh,
+  onPageChange,
+  onEmptyTrash,
+}) {
+  // Check if the screen is trash to present empty trash button
+  const location = useLocation();
+  const showEmptyTrashBtn = location.pathname === "/main/trash";
+
   return (
     <div className="inbox-header">
       <button
@@ -11,6 +22,15 @@ function MailsControl({ currentPage, totalCount, onRefresh, onPageChange }) {
       >
         <FiRefreshCw size={20} />
       </button>
+      {showEmptyTrashBtn && (
+        <button
+          className="empty-trash-button"
+          onClick={onEmptyTrash}
+          aria-label="Empty Trash"
+        >
+          Empty Trash 🗑️
+        </button>
+      )}
 
       <div className="pagination-top">
         <button

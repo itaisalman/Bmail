@@ -28,16 +28,7 @@ function DraftMailComposer({ draft, onClose }) {
         const posted_mail = await post_mail_res.json();
         // Return appropriate error message to the client.
         if (!post_mail_res.ok) {
-          //   if (res.status === 401)
-          //     setErrors("Token required. Please log in again.");
-          //   else if (
-          //     res.status === 400 &&
-          //     data.error === "Invalid/Missing Receiver"
-          //   )
-          //     setErrors("Invalid/Missing receiver!");
-          //   else setErrors("Server error: " + res.status);
           setErrors(posted_mail.error);
-
           return;
         }
         const delete_draft_res = await fetch(`/api/mails/draft/${draft.id}`, {
@@ -72,9 +63,8 @@ function DraftMailComposer({ draft, onClose }) {
       content: message,
     };
     try {
-      const draft_id = draft.id;
       const token = sessionStorage.getItem("jwt");
-      const res = await fetch(`/api/mails/${draft_id}`, {
+      const res = await fetch(`/api/mails/${draft.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -100,6 +90,7 @@ function DraftMailComposer({ draft, onClose }) {
       onSend={onSend}
       onClose={onMailClose}
       errors={errors}
+      receiver={draft.receiver}
       title={draft.title}
       content={draft.content}
     />
