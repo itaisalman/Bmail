@@ -68,13 +68,17 @@ function validateUserData(data) {
   ) {
     return "Missing required user data";
   }
-  // Check names validation
-  if (!isValidName(first_name) || !isValidName(last_name)) {
-    return "Invalid name (letters only)";
+  // Check first name validation
+  if (!isValidName(first_name)) {
+    return "Invalid first name (letters only)";
+  }
+  // Check last name validation
+  if (!isValidName(last_name)) {
+    return "Invalid last name (letters only)";
   }
   // Check date validation
   if (!isValidBirthDate(birth_date)) {
-    return "Invalid birth_date format (DD/MM/YYYY)";
+    return "Invalid birth date";
   }
   // Check gender validation
   if (!isValidGender(gender)) {
