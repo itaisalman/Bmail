@@ -41,7 +41,7 @@ function ImportantScreen() {
         setTotalCount(data.totalCount);
         setError("");
       } catch (err) {
-        setError("Failed to load important mails");
+        setError(err.message);
       }
     },
     [currentPage]
