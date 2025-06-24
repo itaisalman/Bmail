@@ -104,24 +104,32 @@ exports.addMail = async ({ headers, body }, res) => {
   // Extract every url in title and content.
   const extracted_title = extractUrls(title);
   const extracted_content = extractUrls(content);
+
   let command = "GET ";
+  let isSpam = false;
+
   try {
     // Check if title or content contain bad url.
     if (title) await checkUrls(extracted_title, command);
     if (content) await checkUrls(extracted_content, command);
-
-    // If all checks passed
-    const created_mail = mails.createMail(+user_id, receiver, title, content);
-    res.status(created_mail.statusCode).json(created_mail.message);
   } catch (err) {
-    if (err.message === "BLACKLISTED")
+    if (err.message === "BLACKLISTED") {
+      isSpam = true;
+    } else {
       return res
-        .status(400)
-        .json({ error: "Your title or content contain a BLACKLISTED URL !" });
-    return res
-      .status(500)
-      .json({ error: "Internal server error while checking blacklist" });
+        .status(500)
+        .json({ error: "Internal server error while checking blacklist" });
+    }
   }
+  // Always create the mail.
+  const created_mail = mails.createMail(
+    +user_id,
+    receiver,
+    title,
+    content,
+    isSpam
+  );
+  res.status(created_mail.statusCode).json(created_mail.message);
 };
 
 // Delete a specific mail by its id.

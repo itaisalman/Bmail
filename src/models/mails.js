@@ -1,6 +1,7 @@
 let mail_counter = 0;
 let draft_counter = 0;
 const users = require("./users");
+const blacklist = require("./blacklist");
 
 // extract wanted label - where to get the mails from
 function findFiftyMails(get_user, label_name, page) {
@@ -110,7 +111,7 @@ const getFiftyMails = (user_id, label, page = 1) => {
 
 // Create a new mail
 // Define its properties and add them to both sender and receiver.
-const createMail = (sender, receiver, title, content) => {
+const createMail = (sender, receiver, title, content, isSpam) => {
   const sender_user = users.getUserById(sender);
   const receiver_user = users.getUserByUsername(receiver);
   const new_mail = {
@@ -127,7 +128,13 @@ const createMail = (sender, receiver, title, content) => {
     content: content,
     date: new Date(),
   };
-  pushToMailsArray(sender_user, receiver_user, new_mail);
+  sender_user.sent_mails.push(new_mail);
+  // If isSpam - mail contains "bad URL" and will be added to reciever's spam and not inbox
+  if (isSpam) {
+    receiver_user.spam.push(new_mail);
+  } else {
+    receiver_user.received_mails.push(new_mail);
+  }
   return { statusCode: 201, message: "Mail created" };
 };
 
