@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Outlet } from "react-router-dom";
 import ButtonMailComposer from "../components/ButtonMailComposer/ButtonMailComposer";
 import Sidebar from "../components/Sidebar/Sidebar";
@@ -12,10 +12,53 @@ function MainScreen() {
   const [showLabels, setShowLabels] = useState(false);
   // All user labels
   const [labels, setLabels] = useState([]);
+
   // Label selected for editing
   const [labelToEdit, setLabelToEdit] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [labelToDelete, setLabelToDelete] = useState(null);
+  const [starredMails, setStarredMails] = useState(new Set());
+  const [importantMails, setImportantMails] = useState(new Set());
+
+  const toggleStar = useCallback(async (id) => {
+    const token = sessionStorage.getItem("jwt");
+    if (!token) return;
+
+    const res = await fetch(`/api/mails/star/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: "bearer " + token,
+      },
+    });
+    if (!res.ok) return;
+
+    setStarredMails((prev) => {
+      const updated = new Set(prev);
+      updated.has(id) ? updated.delete(id) : updated.add(id);
+      return updated;
+    });
+  }, []);
+
+  const toggleImportant = useCallback(async (id) => {
+    const token = sessionStorage.getItem("jwt");
+    if (!token) return;
+
+    const res = await fetch(`/api/mails/important/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: "bearer " + token,
+      },
+    });
+    if (!res.ok) return;
+
+    setImportantMails((prev) => {
+      const updated = new Set(prev);
+      updated.has(id) ? updated.delete(id) : updated.add(id);
+      return updated;
+    });
+  }, []);
 
   const toggleComposer = () => {
     setShowComposer((prev) => !prev);
@@ -53,6 +96,32 @@ function MainScreen() {
       .then((data) => setLabels(data));
   }, []);
 
+  const deleteMail = async (id) => {
+    const token = sessionStorage.getItem("jwt");
+    if (!token) return;
+
+    const res = await fetch(`/api/mails/${id}`, {
+      method: "DELETE",
+      headers: {
+        authorization: "bearer " + token,
+      },
+    });
+
+    if (!res.ok) return;
+
+    setStarredMails((prev) => {
+      const updated = new Set(prev);
+      updated.delete(id);
+      return updated;
+    });
+
+    setImportantMails((prev) => {
+      const updated = new Set(prev);
+      updated.delete(id);
+      return updated;
+    });
+  };
+
   return (
     <div className="main-container">
       <Sidebar
@@ -70,7 +139,15 @@ function MainScreen() {
       />
       <main className="main-content">
         <Topbar />
-        <Outlet />
+        <Outlet
+          context={{
+            starredMails,
+            importantMails,
+            toggleStar,
+            toggleImportant,
+            deleteMail,
+          }}
+        />
       </main>
       {showComposer && <ButtonMailComposer onClose={toggleComposer} />}
       {showLabels && (

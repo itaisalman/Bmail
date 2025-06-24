@@ -4,9 +4,10 @@ const controller = require("../controllers/mails");
 
 router.route("/").get(controller.getFiftyMails).post(controller.addMail);
 
-router.route("/draft")
-  .post(controller.createNewDraft);
-  
+router.route("/trash").delete(controller.emptyTrash);
+
+router.route("/draft").post(controller.createNewDraft);
+
 router
   .route("/:id")
   .delete(controller.deleteMailById)
@@ -14,5 +15,8 @@ router
   .patch(controller.patchMail);
 
 router.route("/search/:query").get(controller.searchMails);
+
+router.route("/star/:id").patch(controller.toggleMailStar);
+router.route("/important/:id").patch(controller.toggleMailImportant);
 
 module.exports = router;

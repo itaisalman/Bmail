@@ -9,6 +9,7 @@ function MailList({
   onStarToggle,
   onImportantToggle,
   onDelete,
+  disabledActions = false,
 }) {
   // Format date string to "YYYY-MM-DD" (short format)
   function formatDateShort(dateString) {
@@ -40,25 +41,31 @@ function MailList({
 
             <div className="mail-icons" onClick={(e) => e.stopPropagation()}>
               <span
-                onClick={() => onStarToggle(mail.id)}
+                onClick={() => {
+                  if (!disabledActions) onStarToggle(mail.id);
+                }}
                 aria-label="Star mail"
-                className="star-icon"
+                className={`star-icon ${disabledActions ? "disabled" : ""}`}
               >
                 {starred.has(mail.id) ? "⭐" : "☆"}
               </span>
               <span
-                onClick={() => onImportantToggle(mail.id)}
+                onClick={() => {
+                  if (!disabledActions) onImportantToggle(mail.id);
+                }}
                 aria-label="Important mail"
                 className={`flag-icon ${
                   important.has(mail.id) ? "important" : ""
-                }`}
+                } ${disabledActions ? "disabled" : ""}`}
               >
                 {important.has(mail.id) ? <MdFlag /> : <MdOutlineFlag />}
               </span>
               <span
-                onClick={() => onDelete(mail.id)}
+                onClick={() => {
+                  if (!disabledActions) onDelete(mail.id);
+                }}
                 aria-label="Delete mail"
-                className="delete-icon"
+                className={`delete-icon ${disabledActions ? "disabled" : ""}`}
               >
                 <MdOutlineDelete />
               </span>
