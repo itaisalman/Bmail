@@ -136,3 +136,12 @@
   overflow-y: auto;
   height: 100%;
 }
+
+.star-icon.disabled,
+.flag-icon.disabled,
+.delete-icon.disabled {
+  color: gray;
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: default;
+}

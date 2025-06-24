@@ -9,6 +9,7 @@ import {
   MdStar,
   MdPriorityHigh,
   MdCreate,
+  MdDelete,
 } from "react-icons/md";
 import "./Sidebar.css";
 
@@ -29,10 +30,23 @@ function Sidebar({ onNewMailClick, onNewLabelClick, labels }) {
         <div className="logo-container">
           <img src={logo} alt="Bmail logo" className="logo" />
         </div>
-        <button className="new-mail-button" onClick={onNewMailClick}>
-          <MdCreate size={20} />
-          <span className="new-mail-text">New Mail</span>
-        </button>
+
+        <div className="top-actions">
+          <NavLink
+            to="/main/trash"
+            className={({ isActive }) =>
+              `icon-button trash-button ${isActive ? "active" : ""}`
+            }
+            title="Trash"
+          >
+            <MdDelete size={20} />
+          </NavLink>
+
+          <button className="new-mail-button" onClick={onNewMailClick}>
+            <MdCreate size={20} />
+            <span className="new-mail-text">New Mail</span>
+          </button>
+        </div>
       </div>
 
       {links.map(({ name, path, icon }) => (

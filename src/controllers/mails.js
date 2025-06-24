@@ -189,11 +189,54 @@ exports.patchMail = ({ headers, params, body }, res) => {
   res.sendStatus(204);
 };
 
+exports.toggleMailStar = ({ headers, params }, res) => {
+  const user_id = headers.user;
+  const mail_id = params.id;
+  let returned_json = checkParamsId(mail_id, user_id);
+  if (returned_json)
+    return res
+      .status(returned_json.statusCode)
+      .json({ error: returned_json.error });
+
+  const result = mails.toggleStarred(+user_id, +mail_id);
+  if (!result) return res.status(404).json({ error: "Mail not found" });
+
+  res.sendStatus(204);
+};
+
+exports.toggleMailImportant = ({ headers, params }, res) => {
+  const user_id = headers.user;
+  const mail_id = params.id;
+  let returned_json = checkParamsId(mail_id, user_id);
+  if (returned_json)
+    return res
+      .status(returned_json.statusCode)
+      .json({ error: returned_json.error });
+
+  const result = mails.toggleImportant(+user_id, +mail_id);
+  if (!result) return res.status(404).json({ error: "Mail not found" });
+
+  res.sendStatus(204);
+};
+
+// Empty the user's trash array
+exports.emptyTrash = ({ headers }, res) => {
+  const user_id = headers.user;
+  if (!user_id) {
+    return res.status(400).json({ error: "Missing user header" });
+  }
+  const result = mails.emptyUserTrash(user_id);
+  if (!result) {
+    return res.status(404).json({ error: "User not found" });
+  }
+  res.sendStatus(204);
+};
 // Creating Draft.
 exports.createNewDraft = ({ headers, body }, res) => {
   const user_id = headers.user;
   const { receiver, title, content } = body;
-  if (checkIfValid(receiver)) mails.createNewDraft(user_id, receiver, title, content);
+  if (checkIfValid(receiver))
+    mails.createNewDraft(user_id, receiver, title, content);
   else mails.createNewDraft(user_id, "", title, content);
   res.status(201).json({ message: "Draft created" });
-}
+};

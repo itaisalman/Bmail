@@ -73,7 +73,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px;
+  padding: 10px 16px;
+  gap: 8px;
 }
 
 .new-mail-button {
@@ -144,4 +145,34 @@ body.dark .sidebar {
   color: #f3f4f6;
   font-size: 14px;
   padding: 4px 8px;
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-button.trash-button {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  height: 40px;
+  width: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+}
+
+.icon-button.trash-button:hover {
+  background-color: #ff4d4d;
+}
+
+.icon-button.trash-button.active {
+  background-color: #1e90ff;
+  box-shadow: 0 2px 10px rgba(30, 144, 255, 0.7);
+  color: white;
 }

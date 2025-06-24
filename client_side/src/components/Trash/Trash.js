@@ -5,7 +5,7 @@ import MailList from "../MailList/MailList";
 import MailDetails from "../ViewMail/ViewMail";
 import MailsControl from "../MailsControl/MailsControl";
 
-function InboxScreen() {
+function TrashScreen() {
   // State variables for inbox data and UI state
   const [messages, setMessages] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -14,15 +14,15 @@ function InboxScreen() {
   const [currentPage, setCurrentPage] = useState(1);
 
   const {
+    handleStarToggle,
+    handleImportantToggle,
+    handleDelete,
     starredMails,
     importantMails,
-    toggleStar,
-    toggleImportant,
-    deleteMail,
   } = useOutletContext();
 
   // Fetch inbox data from the server for the current page
-  const fetchInbox = useCallback(
+  const fetchTrash = useCallback(
     async (page = currentPage) => {
       try {
         const token = sessionStorage.getItem("jwt");
@@ -33,17 +33,17 @@ function InboxScreen() {
           headers: {
             "Content-Type": "application/json",
             authorization: "bearer " + token,
-            label: "Inbox",
+            label: "Trash",
           },
         });
 
-        if (!res.ok) throw new Error("Failed to load inbox");
-        setError("");
+        if (!res.ok) throw new Error("Failed to load trash");
         const data = await res.json();
         setMessages(data.mails);
         setTotalCount(data.totalCount);
+        setError("");
       } catch (err) {
-        setError("Error loading inbox: " + err.message);
+        setError("Failed to load trash");
       }
     },
     [currentPage]
@@ -51,11 +51,12 @@ function InboxScreen() {
 
   // Fetch inbox whenever the page changes
   useEffect(() => {
-    fetchInbox(currentPage);
-  }, [fetchInbox, currentPage]);
+    fetchTrash(currentPage);
+  }, [fetchTrash, currentPage]);
 
   // Load and show the full details of a selected mail
   const handleMailClick = async (id) => {
+    if (!id) return;
     const token = sessionStorage.getItem("jwt");
     const res = await fetch(`/api/mails/${id}`, {
       headers: {
@@ -66,10 +67,31 @@ function InboxScreen() {
     setSelectedMail(data);
   };
 
-  const handleDelete = async (id) => {
-    await deleteMail(id);
-    setMessages((prev) => prev.filter((mail) => mail.id !== id));
-    if (selectedMail?.id === id) setSelectedMail(null);
+  // When user clicks empty trash button
+  const handleEmptyTrash = async () => {
+    setError("");
+
+    try {
+      const token = sessionStorage.getItem("jwt");
+      if (!token) return;
+      const res = await fetch("/api/mails/trash", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: "bearer " + token,
+        },
+      });
+
+      if (!res.ok) throw new Error("Failed to empty trash");
+
+      // Updated values after delete all mails from user's trash
+      setSelectedMail(null);
+      setMessages([]);
+      setTotalCount(0);
+      setCurrentPage(1);
+    } catch (err) {
+      setError("Failed empty trash");
+    }
   };
 
   return (
@@ -78,8 +100,9 @@ function InboxScreen() {
         <MailsControl
           currentPage={currentPage}
           totalCount={totalCount}
-          onRefresh={fetchInbox}
+          onRefresh={fetchTrash}
           onPageChange={setCurrentPage}
+          onEmptyTrash={handleEmptyTrash}
         />
       )}
 
@@ -92,24 +115,26 @@ function InboxScreen() {
             starred={starredMails}
             important={importantMails}
             onSelect={handleMailClick}
-            onStarToggle={toggleStar}
-            onImportantToggle={toggleImportant}
+            onStarToggle={handleStarToggle}
+            onImportantToggle={handleImportantToggle}
             onDelete={handleDelete}
+            disabledActions={true}
           />
         </div>
       ) : (
         <MailDetails
           mail={selectedMail}
           onClose={() => setSelectedMail(null)}
-          onStarToggle={toggleStar}
-          onImportantToggle={toggleImportant}
+          onStarToggle={handleStarToggle}
+          onImportantToggle={handleImportantToggle}
           onDelete={handleDelete}
           starred={starredMails}
           important={importantMails}
+          disabledActions={true}
         />
       )}
     </div>
   );
 }
 
-export default InboxScreen;
+export default TrashScreen;
