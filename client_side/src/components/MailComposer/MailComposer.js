@@ -1,10 +1,10 @@
 import { useState } from "react";
 import "./MailComposer.css";
 
-function MailComposer({ onSend, onClose, errors }) {
-  const [to, setTo] = useState("");
-  const [subject, setSubject] = useState("");
-  const [message, setMessage] = useState("");
+function MailComposer({ onSend, onClose, errors, receiver, title, content }) {
+  const [to, setTo] = useState(receiver);
+  const [subject, setSubject] = useState(title);
+  const [message, setMessage] = useState(content);
 
   const handleDraft = async (e) => {
     e.preventDefault();

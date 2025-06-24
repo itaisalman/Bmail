@@ -1,4 +1,5 @@
 import { MdOutlineFlag, MdFlag, MdOutlineDelete } from "react-icons/md";
+import { useLocation } from "react-router-dom";
 import "./MailList.css";
 
 function MailList({
@@ -11,6 +12,13 @@ function MailList({
   onDelete,
   disabledActions = false,
 }) {
+  const location = useLocation();
+  // We use this component for several usages.
+  // When the user is on drafts/sent labels, we would like to show the appropriate data on screen.
+  const showReceiver =
+    location.pathname === "/main/drafts" || location.pathname === "/main/sent";
+  const showDelete = location.pathname === "/main/drafts";
+
   // Format date string to "YYYY-MM-DD" (short format)
   function formatDateShort(dateString) {
     return dateString ? dateString.split("T")[0] : "";
@@ -18,7 +26,9 @@ function MailList({
   return (
     <div className="mail-list-wrapper">
       <div className="mail-list-header">
-        <span className="header-sender">Sender</span>
+        <span className="header-sender">
+          {showReceiver ? "Receiver" : "Sender"}
+        </span>
         <span className="header-subject">Title</span>
         <span className="header-snippet">Content</span>
         <span className="header-date">Date</span>
@@ -33,12 +43,13 @@ function MailList({
             onClick={() => onSelect(mail.id)}
           >
             <div className="mail-sender">
-              {mail.sender_address.split("@")[0]}
+              {showReceiver
+                ? mail.receiver.split("@")[0]
+                : mail.sender_address.split("@")[0]}
             </div>
-            <div className="mail-subject">{mail.title}</div>
-            <div className="mail-snippet">{mail.content}</div>
+            {mail.title && <div className="mail-subject">{mail.title}</div>}
+            {mail.content && <div className="mail-snippet">{mail.content}</div>}
             <div className="mail-date">{formatDateShort(mail.date)}</div>
-
             <div className="mail-icons" onClick={(e) => e.stopPropagation()}>
               <span
                 onClick={() => {
@@ -47,25 +58,28 @@ function MailList({
                 aria-label="Star mail"
                 className={`star-icon ${disabledActions ? "disabled" : ""}`}
               >
-                {starred.has(mail.id) ? "⭐" : "☆"}
+                {starred?.has(mail.id) ? "⭐" : "☆"}
               </span>
+
               <span
                 onClick={() => {
                   if (!disabledActions) onImportantToggle(mail.id);
                 }}
                 aria-label="Important mail"
                 className={`flag-icon ${
-                  important.has(mail.id) ? "important" : ""
+                  important?.has(mail.id) ? "important" : ""
                 } ${disabledActions ? "disabled" : ""}`}
               >
-                {important.has(mail.id) ? <MdFlag /> : <MdOutlineFlag />}
+                {important?.has(mail.id) ? <MdFlag /> : <MdOutlineFlag />}
               </span>
               <span
                 onClick={() => {
-                  if (!disabledActions) onDelete(mail.id);
+                  if (!disabledActions || showDelete) onDelete(mail.id);
                 }}
                 aria-label="Delete mail"
-                className={`delete-icon ${disabledActions ? "disabled" : ""}`}
+                className={`delete-icon ${
+                  !disabledActions || showDelete ? "" : "disabled"
+                }`}
               >
                 <MdOutlineDelete />
               </span>
