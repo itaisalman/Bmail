@@ -86,6 +86,7 @@ function ButtonMailComposer({ onClose }) {
       onSend={onSend}
       onClose={onMailClose}
       errors={errors}
+      receiver={""}
       title={""}
       content={""}
     />
