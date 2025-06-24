@@ -97,6 +97,32 @@ function MainScreen() {
     });
   };
 
+  const moveToSpam = async (id) => {
+    const token = sessionStorage.getItem("jwt");
+    if (!token) return;
+
+    const res = await fetch(`/api/mails/spam/${id}`, {
+      method: "POST",
+      headers: {
+        authorization: "bearer " + token,
+      },
+    });
+
+    if (!res.ok) return;
+
+    setStarredMails((prev) => {
+      const updated = new Set(prev);
+      updated.delete(id);
+      return updated;
+    });
+
+    setImportantMails((prev) => {
+      const updated = new Set(prev);
+      updated.delete(id);
+      return updated;
+    });
+  };
+
   return (
     <div className="main-container">
       <Sidebar

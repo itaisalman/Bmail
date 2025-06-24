@@ -236,14 +236,14 @@ const cleanupMailReferences = (user, mail_id) => {
 };
 
 // Remove from inbox or sent and add to trash
-const moveMailToTrash = (user, mail_id) => {
+const spamOrTrashMail = (user, mail_id, mail_array) => {
   // If mail was deleted from inbox
   const received_index = user.received_mails.findIndex(
     (mail) => mail.id === mail_id
   );
   if (received_index !== -1) {
     const mail = user.received_mails[received_index];
-    user.trash.push(mail);
+    mail_array.push(mail);
     user.received_mails.splice(received_index, 1);
     return;
   }
@@ -252,7 +252,7 @@ const moveMailToTrash = (user, mail_id) => {
   const sent_index = user.sent_mails.findIndex((mail) => mail.id === mail_id);
   if (sent_index !== -1) {
     const mail = user.sent_mails[sent_index];
-    user.trash.push(mail);
+    mail_array.push(mail);
     user.sent_mails.splice(sent_index, 1);
   }
 };
@@ -261,7 +261,7 @@ const moveMailToTrash = (user, mail_id) => {
 const deleteSpecificMail = (user_id, mail_id) => {
   const user = users.getUserById(user_id);
   cleanupMailReferences(user, mail_id);
-  moveMailToTrash(user, mail_id);
+  spamOrTrashMail(user, mail_id, user.trash);
 };
 
 // Empty the user's trash array
@@ -285,6 +285,12 @@ const createNewDraft = (sender, receiver, title, content) => {
   return;
 };
 
+const mailToSpam = (user_id, mail_id) => {
+  const user = users.getUserById(user_id);
+  cleanupMailReferences(user, mail_id);
+  spamOrTrashMail(user, mail_id, user.spam);
+};
+
 module.exports = {
   getFiftyMails,
   createMail,
@@ -298,4 +304,5 @@ module.exports = {
   toggleStarred,
   toggleImportant,
   emptyUserTrash,
+  mailToSpam,
 };

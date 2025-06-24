@@ -290,3 +290,18 @@ exports.createNewDraft = ({ headers, body }, res) => {
   else mails.createNewDraft(user_id, "", title, content);
   res.status(201).json({ message: "Draft created" });
 };
+
+exports.moveMailToSpam = ({ headers, params }, res) => {
+  const user_id = headers.user;
+  const mail_id = params.id;
+  let returned_json = checkParamsId(mail_id, user_id);
+  if (returned_json)
+    return res
+      .status(returned_json.statusCode)
+      .json({ error: returned_json.error });
+  const result = mails.mailToSpam(user_id, mail_id);
+  if (!result) {
+    return res.status(404).json({ error: "User not found" });
+  }
+  res.sendStatus(201);
+};
