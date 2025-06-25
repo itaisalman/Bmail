@@ -3,10 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { ThemeContext } from "../../ThemeContext";
 import { FaSearch } from "react-icons/fa";
 import "./Topbar.css";
+import LiveSearchResult from "../LiveSearchResult/LiveSearchResult";
 
 function Topbar() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const { toggleTheme } = useContext(ThemeContext);
@@ -55,6 +57,7 @@ function Topbar() {
       );
       const data = await res.json();
       setResults(data);
+      setShowDropdown(true);
     } catch (err) {
       alert(err.message);
     }
@@ -67,6 +70,37 @@ function Topbar() {
   useEffect(() => {
     fetchTopbar();
   }, []);
+
+  useEffect(() => {
+    if (!query.trim()) {
+      setResults([]);
+      setShowDropdown(false);
+      return;
+    }
+
+    const timeout = setTimeout(async () => {
+      try {
+        const token = sessionStorage.getItem("jwt");
+        const res = await fetch(
+          `/api/mails/search/${encodeURIComponent(query)}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              authorization: "bearer " + token,
+            },
+          }
+        );
+        const data = await res.json();
+        setResults(data);
+        setShowDropdown(true);
+      } catch (err) {
+        console.error("Search error:", err.message);
+      }
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [query]);
 
   return (
     <div className="inbox-header">
@@ -81,18 +115,61 @@ function Topbar() {
           <span className="username">{user.first_name}</span>
         </>
       )}
-      <form className="search-container" onSubmit={handleSearch}>
-        <input
-          type="text"
-          placeholder="Search in email"
-          className="search-input"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        <button type="submit" className="search-button" aria-label="Search">
-          <FaSearch />
-        </button>
-      </form>
+      {/* <div className="search-wrapper">
+        <form className="search-container" onSubmit={handleSearch}>
+          <input
+            type="text"
+            placeholder="Search in email"
+            className="search-input"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onFocus={() => query && setShowDropdown(true)}
+          />
+          <button type="submit" className="search-button" aria-label="Search">
+            <FaSearch />
+          </button>
+        </form>
+        {showDropdown && (
+          <LiveSearchResult
+            results={results}
+            onSelect={(item) => {
+              setQuery(item.subject || "");
+              setShowDropdown(false);
+              navigate(`/mail/${item.id}`);
+            }}
+          />
+        )}
+      </div> */}
+      <div className="search-container">
+        <form onSubmit={handleSearch}>
+          <input
+            type="text"
+            placeholder="Search in email"
+            className="search-input"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onFocus={() => query && setShowDropdown(true)}
+          />
+          <button type="submit" className="search-button" aria-label="Search">
+            <FaSearch />
+          </button>
+        </form>
+
+        {showDropdown && (
+          <div className="live-search-dropdown">
+            <LiveSearchResult results={results} />
+          </div>
+          // <LiveSearchResult
+          //   className="live-search-dropdown"
+          //   results={results}
+          //   // onSelect={(item) => {
+          //   //   setQuery(item.subject || "");
+          //   //   setShowDropdown(false);
+          //   //   navigate(`/mail/${item.id}`);
+          //   // }}
+          // />
+        )}
+      </div>
 
       {/* Logout button */}
       <button className="logout-button" onClick={handleLogout}>
