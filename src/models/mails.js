@@ -253,32 +253,9 @@ const deleteSpecificMail = (user_id, mail_id) => {
 // Move mail to user's spam.
 const mailToSpam = (user_id, mail_id) => {
   const user = users.getUserById(user_id);
-
-  // מדפיס מצב לפני כל פעולה
-  console.log("Before cleanup:", {
-    received_mails: user.received_mails,
-    sent_mails: user.sent_mails,
-    spam: user.spam,
-    trash: user.trash,
-  });
-
   const wanted_mail = getSpecificMail(user_id, mail_id);
-
-  if (!wanted_mail) {
-    console.error("Mail not found!");
-    return;
-  }
-
+  if (!wanted_mail) return;
   cleanupMailReferences(user, mail_id);
-
-  // שוב מדפיס אחרי הניקוי
-  console.log("After cleanup:", {
-    received_mails: user.received_mails,
-    sent_mails: user.sent_mails,
-    spam: user.spam,
-    trash: user.trash,
-  });
-
   user.spam.push(wanted_mail);
 };
 
