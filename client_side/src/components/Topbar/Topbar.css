@@ -111,3 +111,11 @@ body.dark .logout-button {
 .search-button:hover {
   background-color: #0056b3;
 }
+
+.username {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+  display: inline-block;
+}

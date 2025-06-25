@@ -6,6 +6,7 @@ import "./Topbar.css";
 
 function Topbar() {
   const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const { toggleTheme } = useContext(ThemeContext);
@@ -42,6 +43,7 @@ function Topbar() {
       const token = sessionStorage.getItem("jwt");
       if (!token) return;
       const res = await fetch(
+        // Used encodeURIComponent in order to search for anything the user wants without misbehaviour
         `/api/mails/search/${encodeURIComponent(query)}`,
         {
           method: "GET",
@@ -51,14 +53,16 @@ function Topbar() {
           },
         }
       );
-
       const data = await res.json();
-      console.log(data);
+      setResults(data);
     } catch (err) {
-      console.log(err);
-      return;
+      alert(err.message);
     }
   };
+
+  useEffect(() => {
+    console.log("Updated results:", results);
+  }, [results]);
 
   useEffect(() => {
     fetchTopbar();
