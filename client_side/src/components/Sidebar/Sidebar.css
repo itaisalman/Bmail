@@ -137,28 +137,6 @@ body.dark .sidebar {
   width: 100%;
 }
 
-.custom-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
-  margin-left: 10px;
-  color: #f3f4f6;
-  font-size: 14px;
-  width: 100%;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background-color 0.2s;
-}
-
-.sidebar-label-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-left: 1rem;
-  margin-bottom: 4px;
-}
-
 .label-edit-button,
 .label-delete-button {
   background: none;
@@ -170,19 +148,6 @@ body.dark .sidebar {
 .label-edit-button:hover,
 .label-delete-button:hover {
   color: red;
-}
-.sidebar-label-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.label-actions button {
-  display: inline;
-  gap: 4px;
-  margin-left: auto;
-  padding-right: 8px;
-  align-items: center;
 }
 
 .label-edit-input {
@@ -197,6 +162,7 @@ body.dark .sidebar {
 .labels-list-container {
   max-height: 100px;
   overflow-y: auto;
+  overflow-x: hidden;
   padding-right: 5px;
   scrollbar-width: thin;
   scrollbar-color: #ffffff #2f3542;
@@ -204,14 +170,6 @@ body.dark .sidebar {
 
 body.dark .labels-list-container {
   scrollbar-color: #ffffff #000000;
-}
-
-.sidebar-link.custom-label.active {
-  width: 50%;
-}
-
-.sidebar-link.custom-label:hover {
-  width: 50%;
 }
 
 .top-actions {

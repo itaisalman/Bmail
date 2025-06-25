@@ -37,35 +37,39 @@ function LabelItem({ label, onEditLabel, onDeleteLabel, onStartEdit }) {
           autoFocus
         />
       ) : (
-        <NavLink
-          to={`/main/labels/${label.name}`}
-          className={({ isActive }) =>
-            `sidebar-link custom-label ${isActive ? "active" : ""}`
-          }
-        >
-          <span className="icon">🏷️</span>
-          <span className="label-name" title={label.name}>
-            {label.name}
-          </span>
-        </NavLink>
-      )}
+        <>
+          <NavLink
+            to={`/main/labels/${label.name}`}
+            className={({ isActive }) =>
+              `label-link ${isActive ? "active" : ""}`
+            }
+          >
+            <div className="label-main">
+              <span className="icon">🏷️</span>
+              <span className="label-name" title={label.name}>
+                {label.name}
+              </span>
+            </div>
+          </NavLink>
 
-      {/* Edit and delete buttons */}
-      <div className="label-actions">
-        <button
-          className="label-edit-button"
-          onClick={() => onStartEdit(label)}
-        >
-          ✏️
-        </button>
-        <button
-          className="label-delete-button"
-          title="Delete label"
-          onClick={() => onDeleteLabel(label)}
-        >
-          🗑️
-        </button>
-      </div>
+          {/* Edit and delete buttons */}
+          <div className="label-actions">
+            <button
+              className="label-edit-button"
+              onClick={() => onStartEdit(label)}
+            >
+              ✏️
+            </button>
+            <button
+              className="label-delete-button"
+              title="Delete label"
+              onClick={() => onDeleteLabel(label)}
+            >
+              🗑️
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
