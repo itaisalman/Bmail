@@ -177,7 +177,6 @@ const getSpecificMail = (user_id, mail_id) => {
     const mail = getMailFromArray(mail_id, source);
     if (mail) return mail;
   }
-
   return null;
 };
 
@@ -231,7 +230,6 @@ const removeMailFromArray = (array, mail_id) => {
 
 // Remove mail from all labels
 const cleanupMailReferences = (user, mail_id) => {
-  const wanted_mail = getSpecificMail(user.id, mail_id);
   removeMailFromArray(user.sent_mails, mail_id);
   removeMailFromArray(user.received_mails, mail_id);
   removeMailFromArray(user.starred, mail_id);
@@ -242,20 +240,45 @@ const cleanupMailReferences = (user, mail_id) => {
   user.labels.forEach((label) => {
     label.mails = label.mails.filter((mail) => mail.id !== mail_id);
   });
-  return wanted_mail;
 };
 
 // delete mail
 const deleteSpecificMail = (user_id, mail_id) => {
   const user = users.getUserById(user_id);
-  const wanted_mail = cleanupMailReferences(user, mail_id);
+  const wanted_mail = getSpecificMail(user_id, mail_id);
+  cleanupMailReferences(user, mail_id);
   user.trash.push(wanted_mail);
 };
 
 // Move mail to user's spam.
 const mailToSpam = (user_id, mail_id) => {
   const user = users.getUserById(user_id);
-  const wanted_mail = cleanupMailReferences(user, mail_id);
+
+  // מדפיס מצב לפני כל פעולה
+  console.log("Before cleanup:", {
+    received_mails: user.received_mails,
+    sent_mails: user.sent_mails,
+    spam: user.spam,
+    trash: user.trash,
+  });
+
+  const wanted_mail = getSpecificMail(user_id, mail_id);
+
+  if (!wanted_mail) {
+    console.error("Mail not found!");
+    return;
+  }
+
+  cleanupMailReferences(user, mail_id);
+
+  // שוב מדפיס אחרי הניקוי
+  console.log("After cleanup:", {
+    received_mails: user.received_mails,
+    sent_mails: user.sent_mails,
+    spam: user.spam,
+    trash: user.trash,
+  });
+
   user.spam.push(wanted_mail);
 };
 

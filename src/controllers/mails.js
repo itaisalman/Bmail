@@ -291,16 +291,51 @@ exports.createNewDraft = ({ headers, body }, res) => {
   res.status(201).json({ message: "Draft created" });
 };
 
-// Move mail to spam by his id and delete all other mentions of it
-exports.moveMailToSpam = ({ headers, params }, res) => {
+// Add url into the blacklist by calling the bloomfilter server
+function addUrlBlacklist(url) {
+  return new Promise((resolve, reject) => {
+    blacklist.connectToBloomFilterServer(url, (err, result) => {
+      if (err) return reject(err);
+      resolve(result);
+    });
+  });
+}
+
+exports.moveMailToSpam = async ({ headers, params }, res) => {
   const user_id = headers.user;
   const mail_id = params.id;
-  let returned_json = checkParamsId(mail_id, user_id);
+
+  // Validate parameters
+  const returned_json = checkParamsId(mail_id, user_id);
   if (returned_json)
     return res
       .status(returned_json.statusCode)
       .json({ error: returned_json.error });
 
-  mails.mailToSpam(+user_id, +mail_id);
+  // Check the mail exists
+  const mail = mails.getSpecificMail(+user_id, +mail_id);
+  if (!mail) return res.status(404).json({ error: "Mail not found" });
+
+  // extract urls from mail
+  const urls_title = extractUrls(mail.title);
+  const urls_content = extractUrls(mail.content);
+  const all_urls = [...urls_title, ...urls_content];
+
+  const command = "POST ";
+  // Add each url found into the blacklist
+  try {
+    for (const url of all_urls) {
+      await addUrlBlacklist(command + url);
+    }
+  } catch (err) {
+    return res
+      .status(400)
+      .json({ error: "Failed to blacklist URL: " + err.message });
+  }
+  // Add the mail to spam
+  const spam_result = mails.mailToSpam(+user_id, +mail_id);
+  if (!spam_result) {
+    return res.status(404).json({ error: "User not found" });
+  }
   res.sendStatus(201);
 };
