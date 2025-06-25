@@ -11,6 +11,7 @@ function MailList({
   onImportantToggle,
   onDelete,
   disabledActions = false,
+  isSpamScreen = false,
 }) {
   const location = useLocation();
   // We use this component for several usages.
@@ -54,22 +55,25 @@ function MailList({
             <div className="mail-icons" onClick={(e) => e.stopPropagation()}>
               <span
                 onClick={() => {
-                  if (!disabledActions) onStarToggle(mail.id);
+                  if (!disabledActions && !isSpamScreen) onStarToggle(mail.id);
                 }}
                 aria-label="Star mail"
-                className={`star-icon ${disabledActions ? "disabled" : ""}`}
+                className={`star-icon ${
+                  disabledActions || isSpamScreen ? "disabled" : ""
+                }`}
               >
                 {starred?.has(mail.id) ? "⭐" : "☆"}
               </span>
 
               <span
                 onClick={() => {
-                  if (!disabledActions) onImportantToggle(mail.id);
+                  if (!disabledActions && !isSpamScreen)
+                    onImportantToggle(mail.id);
                 }}
                 aria-label="Important mail"
                 className={`flag-icon ${
                   important?.has(mail.id) ? "important" : ""
-                } ${disabledActions ? "disabled" : ""}`}
+                } ${disabledActions || isSpamScreen ? "disabled" : ""}`}
               >
                 {important?.has(mail.id) ? <MdFlag /> : <MdOutlineFlag />}
               </span>

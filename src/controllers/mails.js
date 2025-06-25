@@ -300,9 +300,7 @@ exports.moveMailToSpam = ({ headers, params }, res) => {
     return res
       .status(returned_json.statusCode)
       .json({ error: returned_json.error });
-  const result = mails.mailToSpam(+user_id, +mail_id);
-  if (!result) {
-    return res.status(404).json({ error: "User not found" });
-  }
+
+  mails.mailToSpam(+user_id, +mail_id);
   res.sendStatus(201);
 };

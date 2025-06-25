@@ -155,26 +155,30 @@ const deleteDraftById = (user_id, draft_id) => {
   return;
 };
 
+const getMailFromArray = (mail_id, user_array) => {
+  return user_array.find((mail) => mail.id === mail_id);
+};
+
 // Find the specific mail that the user want.
 // Return null if doesnt exist.
 const getSpecificMail = (user_id, mail_id) => {
   // Return null if this user_id does not exist.
   const get_user = users.getUserById(user_id);
-  // Check if the mail is in received or in sent.
-  // If not in both, return null.
-  const get_mail_from_received = get_user.received_mails.find(
-    (mail) => mail.id === mail_id
-  );
-  if (!get_mail_from_received) {
-    const get_mail_from_sent = get_user.sent_mails.find(
-      (mail) => mail.id === mail_id
-    );
+  if (!get_user) return null;
+  // Search the mail in all possible arrays. If not there returns null.
+  const allSources = [
+    get_user.received_mails,
+    get_user.sent_mails,
+    get_user.spam,
+    get_user.trash,
+  ];
 
-    if (!get_mail_from_sent) return null;
-
-    return get_mail_from_sent;
+  for (const source of allSources) {
+    const mail = getMailFromArray(mail_id, source);
+    if (mail) return mail;
   }
-  return get_mail_from_received;
+
+  return null;
 };
 
 // Create the wanted mails array.
@@ -227,42 +231,32 @@ const removeMailFromArray = (array, mail_id) => {
 
 // Remove mail from all labels
 const cleanupMailReferences = (user, mail_id) => {
+  const wanted_mail = getSpecificMail(user.id, mail_id);
+  removeMailFromArray(user.sent_mails, mail_id);
+  removeMailFromArray(user.received_mails, mail_id);
   removeMailFromArray(user.starred, mail_id);
   removeMailFromArray(user.important, mail_id);
   removeMailFromArray(user.trash, mail_id);
+  removeMailFromArray(user.spam, mail_id);
 
   user.labels.forEach((label) => {
     label.mails = label.mails.filter((mail) => mail.id !== mail_id);
   });
-};
-
-// Remove from inbox or sent and add to trash
-const spamOrTrashMail = (user, mail_id, mail_array) => {
-  // If mail was deleted from inbox
-  const received_index = user.received_mails.findIndex(
-    (mail) => mail.id === mail_id
-  );
-  if (received_index !== -1) {
-    const mail = user.received_mails[received_index];
-    mail_array.push(mail);
-    user.received_mails.splice(received_index, 1);
-    return;
-  }
-
-  // If mail was deleted from sent
-  const sent_index = user.sent_mails.findIndex((mail) => mail.id === mail_id);
-  if (sent_index !== -1) {
-    const mail = user.sent_mails[sent_index];
-    mail_array.push(mail);
-    user.sent_mails.splice(sent_index, 1);
-  }
+  return wanted_mail;
 };
 
 // delete mail
 const deleteSpecificMail = (user_id, mail_id) => {
   const user = users.getUserById(user_id);
-  cleanupMailReferences(user, mail_id);
-  spamOrTrashMail(user, mail_id, user.trash);
+  const wanted_mail = cleanupMailReferences(user, mail_id);
+  user.trash.push(wanted_mail);
+};
+
+// Move mail to user's spam.
+const mailToSpam = (user_id, mail_id) => {
+  const user = users.getUserById(user_id);
+  const wanted_mail = cleanupMailReferences(user, mail_id);
+  user.spam.push(wanted_mail);
 };
 
 // Empty the user's trash array
@@ -284,14 +278,6 @@ const createNewDraft = (sender, receiver, title, content) => {
   };
   sender_user.drafts.push(new_draft);
   return;
-};
-
-// Move mail to user's spam.
-const mailToSpam = (user_id, mail_id) => {
-  const user = users.getUserById(user_id);
-  cleanupMailReferences(user, mail_id);
-  spamOrTrashMail(user, mail_id, user.spam);
-  return true;
 };
 
 module.exports = {

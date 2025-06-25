@@ -154,7 +154,8 @@
 
 .star-icon.disabled,
 .flag-icon.disabled,
-.trash-icon.disabled {
+.trash-icon.disabled,
+.spam-icon.disabled {
   opacity: 0.5;
   pointer-events: none;
   cursor: default;
