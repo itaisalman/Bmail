@@ -19,6 +19,7 @@ function InboxScreen() {
     toggleStar,
     toggleImportant,
     deleteMail,
+    moveToSpam,
   } = useOutletContext();
 
   // Fetch inbox data from the server for the current page
@@ -72,6 +73,14 @@ function InboxScreen() {
     if (selectedMail?.id === id) setSelectedMail(null);
   };
 
+  const handleMoveToSpam = async (id) => {
+    await moveToSpam(id);
+    setMessages((prev) => prev.filter((mail) => mail.id !== id));
+    if (selectedMail?.id === id) {
+      setSelectedMail(null);
+    }
+  };
+
   return (
     <div className="inboxScreen">
       {!selectedMail && (
@@ -104,6 +113,7 @@ function InboxScreen() {
           onStarToggle={toggleStar}
           onImportantToggle={toggleImportant}
           onDelete={handleDelete}
+          moveToSpam={handleMoveToSpam}
           starred={starredMails}
           important={importantMails}
         />

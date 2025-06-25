@@ -139,6 +139,7 @@ function MainScreen() {
             toggleStar,
             toggleImportant,
             deleteMail,
+            moveToSpam,
           }}
         />
       </main>

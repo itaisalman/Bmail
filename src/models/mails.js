@@ -229,6 +229,7 @@ const removeMailFromArray = (array, mail_id) => {
 const cleanupMailReferences = (user, mail_id) => {
   removeMailFromArray(user.starred, mail_id);
   removeMailFromArray(user.important, mail_id);
+  removeMailFromArray(user.trash, mail_id);
 
   user.labels.forEach((label) => {
     label.mails = label.mails.filter((mail) => mail.id !== mail_id);
@@ -285,10 +286,12 @@ const createNewDraft = (sender, receiver, title, content) => {
   return;
 };
 
+// Move mail to user's spam.
 const mailToSpam = (user_id, mail_id) => {
   const user = users.getUserById(user_id);
   cleanupMailReferences(user, mail_id);
   spamOrTrashMail(user, mail_id, user.spam);
+  return true;
 };
 
 module.exports = {

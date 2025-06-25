@@ -1,4 +1,5 @@
 import { RxCross2 } from "react-icons/rx";
+import { MdReport } from "react-icons/md";
 import { MdOutlineDelete, MdOutlineFlag, MdFlag } from "react-icons/md";
 import "./ViewMail.css";
 
@@ -10,6 +11,7 @@ function MailDetails({
   onImportantToggle,
   starred,
   important,
+  moveToSpam,
   disabledActions = false,
 }) {
   // Don't render anything if no mail is selected
@@ -61,6 +63,13 @@ function MailDetails({
             title="Delete"
           >
             <MdOutlineDelete />
+          </span>
+          <span
+            onClick={() => moveToSpam(mail.id)}
+            className="spam-icon"
+            title="Mark as Spam"
+          >
+            <MdReport />
           </span>
         </div>
 

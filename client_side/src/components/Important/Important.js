@@ -18,7 +18,9 @@ function ImportantScreen() {
     toggleStar,
     toggleImportant,
     deleteMail,
+    moveToSpam,
   } = useOutletContext();
+
   const fetchImportant = useCallback(
     async (page = currentPage) => {
       try {
@@ -75,6 +77,13 @@ function ImportantScreen() {
     setMessages((prev) => prev.filter((mail) => mail.id !== id));
     if (selectedMail?.id === id) setSelectedMail(null);
   };
+  const handleMoveToSpam = async (id) => {
+    await moveToSpam(id);
+    setMessages((prev) => prev.filter((mail) => mail.id !== id));
+    if (selectedMail?.id === id) {
+      setSelectedMail(null);
+    }
+  };
 
   return (
     <div className="inboxScreen">
@@ -108,6 +117,7 @@ function ImportantScreen() {
           onStarToggle={toggleStar}
           onImportantToggle={handleImportantToggle}
           onDelete={handleDelete}
+          moveToSpam={handleMoveToSpam}
           starred={starredMails}
           important={importantMails}
         />

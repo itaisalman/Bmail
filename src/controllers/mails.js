@@ -291,6 +291,7 @@ exports.createNewDraft = ({ headers, body }, res) => {
   res.status(201).json({ message: "Draft created" });
 };
 
+// Move mail to spam by his id and delete all other mentions of it
 exports.moveMailToSpam = ({ headers, params }, res) => {
   const user_id = headers.user;
   const mail_id = params.id;
@@ -299,7 +300,7 @@ exports.moveMailToSpam = ({ headers, params }, res) => {
     return res
       .status(returned_json.statusCode)
       .json({ error: returned_json.error });
-  const result = mails.mailToSpam(user_id, mail_id);
+  const result = mails.mailToSpam(+user_id, +mail_id);
   if (!result) {
     return res.status(404).json({ error: "User not found" });
   }
