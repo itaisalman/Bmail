@@ -7,7 +7,7 @@ import LiveSearchResult from "../LiveSearchResult/LiveSearchResult";
 
 function Topbar() {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState(null);
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const { toggleTheme } = useContext(ThemeContext);
@@ -36,8 +36,11 @@ function Topbar() {
   };
 
   const handleChange = (e, value) => {
+    setResults(null);
     setQuery(value);
-    handleSearch(e, value);
+    if (value) {
+      handleSearch(e, value);
+    }
   };
 
   const handleSearch = async (e, value) => {
@@ -45,6 +48,7 @@ function Topbar() {
     try {
       const token = sessionStorage.getItem("jwt");
       if (!token) return;
+      console.log(value);
       const res = await fetch(
         // Used encodeURIComponent in order to search for anything the user wants without misbehaviour
         `/api/mails/search/${encodeURIComponent(value)}`,
@@ -66,37 +70,6 @@ function Topbar() {
   useEffect(() => {
     fetchTopbar();
   }, []);
-
-  // useEffect(() => {
-  //   if (!query.trim()) {
-  //     setResults([]);
-  //     setShowDropdown(false);
-  //     return;
-  //   }
-
-  //   const timeout = setTimeout(async () => {
-  //     try {
-  //       const token = sessionStorage.getItem("jwt");
-  //       const res = await fetch(
-  //         `/api/mails/search/${encodeURIComponent(query)}`,
-  //         {
-  //           method: "GET",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //             authorization: "bearer " + token,
-  //           },
-  //         }
-  //       );
-  //       const data = await res.json();
-  //       setResults(data);
-  //       setShowDropdown(true);
-  //     } catch (err) {
-  //       console.error("Search error:", err.message);
-  //     }
-  //   }, 300);
-
-  //   return () => clearTimeout(timeout);
-  // }, [query]);
 
   return (
     <div className="inbox-header">
@@ -124,7 +97,10 @@ function Topbar() {
           </button>
         </form>
 
-        <LiveSearchResult results={results} />
+        <LiveSearchResult
+          results={results}
+          isLoading={query?.length && !results}
+        />
       </div>
       <button className="logout-button" onClick={handleLogout}>
         Logout
