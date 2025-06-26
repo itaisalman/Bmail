@@ -11,6 +11,15 @@ function Topbar() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const { toggleTheme } = useContext(ThemeContext);
+  const [isFocused, setIsFocused] = useState(false);
+
+  const handleOnFocus = () => {
+    setIsFocused(true);
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+  };
   const fetchTopbar = async () => {
     try {
       const token = sessionStorage.getItem("jwt");
@@ -91,16 +100,20 @@ function Topbar() {
             className="search-input"
             value={query}
             onChange={(e) => handleChange(e, e.target.value)}
+            onFocus={handleOnFocus}
+            onBlur={handleBlur}
           />
           <button type="submit" className="search-button" aria-label="Search">
             <FaSearch />
           </button>
         </form>
 
-        <LiveSearchResult
-          results={results}
-          isLoading={query?.length && !results}
-        />
+        {isFocused && (
+          <LiveSearchResult
+            results={results}
+            isLoading={query?.length && !results}
+          />
+        )}
       </div>
       <button className="logout-button" onClick={handleLogout}>
         Logout
