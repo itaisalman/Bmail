@@ -4,9 +4,11 @@ const users = require("./users");
 const DEFAULT_LABEL_NAMES = [
   "inbox",
   "starred",
+  "star",
   "important",
   "sent",
   "drafts",
+  "draft",
   "trash",
   "spam",
   "labels",

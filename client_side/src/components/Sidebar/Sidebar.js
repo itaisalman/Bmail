@@ -12,6 +12,7 @@ import {
   MdDelete,
 } from "react-icons/md";
 import "./Sidebar.css";
+import LabelItem from "../Labels/LabelItem.js";
 
 const links = [
   { name: "Inbox", path: "/main/inbox", icon: <MdInbox /> },
@@ -20,10 +21,16 @@ const links = [
   { name: "Sent", path: "/main/sent", icon: <MdSend /> },
   { name: "Drafts", path: "/main/drafts", icon: <MdDrafts /> },
   { name: "Spam", path: "/main/spam", icon: <MdReport /> },
-  { name: "Labels", path: "/main/labels", icon: <MdLabel /> },
 ];
 
-function Sidebar({ onNewMailClick, onNewLabelClick, labels }) {
+function Sidebar({
+  onNewMailClick,
+  onNewLabelClick,
+  labels,
+  onEditLabel,
+  onStartEditLabel,
+  onDeleteLabel,
+}) {
   return (
     <nav className="sidebar">
       <div className="top-container">
@@ -88,18 +95,17 @@ function Sidebar({ onNewMailClick, onNewLabelClick, labels }) {
       </div>
 
       {/* Custom user-defined labels */}
-      {labels.map((label) => (
-        <NavLink
-          key={label.id}
-          to={`/main/labels/${label.name}`}
-          className={({ isActive }) =>
-            `sidebar-link custom-label ${isActive ? "active" : ""}`
-          }
-        >
-          <span className="icon">🏷️</span>
-          <span className="link-text">{label.name}</span>
-        </NavLink>
-      ))}
+      <div className="labels-list-container">
+        {labels.map((label) => (
+          <LabelItem
+            key={label.id}
+            label={label}
+            onEditLabel={onEditLabel}
+            onStartEdit={onStartEditLabel}
+            onDeleteLabel={(label) => onDeleteLabel(label)}
+          />
+        ))}
+      </div>
     </nav>
   );
 }
