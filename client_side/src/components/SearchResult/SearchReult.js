@@ -1,18 +1,23 @@
 import "./SearchResult.css";
 import { FaEnvelope } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 // Every result is rendered by this component
-function SearchResult({ result }) {
+function SearchResult({ result, setQuery, setResults }) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Format date string to "YYYY-MM-DD" (short format)
   function formatDateShort(dateString) {
     return dateString ? dateString.split("T")[0] : "";
   }
 
+  // Clicking on result cause the search bar to reset
   const handleClick = () => {
-    const label = result.label?.toLowerCase() || "inbox";
+    setResults("");
+    setQuery("");
+    const pathParts = location.pathname.split("/");
+    const label = pathParts[2] || "inbox";
     navigate(`/main/${label}/${result.id}`, { state: { result } });
   };
 

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useOutletContext } from "react-router-dom";
+import { Outlet, useParams, useOutletContext } from "react-router-dom";
 import "../Inbox/Inbox.css";
 import MailList from "../MailList/MailList";
 import MailDetails from "../ViewMail/ViewMail";
@@ -10,6 +10,7 @@ function ImportantScreen() {
   const [totalCount, setTotalCount] = useState(0);
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const { id } = useParams();
 
   const {
     starredMails,
@@ -65,42 +66,59 @@ function ImportantScreen() {
 
   return (
     <div className="inboxScreen">
-      {!selectedMail && (
-        <MailsControl
-          currentPage={currentPage}
-          totalCount={totalCount}
-          onRefresh={fetchImportant}
-          onPageChange={setCurrentPage}
+      {id ? (
+        <Outlet
+          context={{
+            starredMails,
+            importantMails,
+            toggleStar,
+            toggleImportant,
+            handleDelete,
+            handleMoveToSpam,
+            setSelectedMail,
+            setMessages,
+          }}
         />
-      )}
-
-      {error && <p className="error-message">{error}</p>}
-
-      {!selectedMail ? (
-        <div className="inbox-body">
-          <MailList
-            mails={messages}
-            starred={starredMails}
-            important={importantMails}
-            onSelect={handleMailClick}
-            onStarToggle={toggleStar}
-            onImportantToggle={handleImportantToggle}
-            onDelete={handleDelete}
-            setMessages={setMessages}
-          />
-        </div>
       ) : (
-        <MailDetails
-          mail={selectedMail}
-          onClose={() => setSelectedMail(null)}
-          onStarToggle={toggleStar}
-          onImportantToggle={handleImportantToggle}
-          onDelete={handleDelete}
-          moveToSpam={handleMoveToSpam}
-          starred={starredMails}
-          important={importantMails}
-          setMessages={setMessages}
-        />
+        <>
+          {!selectedMail && (
+            <MailsControl
+              currentPage={currentPage}
+              totalCount={totalCount}
+              onRefresh={fetchImportant}
+              onPageChange={setCurrentPage}
+            />
+          )}
+
+          {error && <p className="error-message">{error}</p>}
+
+          {!selectedMail ? (
+            <div className="inbox-body">
+              <MailList
+                mails={messages}
+                starred={starredMails}
+                important={importantMails}
+                onSelect={handleMailClick}
+                onStarToggle={toggleStar}
+                onImportantToggle={handleImportantToggle}
+                onDelete={handleDelete}
+                setMessages={setMessages}
+              />
+            </div>
+          ) : (
+            <MailDetails
+              mail={selectedMail}
+              onClose={() => setSelectedMail(null)}
+              onStarToggle={toggleStar}
+              onImportantToggle={handleImportantToggle}
+              onDelete={handleDelete}
+              moveToSpam={handleMoveToSpam}
+              starred={starredMails}
+              important={importantMails}
+              setMessages={setMessages}
+            />
+          )}
+        </>
       )}
     </div>
   );
