@@ -12,6 +12,7 @@ function MainScreen() {
   const [labels, setLabels] = useState([]);
   const [starredMails, setStarredMails] = useState(new Set());
   const [importantMails, setImportantMails] = useState(new Set());
+  const [selectedMail, setSelectedMail] = useState(null);
 
   const toggleStar = useCallback(async (id) => {
     const token = sessionStorage.getItem("jwt");
@@ -97,6 +98,13 @@ function MainScreen() {
     });
   };
 
+  // Delete the mail from all labels
+  const handleDelete = async (id, setMessages) => {
+    await deleteMail(id);
+    setMessages((prev) => prev.filter((mail) => mail.id !== id));
+    if (selectedMail?.id === id) setSelectedMail(null);
+  };
+
   const moveToSpam = async (id) => {
     const token = sessionStorage.getItem("jwt");
     if (!token) return;
@@ -123,6 +131,25 @@ function MainScreen() {
     });
   };
 
+  const handleMoveToSpam = async (id, setMessages) => {
+    await moveToSpam(id);
+    setMessages((prev) => prev.filter((mail) => mail.id !== id));
+    if (selectedMail?.id === id) {
+      setSelectedMail(null);
+    }
+  };
+
+  const handleMailClick = async (id) => {
+    const token = sessionStorage.getItem("jwt");
+    const res = await fetch(`/api/mails/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await res.json();
+    setSelectedMail(data);
+  };
+
   return (
     <div className="main-container">
       <Sidebar
@@ -138,8 +165,12 @@ function MainScreen() {
             importantMails,
             toggleStar,
             toggleImportant,
-            deleteMail,
+            handleDelete,
             moveToSpam,
+            handleMailClick,
+            setSelectedMail,
+            selectedMail,
+            handleMoveToSpam,
           }}
         />
       </main>
