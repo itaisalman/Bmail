@@ -1,6 +1,7 @@
 import SearchResult from "../SearchResult/SearchReult";
 import "./LiveSearchResult.css";
 
+// This is the result screen dropdown component
 function LiveSearchResult({ results, isLoading }) {
   return (
     <div className="result-list">
