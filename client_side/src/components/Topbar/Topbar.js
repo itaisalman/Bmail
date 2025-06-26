@@ -101,7 +101,7 @@ function Topbar() {
             value={query}
             onChange={(e) => handleChange(e, e.target.value)}
             onFocus={handleOnFocus}
-            onBlur={handleBlur}
+            onBlur={() => setTimeout(handleBlur, 150)}
           />
           <button type="submit" className="search-button" aria-label="Search">
             <FaSearch />

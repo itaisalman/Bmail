@@ -214,7 +214,8 @@ exports.searchMails = ({ headers, params }, res) => {
   const user_id = headers.user;
   const query = params.query;
   const result = mails.getMailsByQuery(+user_id, query);
-  res.status(200).json(result);
+  // res.status(200).json(result);
+  res.status(200).json(Array.from(result));
 };
 
 // Edit fields in the mail.

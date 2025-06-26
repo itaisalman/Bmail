@@ -37,61 +37,21 @@ function findFiftyMails(get_user, label_name, page) {
   return { mails: page_mails, totalCount };
 }
 
-// Remove the draft from the draft's array, and add it to the mail's array.
-function uploadDraft(mail) {
-  // Extract the users in order to add the mails to their inbox/sent.
-  const sender_id = mail.sender_id;
-  const receiver_id = mail.receiver_id;
-  const sender_user = users.getUserById(sender_id);
-  const receiver_user = users.getUserById(receiver_id);
-  const draft_index = sender_user.drafts.findIndex(
-    (draft) => draft.id === mail.id
-  );
-  sender_user.drafts.splice(draft_index, 1);
-  pushToMailsArray(sender_user, receiver_user, mail);
-}
-
-// Push the mail to the corresponding places for both sender and receiver.
-function pushToMailsArray(sender_user, receiver_user, mail) {
-  sender_user.sent_mails.push(mail);
-  receiver_user.received_mails.push(mail);
-}
-// Iterate over each mail in the sent_mails_array.
-// If they contain query, they will be added to the result_array.
-function findMailsInSent(result_array, mails_array, query) {
+function findMailsInArray(result_set, mails_array, query) {
   for (const mail of mails_array) {
-    if (checkIfContainQueryInSent(mail, query)) result_array.push(mail);
+    if (checkIfContainQueryInMail(mail, query)) result_set.add(mail);
   }
-}
-
-// Iterate over each mail in the received_mails_array.
-// If they contain query, they will be added to the result_array.
-function findMailsInReceived(result_array, mails_array, query) {
-  for (const mail of mails_array) {
-    if (checkIfContainQueryInReceived(mail, query)) result_array.push(mail);
-  }
-}
-
-// Check every relevent field in sent mails if it contains query.
-function checkIfContainQueryInSent(mail, query) {
-  if (
-    mail.receiver_address.includes(query) ||
-    mail.receiver_first_name.includes(query) ||
-    mail.receiver_last_name.includes(query) ||
-    mail.title.includes(query) ||
-    mail.content.includes(query)
-  )
-    return true;
-
-  return false;
 }
 
 // Check every relevent field in received mails if it contains query.
-function checkIfContainQueryInReceived(mail, query) {
+function checkIfContainQueryInMail(mail, query) {
   if (
     mail.sender_address.includes(query) ||
     mail.sender_first_name.includes(query) ||
     mail.sender_last_name.includes(query) ||
+    mail.receiver_address.includes(query) ||
+    mail.receiver_first_name.includes(query) ||
+    mail.receiver_last_name.includes(query) ||
     mail.title.includes(query) ||
     mail.content.includes(query)
   )
@@ -181,10 +141,12 @@ const getSpecificMail = (user_id, mail_id) => {
 // Search if the mails in sent_mails and received_mails contain the query.
 const getMailsByQuery = (user_id, query) => {
   const user = users.getUserById(user_id);
-  const result_array = [];
-  findMailsInSent(result_array, user.sent_mails, query);
-  findMailsInReceived(result_array, user.received_mails, query);
-  return result_array;
+  const result_set = new Set();
+  // findMailsInSent(result_set, user.sent_mails, query);
+  // findMailsInReceived(result_set, user.received_mails, query);
+  findMailsInArray(result_set, user.received_mails, query);
+  findMailsInArray(result_set, user.sent_mails, query);
+  return result_set;
 };
 
 // Change the wanted fields in draft.
