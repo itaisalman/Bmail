@@ -9,7 +9,6 @@ function ImportantScreen() {
   const [messages, setMessages] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [error, setError] = useState("");
-  const [selectedMail, setSelectedMail] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
   const {
@@ -17,8 +16,13 @@ function ImportantScreen() {
     importantMails,
     toggleStar,
     toggleImportant,
-    deleteMail,
+    handleDelete,
+    handleMoveToSpam,
+    handleMailClick,
+    setSelectedMail,
+    selectedMail,
   } = useOutletContext();
+
   const fetchImportant = useCallback(
     async (page = currentPage) => {
       try {
@@ -47,31 +51,14 @@ function ImportantScreen() {
     [currentPage]
   );
 
+  // Fetch important whenever the page changes
   useEffect(() => {
     fetchImportant();
   }, [fetchImportant]);
 
-  const handleMailClick = async (id) => {
-    const token = sessionStorage.getItem("jwt");
-    const res = await fetch(`/api/mails/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data = await res.json();
-    setSelectedMail(data);
-  };
-
-  const handleImportantToggle = async (id) => {
+  const handleImportantToggle = async (id, setMessages) => {
     await toggleImportant(id);
     // Remove mail localy
-    setMessages((prev) => prev.filter((mail) => mail.id !== id));
-    if (selectedMail?.id === id) setSelectedMail(null);
-  };
-
-  // Delete the mail from all labels
-  const handleDelete = async (id) => {
-    await deleteMail(id);
     setMessages((prev) => prev.filter((mail) => mail.id !== id));
     if (selectedMail?.id === id) setSelectedMail(null);
   };
@@ -99,6 +86,7 @@ function ImportantScreen() {
             onStarToggle={toggleStar}
             onImportantToggle={handleImportantToggle}
             onDelete={handleDelete}
+            setMessages={setMessages}
           />
         </div>
       ) : (
@@ -108,8 +96,10 @@ function ImportantScreen() {
           onStarToggle={toggleStar}
           onImportantToggle={handleImportantToggle}
           onDelete={handleDelete}
+          moveToSpam={handleMoveToSpam}
           starred={starredMails}
           important={importantMails}
+          setMessages={setMessages}
         />
       )}
     </div>
