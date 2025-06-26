@@ -10,15 +10,15 @@ function SpamScreen() {
   const [messages, setMessages] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [error, setError] = useState("");
-  const [selectedMail, setSelectedMail] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
   const {
     starredMails,
     importantMails,
-    toggleStar,
-    toggleImportant,
-    deleteMail,
+    handleMailClick,
+    handleDelete,
+    setSelectedMail,
+    selectedMail,
   } = useOutletContext();
 
   // Fetch spam data from the server for the current page
@@ -54,24 +54,6 @@ function SpamScreen() {
     fetchSpam(currentPage);
   }, [fetchSpam, currentPage]);
 
-  // Load and show the full details of a selected mail
-  const handleMailClick = async (id) => {
-    const token = sessionStorage.getItem("jwt");
-    const res = await fetch(`/api/mails/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data = await res.json();
-    setSelectedMail(data);
-  };
-
-  const handleDelete = async (id) => {
-    await deleteMail(id);
-    setMessages((prev) => prev.filter((mail) => mail.id !== id));
-    if (selectedMail?.id === id) setSelectedMail(null);
-  };
-
   return (
     <div className="inboxScreen">
       {!selectedMail && (
@@ -92,22 +74,20 @@ function SpamScreen() {
             starred={starredMails}
             important={importantMails}
             onSelect={handleMailClick}
-            onStarToggle={toggleStar}
-            onImportantToggle={toggleImportant}
             onDelete={handleDelete}
             isSpamScreen={true}
+            setMessages={setMessages}
           />
         </div>
       ) : (
         <MailDetails
           mail={selectedMail}
           onClose={() => setSelectedMail(null)}
-          onStarToggle={toggleStar}
-          onImportantToggle={toggleImportant}
-          onDelete={handleDelete}
           starred={starredMails}
           important={importantMails}
+          onDelete={handleDelete}
           isSpamScreen={true}
+          setMessages={setMessages}
         />
       )}
     </div>

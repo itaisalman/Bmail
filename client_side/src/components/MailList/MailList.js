@@ -12,6 +12,7 @@ function MailList({
   onDelete,
   disabledActions = false,
   setMessages,
+  isSpamScreen = false,
 }) {
   const location = useLocation();
   // We use this component for several usages.
@@ -62,7 +63,7 @@ function MailList({
                   disabledActions || isSpamScreen ? "disabled" : ""
                 }`}
               >
-                {starred?.has(mail.id) ? "⭐" : "☆"}
+                {starred?.has(mail.id) && !isSpamScreen ? "⭐" : "☆"}
               </span>
 
               <span
@@ -71,10 +72,14 @@ function MailList({
                 }}
                 aria-label="Important mail"
                 className={`flag-icon ${
-                  important?.has(mail.id) ? "important" : ""
+                  important?.has(mail.id) && !isSpamScreen ? "important" : ""
                 } ${disabledActions || isSpamScreen ? "disabled" : ""}`}
               >
-                {important?.has(mail.id) ? <MdFlag /> : <MdOutlineFlag />}
+                {important?.has(mail.id) && !isSpamScreen ? (
+                  <MdFlag />
+                ) : (
+                  <MdOutlineFlag />
+                )}
               </span>
               <span
                 onClick={() => {
