@@ -47,7 +47,7 @@ function MailList({
           >
             <div className="mail-sender">
               {showReceiver
-                ? mail.receiver.split("@")[0]
+                ? mail.receiver_address.split("@")[0]
                 : mail.sender_address.split("@")[0]}
             </div>
             <div className="mail-subject">{mail.title || "(no title)"}</div>
