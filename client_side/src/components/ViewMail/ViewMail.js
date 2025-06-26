@@ -14,6 +14,7 @@ function MailDetails({
   moveToSpam,
   disabledActions = false,
   setMessages,
+  isSpamScreen = false,
 }) {
   // Don't render anything if no mail is selected
   if (!mail) return null;
@@ -39,22 +40,26 @@ function MailDetails({
               if (!disabledActions) onStarToggle(mail.id, setMessages);
             }}
             className={`star-icon ${starred.has(mail.id) ? "active" : ""} ${
-              disabledActions ? "disabled" : ""
+              disabledActions || isSpamScreen ? "disabled" : ""
             }`}
             title="Star"
           >
-            {starred.has(mail.id) ? "⭐" : "☆"}
+            {starred.has(mail.id) && !isSpamScreen ? "⭐" : "☆"}
           </span>
           <span
             onClick={() => {
               if (!disabledActions) onImportantToggle(mail.id, setMessages);
             }}
             className={`flag-icon ${
-              important.has(mail.id) ? "important" : ""
-            } ${disabledActions ? "disabled" : ""}`}
+              important.has(mail.id) && !isSpamScreen ? "important" : ""
+            } ${disabledActions || isSpamScreen ? "disabled" : ""}`}
             title="Important"
           >
-            {important.has(mail.id) ? <MdFlag /> : <MdOutlineFlag />}
+            {important.has(mail.id) && !isSpamScreen ? (
+              <MdFlag />
+            ) : (
+              <MdOutlineFlag />
+            )}
           </span>
           <span
             onClick={() => {
@@ -66,8 +71,10 @@ function MailDetails({
             <MdOutlineDelete />
           </span>
           <span
-            onClick={() => moveToSpam(mail.id, setMessages)}
-            className="spam-icon"
+            onClick={() => {
+              if (!isSpamScreen) moveToSpam(mail.id, setMessages);
+            }}
+            className={`spam-icon ${isSpamScreen ? "disabled" : ""}`}
             title="Mark as Spam"
           >
             <MdReport />

@@ -11,10 +11,10 @@ import LabelView from "./components/Labels/LabelView";
 import StarredScreen from "./components/Star/Star";
 import ImportantScreen from "./components/Important/Important";
 import TrashScreen from "./components/Trash/Trash";
+import SpamScreen from "./components/Spam/Spam";
 
 // Temporary components
 const Sent = () => <h1>Sent</h1>;
-const Spam = () => <h1>Spam</h1>;
 
 function App() {
   return (
@@ -34,7 +34,7 @@ function App() {
           <Route index element={<Navigate to="inbox" replace />} />
           <Route path="inbox" element={<InboxScreen />} />
           <Route path="sent" element={<Sent />} />
-          <Route path="spam" element={<Spam />} />
+          <Route path="spam" element={<SpamScreen />} />
           <Route path="drafts" element={<Draft />} />
           <Route path="starred" element={<StarredScreen />} />
           <Route path="important" element={<ImportantScreen />} />
