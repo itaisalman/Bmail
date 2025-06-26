@@ -11,6 +11,7 @@ import LabelView from "./components/Labels/LabelView";
 import StarredScreen from "./components/Star/Star";
 import ImportantScreen from "./components/Important/Important";
 import TrashScreen from "./components/Trash/Trash";
+import ViewResult from "./components/ViewResult/ViewResult";
 
 // Temporary components
 const Sent = () => <h1>Sent</h1>;
@@ -32,14 +33,38 @@ function App() {
           }
         >
           <Route index element={<Navigate to="inbox" replace />} />
-          <Route path="inbox" element={<InboxScreen />} />
-          <Route path="sent" element={<Sent />} />
-          <Route path="spam" element={<Spam />} />
-          <Route path="drafts" element={<Draft />} />
-          <Route path="starred" element={<StarredScreen />} />
-          <Route path="important" element={<ImportantScreen />} />
-          <Route path="labels/:labelName" element={<LabelView />} />
-          <Route path="trash" element={<TrashScreen />} />
+
+          <Route path="inbox" element={<InboxScreen />}>
+            <Route path=":id" element={<ViewResult />} />
+          </Route>
+
+          <Route path="sent" element={<Sent />}>
+            <Route path=":id" element={<ViewResult />} />
+          </Route>
+
+          <Route path="spam" element={<Spam />}>
+            <Route path=":id" element={<ViewResult />} />
+          </Route>
+
+          <Route path="drafts" element={<Draft />}>
+            <Route path=":id" element={<ViewResult />} />
+          </Route>
+
+          <Route path="starred" element={<StarredScreen />}>
+            <Route path=":id" element={<ViewResult />} />
+          </Route>
+
+          <Route path="important" element={<ImportantScreen />}>
+            <Route path=":id" element={<ViewResult />} />
+          </Route>
+
+          <Route path="trash" element={<TrashScreen />}>
+            <Route path=":id" element={<ViewResult />} />
+          </Route>
+
+          <Route path="labels/:labelName" element={<LabelView />}>
+            <Route path=":id" element={<ViewResult />} />
+          </Route>
         </Route>
       </Routes>
     </ThemeProvider>
