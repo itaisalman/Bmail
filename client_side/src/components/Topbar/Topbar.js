@@ -63,7 +63,6 @@ function Topbar() {
           },
         }
       );
-
       const data = await res.json();
       setResults(data);
     } catch (err) {
@@ -87,6 +86,10 @@ function Topbar() {
       searchMails(value);
     }, 300);
   };
+
+  useEffect(() => {
+    console.log("Updated results:", results);
+  }, [results]);
 
   useEffect(() => {
     fetchTopbar();
