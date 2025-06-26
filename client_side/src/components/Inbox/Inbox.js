@@ -10,7 +10,6 @@ function InboxScreen() {
   const [messages, setMessages] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [error, setError] = useState("");
-  const [selectedMail, setSelectedMail] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
   const {
@@ -18,8 +17,11 @@ function InboxScreen() {
     importantMails,
     toggleStar,
     toggleImportant,
-    deleteMail,
-    moveToSpam,
+    handleDelete,
+    handleMoveToSpam,
+    handleMailClick,
+    setSelectedMail,
+    selectedMail,
   } = useOutletContext();
 
   // Fetch inbox data from the server for the current page
@@ -55,32 +57,6 @@ function InboxScreen() {
     fetchInbox(currentPage);
   }, [fetchInbox, currentPage]);
 
-  // Load and show the full details of a selected mail
-  const handleMailClick = async (id) => {
-    const token = sessionStorage.getItem("jwt");
-    const res = await fetch(`/api/mails/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data = await res.json();
-    setSelectedMail(data);
-  };
-
-  const handleDelete = async (id) => {
-    await deleteMail(id);
-    setMessages((prev) => prev.filter((mail) => mail.id !== id));
-    if (selectedMail?.id === id) setSelectedMail(null);
-  };
-
-  const handleMoveToSpam = async (id) => {
-    await moveToSpam(id);
-    setMessages((prev) => prev.filter((mail) => mail.id !== id));
-    if (selectedMail?.id === id) {
-      setSelectedMail(null);
-    }
-  };
-
   return (
     <div className="inboxScreen">
       {!selectedMail && (
@@ -104,6 +80,7 @@ function InboxScreen() {
             onStarToggle={toggleStar}
             onImportantToggle={toggleImportant}
             onDelete={handleDelete}
+            setMessages={setMessages}
           />
         </div>
       ) : (
@@ -116,6 +93,7 @@ function InboxScreen() {
           moveToSpam={handleMoveToSpam}
           starred={starredMails}
           important={importantMails}
+          setMessages={setMessages}
         />
       )}
     </div>
