@@ -16,9 +16,11 @@ function SearchResult({ result, setQuery, setResults }) {
   const handleClick = () => {
     setResults("");
     setQuery("");
-    const pathParts = location.pathname.split("/");
-    const label = pathParts[2] || "inbox";
-    navigate(`/main/${label}/${result.id}`, { state: { result } });
+    const label = result.label;
+    const mail = result.mail;
+    navigate(`/main/${label}/${mail.id}`, {
+      state: { mail, from: location.pathname },
+    });
   };
 
   return (
@@ -28,15 +30,15 @@ function SearchResult({ result, setQuery, setResults }) {
       </div>
 
       <div className="info-container">
-        <div className="mail-title">{result.title}</div>
+        <div className="mail-title">{result.mail.title}</div>
         <div className="mail-meta">
-          <span className="mail-sender">{result.sender_address}</span>
+          <span className="mail-sender">{result.mail.sender_address}</span>
           <span className="mail-separator">→</span>
-          <span className="mail-receiver">{result.receiver_address}</span>
+          <span className="mail-receiver">{result.mail.receiver_address}</span>
         </div>
       </div>
 
-      <div className="date-container">{formatDateShort(result.date)}</div>
+      <div className="date-container">{formatDateShort(result.mail.date)}</div>
     </div>
   );
 }

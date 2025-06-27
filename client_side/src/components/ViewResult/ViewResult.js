@@ -5,7 +5,8 @@ import { useOutletContext } from "react-router-dom";
 function ViewResult() {
   const location = useLocation();
   const navigate = useNavigate();
-  const result = location.state?.result;
+  const mail = location.state?.mail;
+  const path = location.state?.from;
 
   const {
     starredMails,
@@ -17,21 +18,18 @@ function ViewResult() {
     setMessages,
   } = useOutletContext();
 
-  // Go to parent path
+  // Navigate to previous path
   const handleClose = () => {
-    const segments = location.pathname.split("/");
-    segments.pop();
-    const parentPath = segments.join("/") || "/";
-    navigate(parentPath);
+    navigate(path);
   };
 
   const handleDeleteResult = () => {
-    handleDelete(result.id, setMessages);
+    handleDelete(mail.id, setMessages);
     handleClose();
   };
   return (
     <MailDetails
-      mail={result}
+      mail={mail}
       onClose={handleClose}
       onStarToggle={toggleStar}
       onImportantToggle={toggleImportant}
