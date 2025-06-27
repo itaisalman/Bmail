@@ -30,6 +30,7 @@ function Sidebar({
   onEditLabel,
   onStartEditLabel,
   onDeleteLabel,
+  onCloseMail,
 }) {
   return (
     <nav className="sidebar">
@@ -60,6 +61,7 @@ function Sidebar({
         <NavLink
           key={name}
           to={path}
+          onClick={onCloseMail}
           className={({ isActive }) =>
             `sidebar-link ${isActive ? "active" : ""}`
           }
