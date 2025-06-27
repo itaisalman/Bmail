@@ -5,6 +5,7 @@ import Sidebar from "../components/Sidebar/Sidebar";
 import Topbar from "../components/Topbar/Topbar";
 import LabelEditor from "../components/Labels/LabelEditor";
 import LabelDeleteConfirm from "../components/Labels/LabelDelete";
+import { assignLabelToMail } from "../components/Labels/apiLabels";
 import "./MainScreen.css";
 
 function MainScreen() {
@@ -122,6 +123,14 @@ function MainScreen() {
     });
   };
 
+  const handleAssignLabel = async (mailId, labelId) => {
+    try {
+      await assignLabelToMail(mailId, labelId);
+    } catch (error) {
+      console.error("Failed to assign label:", error.message);
+    }
+  };
+
   return (
     <div className="main-container">
       <Sidebar
@@ -146,6 +155,8 @@ function MainScreen() {
             toggleStar,
             toggleImportant,
             deleteMail,
+            labels,
+            assignLabel: handleAssignLabel,
           }}
         />
       </main>

@@ -1,6 +1,10 @@
+import { useState } from "react";
 import { RxCross2 } from "react-icons/rx";
+import { useOutletContext } from "react-router-dom";
+import { CiBookmarkPlus } from "react-icons/ci";
 import { MdOutlineDelete, MdOutlineFlag, MdFlag } from "react-icons/md";
 import "./ViewMail.css";
+import LabelDropdown from "../Labels/LabelDropdown";
 
 function MailDetails({
   mail,
@@ -10,11 +14,14 @@ function MailDetails({
   onImportantToggle,
   starred,
   important,
+  onAssignLabel,
   disabledActions = false,
 }) {
+  const { labels } = useOutletContext();
+  const [showDropdown, setShowDropdown] = useState(false);
+
   // Don't render anything if no mail is selected
   if (!mail) return null;
-
   // Format a date string to "YYYY-MM-DD HH:mm"
   function formatDateTime(dateString) {
     if (!dateString) return "";
@@ -62,6 +69,30 @@ function MailDetails({
           >
             <MdOutlineDelete />
           </span>
+          <div style={{ position: "relative" }}>
+            <span
+              className="label-icon"
+              title="Assign label"
+              onClick={(e) => {
+                console.log("clicked!");
+                e.stopPropagation();
+                setShowDropdown((prev) => !prev);
+              }}
+            >
+              <CiBookmarkPlus size={22} />
+            </span>
+
+            {showDropdown && (
+              <LabelDropdown
+                labels={labels}
+                onSelect={(label) => {
+                  onAssignLabel(mail.id, label.id);
+                  setShowDropdown(false);
+                }}
+                onClose={() => setShowDropdown(false)}
+              />
+            )}
+          </div>
         </div>
 
         <button

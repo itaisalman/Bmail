@@ -23,5 +23,6 @@ router.route("/search/:query").get(controller.searchMails);
 
 router.route("/star/:id").patch(controller.toggleMailStar);
 router.route("/important/:id").patch(controller.toggleMailImportant);
+router.route("/:id/assign-label").patch(controller.assignLabelToMail);
 
 module.exports = router;

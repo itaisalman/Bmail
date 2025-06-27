@@ -93,3 +93,19 @@ export const deleteLabel = async (id) => {
     throw err;
   }
 };
+
+// Assign a specific mail to label
+export async function assignLabelToMail(mailId, labelId) {
+  const res = await fetch(`/api/mails/${mailId}/assign-label`, {
+    method: "PATCH",
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ labelId }),
+  });
+
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error("Failed to assign label: " + error);
+  }
+
+  return;
+}

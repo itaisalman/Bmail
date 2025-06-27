@@ -4,6 +4,7 @@ import "../Inbox/Inbox.css";
 import MailList from "../MailList/MailList";
 import MailDetails from "../ViewMail/ViewMail";
 import MailsControl from "../MailsControl/MailsControl";
+import { assignLabelToMail } from "../Labels/apiLabels";
 
 function InboxScreen() {
   // State variables for inbox data and UI state
@@ -72,6 +73,16 @@ function InboxScreen() {
     if (selectedMail?.id === id) setSelectedMail(null);
   };
 
+  const onAssignLabel = async (mailId, labelId) => {
+    try {
+      await assignLabelToMail(mailId, labelId);
+      // After association, reload the email list to reflect the changes on the screen
+      await fetchInbox();
+    } catch (err) {
+      console.error("Label assignment failed:", err.message);
+    }
+  };
+
   return (
     <div className="inboxScreen">
       {!selectedMail && (
@@ -106,6 +117,7 @@ function InboxScreen() {
           onDelete={handleDelete}
           starred={starredMails}
           important={importantMails}
+          onAssignLabel={onAssignLabel}
         />
       )}
     </div>
