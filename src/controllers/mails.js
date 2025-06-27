@@ -374,7 +374,7 @@ exports.restoreMailFromSpam = async ({ headers, params }, res) => {
       .json({ error: "Failed to delete URL: " + err.message });
   }
   // Add the mail to spam
-  const spam_result = mails.restorSpammedMail(+user_id, +mail_id);
+  const spam_result = mails.restoreSpammedMail(+user_id, +mail_id);
   if (!spam_result) {
     return res.status(404).json({ error: "User not found" });
   }
