@@ -1,4 +1,3 @@
-/* General screen design */
 .inbox-screen {
   padding: 1rem;
   background-color: var(--bg-color);
@@ -7,66 +6,104 @@
   transition: background-color 0.3s, color 0.3s;
 }
 
-/* Header */
-.inbox-header {
+ .inbox-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 20px;
+  gap: 1rem;
+  padding: 0.5rem 1.25rem;
 }
 
-/* Profile image */
 .profile-image {
-  width: 45px;
-  height: 45px;
+  width: 2rem;
+  height: 2rem;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #022a60;
 }
 
-/* Search */
+.username {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 6.25rem;
+  max-width: 150px;
+  display: inline-block;
+}
+
 .search-container {
   flex: 1;
   position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-container form {
+  flex: none;
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
 }
 
 .search-input {
-  width: 90%;
-  padding: 0.5rem 2rem 0.5rem 0.75rem;
-  border-radius: 20px;
-  border: 1px solid #ccc;
+  flex: 1;
+  padding: 0.5rem 2.5rem 0.5rem 0.75rem;
   font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 2em;
+  width: 100%;
 }
 
-/* lighting mode button */
-.theme-toggle-button {
-  background-color: transparent;
+.search-button {
+  position: absolute;
+  top: 50%;
+  right: 0.75rem;
+  transform: translateY(-50%);
+  background: none;
   border: none;
-  font-size: 25px;
   cursor: pointer;
-  transition: transform 0.2s;
+  font-size: 1rem;
+  color: #022a60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  height: 100%;
 }
-
-.theme-toggle-button:hover {
-  transform: scale(1.2);
+.search-button:hover {
+  background-color: rgba(2, 42, 96, 0.1);
+  border-radius: 50%;
 }
 
 .logout-button {
   background-color: #fff;
   color: #000;
   border: 2px solid #022a60;
-  border-radius: 45px;
-  padding: 8px 16px;
+  border-radius: 2rem;
+  padding: 0.375rem 0.75rem;
   font-size: 1rem;
   cursor: pointer;
-  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
-  outline: none;
-  margin-left: 10px;
-  transition: background-color 0.3s ease;
+  box-shadow: 0 0.5rem 0.9375rem rgba(0, 0, 0, 0.1);
+  margin-left: 0.625rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .logout-button:hover {
+  transform: scale(1.2);
+}
+
+.theme-toggle-button {
+  background-color: transparent;
+  border: 2px solid #022a60;
+  border-radius: 2rem;
+  font-size: 1.25rem;
+  color: #022a60;
+  padding: 0.375rem 0.75rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  box-shadow: 0 0.5rem 0.9375rem rgba(0, 0, 0, 0.1);
+}
+
+.theme-toggle-button:hover {
   transform: scale(1.2);
 }
 
@@ -83,31 +120,22 @@ body.dark .logout-button {
   border-color: #ffffff;
 }
 
-.search-container {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.live-search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-top: none;
+  z-index: 10;
+  max-height: 12.5rem;
+  overflow-y: auto;
+  box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
 }
 
-.search-input {
-  flex: 1;
-  padding: 8px;
-  font-size: 16px;
-}
 
-.search-button {
-  padding: 8px 12px;
-  background-color: #007bff;
-  color: white;
-  font-size: 18px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
-.search-button:hover {
-  background-color: #0056b3;
-}
+
+
+

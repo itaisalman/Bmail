@@ -11,7 +11,6 @@ function InboxScreen() {
   const [messages, setMessages] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [error, setError] = useState("");
-  const [selectedMail, setSelectedMail] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
   const {
@@ -19,7 +18,11 @@ function InboxScreen() {
     importantMails,
     toggleStar,
     toggleImportant,
-    deleteMail,
+    handleDelete,
+    handleMoveToSpam,
+    handleMailClick,
+    setSelectedMail,
+    selectedMail,
   } = useOutletContext();
 
   // Fetch inbox data from the server for the current page
@@ -54,7 +57,7 @@ function InboxScreen() {
   useEffect(() => {
     fetchInbox(currentPage);
   }, [fetchInbox, currentPage]);
-
+  
   // Load and show the full details of a selected mail
   const handleMailClick = async (id) => {
     const token = sessionStorage.getItem("jwt");
@@ -82,7 +85,7 @@ function InboxScreen() {
       console.error("Label assignment failed:", err.message);
     }
   };
-
+  
   return (
     <div className="inboxScreen">
       {!selectedMail && (
@@ -106,6 +109,7 @@ function InboxScreen() {
             onStarToggle={toggleStar}
             onImportantToggle={toggleImportant}
             onDelete={handleDelete}
+            setMessages={setMessages}
           />
         </div>
       ) : (
@@ -115,9 +119,11 @@ function InboxScreen() {
           onStarToggle={toggleStar}
           onImportantToggle={toggleImportant}
           onDelete={handleDelete}
+          moveToSpam={handleMoveToSpam}
           starred={starredMails}
           important={importantMails}
           onAssignLabel={onAssignLabel}
+          setMessages={setMessages}
         />
       )}
     </div>

@@ -5,7 +5,8 @@ import MailList from "../MailList/MailList";
 import MailDetails from "../ViewMail/ViewMail";
 import MailsControl from "../MailsControl/MailsControl";
 
-function ImportantScreen() {
+function SpamScreen() {
+  // State variables for spam data and UI state
   const [messages, setMessages] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [error, setError] = useState("");
@@ -14,36 +15,32 @@ function ImportantScreen() {
   const {
     starredMails,
     importantMails,
-    toggleStar,
-    toggleImportant,
-    handleDelete,
-    handleMoveToSpam,
     handleMailClick,
+    handleDelete,
     setSelectedMail,
     selectedMail,
   } = useOutletContext();
 
-  const fetchImportant = useCallback(
+  // Fetch spam data from the server for the current page
+  const fetchSpam = useCallback(
     async (page = currentPage) => {
       try {
         const token = sessionStorage.getItem("jwt");
-        if (!token) return;
 
         const res = await fetch(`/api/mails?page=${page}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
             authorization: "bearer " + token,
-            label: "Important",
+            label: "Spam",
           },
         });
 
-        if (!res.ok) throw new Error("Failed to load important mails");
-
+        if (!res.ok) throw new Error("Failed to load spam");
+        setError("");
         const data = await res.json();
         setMessages(data.mails);
         setTotalCount(data.totalCount);
-        setError("");
       } catch (err) {
         setError(err.message);
       }
@@ -51,17 +48,10 @@ function ImportantScreen() {
     [currentPage]
   );
 
-  // Fetch important whenever the page changes
+  // Fetch spam whenever the page changes
   useEffect(() => {
-    fetchImportant();
-  }, [fetchImportant]);
-
-  const handleImportantToggle = async (id, setMessages) => {
-    await toggleImportant(id);
-    // Remove mail localy
-    setMessages((prev) => prev.filter((mail) => mail.id !== id));
-    if (selectedMail?.id === id) setSelectedMail(null);
-  };
+    fetchSpam(currentPage);
+  }, [fetchSpam, currentPage]);
 
   return (
     <div className="inboxScreen">
@@ -69,7 +59,7 @@ function ImportantScreen() {
         <MailsControl
           currentPage={currentPage}
           totalCount={totalCount}
-          onRefresh={fetchImportant}
+          onRefresh={fetchSpam}
           onPageChange={setCurrentPage}
         />
       )}
@@ -83,9 +73,8 @@ function ImportantScreen() {
             starred={starredMails}
             important={importantMails}
             onSelect={handleMailClick}
-            onStarToggle={toggleStar}
-            onImportantToggle={handleImportantToggle}
             onDelete={handleDelete}
+            isSpamScreen={true}
             setMessages={setMessages}
           />
         </div>
@@ -93,12 +82,10 @@ function ImportantScreen() {
         <MailDetails
           mail={selectedMail}
           onClose={() => setSelectedMail(null)}
-          onStarToggle={toggleStar}
-          onImportantToggle={handleImportantToggle}
-          onDelete={handleDelete}
-          moveToSpam={handleMoveToSpam}
           starred={starredMails}
           important={importantMails}
+          onDelete={handleDelete}
+          isSpamScreen={true}
           setMessages={setMessages}
         />
       )}
@@ -106,4 +93,4 @@ function ImportantScreen() {
   );
 }
 
-export default ImportantScreen;
+export default SpamScreen;

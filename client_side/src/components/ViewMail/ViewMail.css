@@ -53,6 +53,15 @@
   color: #555;
 }
 
+.mail-details-icons .spam-icon {
+  transition: color 0.2s;
+  color: #3b3b3a;
+}
+
+.mail-details-icons .spam-icon:hover {
+  color: #d93025;
+}
+
 .mail-details-actions {
   display: flex;
   justify-content: space-between;
@@ -145,7 +154,8 @@
 
 .star-icon.disabled,
 .flag-icon.disabled,
-.trash-icon.disabled {
+.trash-icon.disabled,
+.spam-icon.disabled {
   opacity: 0.5;
   pointer-events: none;
   cursor: default;
