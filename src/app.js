@@ -2,7 +2,7 @@ const express = require("express");
 const path = require("path");
 const app = express();
 const middleware = require("./middleware/auth");
-require("dotenv").config();
+require("dotenv").config({ path: path.join(__dirname, "../config/.env") });
 
 const mails = require("./routes/mails");
 const users = require("./routes/users");

@@ -27,7 +27,6 @@ function ImportantScreen() {
     async (page = currentPage) => {
       try {
         const token = sessionStorage.getItem("jwt");
-        if (!token) return;
 
         const res = await fetch(`/api/mails?page=${page}`, {
           method: "GET",
