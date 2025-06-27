@@ -7,7 +7,6 @@ export function ThemeProvider({ children }) {
 
   const updateUserTheme = async (newTheme) => {
     const token = sessionStorage.getItem("jwt");
-    if (!token) return;
 
     await fetch("/api/users/theme", {
       method: "PUT",
@@ -21,7 +20,6 @@ export function ThemeProvider({ children }) {
 
   useEffect(() => {
     const token = sessionStorage.getItem("jwt");
-    if (!token) return;
 
     fetch("/api/users", {
       headers: {
