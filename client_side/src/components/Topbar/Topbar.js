@@ -1,17 +1,21 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ThemeContext } from "../../ThemeContext";
 import { FaSearch } from "react-icons/fa";
 import "./Topbar.css";
+import LiveSearchResult from "../LiveSearchResult/LiveSearchResult";
 
 function Topbar() {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState(null);
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const { toggleTheme } = useContext(ThemeContext);
+  const [isFocused, setIsFocused] = useState(false);
+  const debounceRef = useRef(null);
+  const searchRef = useRef(null);
 
-  // Function that performs a fetch request for user data
+  // Fetch the current user data on mount
   const fetchTopbar = async () => {
     try {
       const token = sessionStorage.getItem("jwt");
@@ -24,7 +28,6 @@ function Topbar() {
         },
       });
       if (!res.ok) throw new Error("Faild to load user");
-      // Gets the information from the server
       const data = await res.json();
       setUser(data);
     } catch (err) {
@@ -37,14 +40,21 @@ function Topbar() {
     navigate("/login");
   };
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
+  // Handle search input changes
+  const handleChange = (value) => {
+    setResults(null);
+    setQuery(value);
+    if (value) {
+      debounceSearch(value);
+    }
+  };
+
+  // Fetch search results from server
+  const searchMails = async (value) => {
     try {
       const token = sessionStorage.getItem("jwt");
-      if (!token) return;
       const res = await fetch(
-        // Used encodeURIComponent in order to search for anything the user wants without misbehaviour
-        `/api/mails/search/${encodeURIComponent(query)}`,
+        `/api/mails/search/${encodeURIComponent(value)}`,
         {
           method: "GET",
           headers: {
@@ -60,17 +70,61 @@ function Topbar() {
     }
   };
 
+  // Submit search manually (form submit)
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    handleChange(query);
+  };
+
+  // Debounce typing to avoid excessive requests
+  const debounceSearch = (value) => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    debounceRef.current = setTimeout(() => {
+      searchMails(value);
+    }, 300);
+  };
+
   useEffect(() => {
     console.log("Updated results:", results);
   }, [results]);
 
   useEffect(() => {
     fetchTopbar();
-  }, []);
 
+    // Handle focus and blur across the entire search container
+    const handleFocusIn = (e) => {
+      if (searchRef.current && searchRef.current.contains(e.target)) {
+        setIsFocused(true);
+      }
+    };
+
+    const handleFocusOut = (e) => {
+      // Timeout ensures clicks inside dropdown aren't lost
+      setTimeout(() => {
+        if (
+          searchRef.current &&
+          !searchRef.current.contains(document.activeElement)
+        ) {
+          setIsFocused(false);
+        }
+      }, 100);
+    };
+
+    // Attach focus listeners to the whole document
+    document.addEventListener("focusin", handleFocusIn);
+    document.addEventListener("focusout", handleFocusOut);
+
+    // Clean up when component unfocused
+    return () => {
+      document.removeEventListener("focusin", handleFocusIn);
+      document.removeEventListener("focusout", handleFocusOut);
+    };
+  }, []);
   return (
     <div className="inbox-header">
-      {/* Display image and name */}
       {user && (
         <>
           <img
@@ -81,25 +135,30 @@ function Topbar() {
           <span className="username">{user.first_name}</span>
         </>
       )}
-      <form className="search-container" onSubmit={handleSearch}>
-        <input
-          type="text"
-          placeholder="Search in email"
-          className="search-input"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        <button type="submit" className="search-button" aria-label="Search">
-          <FaSearch />
-        </button>
-      </form>
+      <div className="search-container" ref={searchRef}>
+        <form onSubmit={handleSearchSubmit}>
+          <input
+            type="text"
+            placeholder="Search in email"
+            className="search-input"
+            value={query}
+            onChange={(e) => handleChange(e.target.value)}
+          />
+          <button type="submit" className="search-button" aria-label="Search">
+            <FaSearch />
+          </button>
+        </form>
 
-      {/* Logout button */}
+        {isFocused && (
+          <LiveSearchResult
+            results={results}
+            isLoading={query?.length && !results}
+          />
+        )}
+      </div>
       <button className="logout-button" onClick={handleLogout}>
         Logout
       </button>
-
-      {/* Display mode toggle button */}
       <button className="theme-toggle-button" onClick={toggleTheme}>
         🔆
       </button>
