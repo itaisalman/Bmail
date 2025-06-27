@@ -84,7 +84,7 @@ const createMail = (sender, receiver, title, content, isSpam) => {
     sender_address: sender_user.username,
     sender_first_name: sender_user.first_name,
     sender_last_name: sender_user.last_name,
-    receiver_id: receiver,
+    receiver_id: receiver_user.id,
     receiver_address: receiver_user.username,
     receiver_first_name: receiver_user.first_name,
     receiver_last_name: receiver_user.last_name,
@@ -158,7 +158,7 @@ function getMailsByQuery(user_id, query) {
 
 // Change the wanted fields in draft.
 const editDraft = (draft, receiver, title, content) => {
-  draft.receiver = receiver.toString();
+  draft.receiver_address = receiver.toString();
   draft.title = title.toString();
   draft.content = content.toString();
   return;
@@ -233,17 +233,34 @@ const emptyUserTrash = (user_id) => {
   return true;
 };
 // Create a new draft with the passed arguments.
-const createNewDraft = (sender, receiver, title, content) => {
+const createNewDraft = (sender, receiver_address, title, content) => {
   const sender_user = users.getUserById(sender);
   const new_draft = {
     id: ++draft_counter,
-    receiver,
+    receiver_address,
     title,
     content,
     date: new Date(),
   };
   sender_user.drafts.push(new_draft);
   return;
+};
+
+const restoreSpammedMail = (user_id, mail_id) => {
+  const user = users.getUserById(user_id);
+  if (!user) return;
+
+  const wanted_mail = getSpecificMail(user_id, mail_id);
+  if (!wanted_mail) return;
+
+  removeMailFromArray(user.spam, mail_id);
+  if (wanted_mail.sender_id == user_id) {
+    user.sent_mails.push(wanted_mail);
+  }
+  if (wanted_mail.receiver_id == user_id) {
+    user.received_mails.push(wanted_mail);
+  }
+  return true;
 };
 
 module.exports = {
@@ -260,4 +277,5 @@ module.exports = {
   toggleImportant,
   emptyUserTrash,
   mailToSpam,
+  restoreSpammedMail,
 };

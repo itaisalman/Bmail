@@ -12,10 +12,8 @@ import StarredScreen from "./components/Star/Star";
 import ImportantScreen from "./components/Important/Important";
 import TrashScreen from "./components/Trash/Trash";
 import ViewResult from "./components/ViewResult/ViewResult";
-
-// Temporary components
-const Sent = () => <h1>Sent</h1>;
-const Spam = () => <h1>Spam</h1>;
+import SpamScreen from "./components/Spam/Spam";
+import SentScreen from "./components/Sent/Sent";
 
 function App() {
   return (
@@ -38,11 +36,11 @@ function App() {
             <Route path=":id" element={<ViewResult />} />
           </Route>
 
-          <Route path="sent" element={<Sent />}>
+          <Route path="sent" element={<SentScreen />}>
             <Route path=":id" element={<ViewResult />} />
           </Route>
 
-          <Route path="spam" element={<Spam />}>
+          <Route path="spam" element={<SpamScreen />}>
             <Route path=":id" element={<ViewResult />} />
           </Route>
 

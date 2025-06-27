@@ -13,7 +13,10 @@ router
   .get(controller.getDraftById)
   .delete(controller.deleteDraftById);
 
-router.route("/spam/:id").post(controller.moveMailToSpam);
+router
+  .route("/spam/:id")
+  .post(controller.moveMailToSpam)
+  .delete(controller.restoreMailFromSpam);
 
 router
   .route("/:id")

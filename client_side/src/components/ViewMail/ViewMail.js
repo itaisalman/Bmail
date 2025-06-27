@@ -1,6 +1,8 @@
 import { RxCross2 } from "react-icons/rx";
 import { MdReport } from "react-icons/md";
+import { FiShare } from "react-icons/fi";
 import { MdOutlineDelete, MdOutlineFlag, MdFlag } from "react-icons/md";
+import { useLocation } from "react-router-dom";
 import "./ViewMail.css";
 
 function MailDetails({
@@ -14,7 +16,14 @@ function MailDetails({
   moveToSpam,
   disabledActions = false,
   setMessages,
+  isSpamScreen = false,
+  restore,
 }) {
+  // Check if the screen is spam to present restorefrom spam button
+  const location = useLocation();
+  const showRestoreFromSpamBtn = location.pathname.startsWith("/main/spam");
+  const isSentScreen = location.pathname.startsWith("/main/sent");
+
   // Don't render anything if no mail is selected
   if (!mail) return null;
 
@@ -36,42 +45,58 @@ function MailDetails({
         <div className="mail-details-icons">
           <span
             onClick={() => {
-              if (!disabledActions) onStarToggle(mail.id, setMessages);
+              if (!disabledActions) onStarToggle(mail.id);
             }}
-            className={`star-icon ${starred.has(mail.id) ? "active" : ""} ${
-              disabledActions ? "disabled" : ""
+            className={`star-icon ${starred?.has(mail.id) ? "active" : ""} ${
+              disabledActions || isSpamScreen ? "disabled" : ""
             }`}
-            title="Star"
+            title="Mark with Star"
           >
-            {starred.has(mail.id) ? "⭐" : "☆"}
+            {starred?.has(mail.id) && !isSpamScreen ? "⭐" : "☆"}
           </span>
           <span
             onClick={() => {
-              if (!disabledActions) onImportantToggle(mail.id, setMessages);
+              if (!disabledActions) onImportantToggle(mail.id);
             }}
             className={`flag-icon ${
-              important.has(mail.id) ? "important" : ""
-            } ${disabledActions ? "disabled" : ""}`}
-            title="Important"
+              important?.has(mail.id) && !isSpamScreen ? "important" : ""
+            } ${disabledActions || isSpamScreen ? "disabled" : ""}`}
+            title="Mark as Important"
           >
-            {important.has(mail.id) ? <MdFlag /> : <MdOutlineFlag />}
+            {important?.has(mail.id) && !isSpamScreen ? (
+              <MdFlag />
+            ) : (
+              <MdOutlineFlag />
+            )}
           </span>
           <span
             onClick={() => {
               if (!disabledActions) onDelete(mail.id, setMessages);
             }}
             className={`trash-icon ${disabledActions ? "disabled" : ""}`}
-            title="Delete"
+            title="Move to trash"
           >
             <MdOutlineDelete />
           </span>
           <span
-            onClick={() => moveToSpam(mail.id, setMessages)}
-            className="spam-icon"
+            onClick={() => {
+              if (!isSpamScreen) moveToSpam(mail.id, setMessages);
+            }}
+            className={`spam-icon ${isSpamScreen ? "disabled" : ""}`}
             title="Mark as Spam"
           >
             <MdReport />
           </span>
+          {showRestoreFromSpamBtn && (
+            <span
+              className="restore-from-spam-button"
+              onClick={() => restore(mail.id)}
+              aria-label="restore to inbox"
+              title="Restore from Spam"
+            >
+              <FiShare />
+            </span>
+          )}
         </div>
 
         <button
@@ -88,8 +113,12 @@ function MailDetails({
         <h3 className="mail-details-subject">{mail.title}</h3>
       </div>
 
-      <div className="mail-details-label">From:</div>
-      <div className="mail-details-sender-box">{mail.sender_address}</div>
+      <div className="mail-details-label">
+        {isSentScreen ? "To: " : "From: "}
+      </div>
+      <div className="mail-details-sender-box">
+        {isSentScreen ? mail.receiver_address : mail.sender_address}
+      </div>
 
       <div className="mail-details-label">Content:</div>
       <p className="mail-details-content-body">{mail.content}</p>

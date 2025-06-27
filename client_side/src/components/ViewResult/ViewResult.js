@@ -15,8 +15,17 @@ function ViewResult() {
     toggleImportant,
     handleDelete,
     handleMoveToSpam,
+    disabledActions = false,
+    isSpamScreen = false,
+    RestoreFromSpam,
     setMessages,
   } = useOutletContext();
+
+  // When pressing spam or trash while viewing a mail, the view mail should be closed.
+  const handleClosingFunctions = (mail_id, setMessages, func) => {
+    handleClose();
+    func(mail_id, setMessages);
+  };
 
   // Navigate to previous path
   const handleClose = () => {
@@ -34,10 +43,17 @@ function ViewResult() {
       onStarToggle={toggleStar}
       onImportantToggle={toggleImportant}
       onDelete={handleDeleteResult}
-      moveToSpam={handleMoveToSpam}
+      moveToSpam={(mail_id, setMessages) =>
+        handleClosingFunctions(mail_id, setMessages, handleMoveToSpam)
+      }
       starred={starredMails}
       important={importantMails}
+      disabledActions={disabledActions}
+      isSpamScreen={isSpamScreen}
       setMessages={setMessages}
+      restore={(mail_id, setMessages) =>
+        handleClosingFunctions(mail_id, setMessages, RestoreFromSpam)
+      }
     />
   );
 }

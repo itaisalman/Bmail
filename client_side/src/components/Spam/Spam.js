@@ -5,83 +5,76 @@ import MailList from "../MailList/MailList";
 import MailDetails from "../ViewMail/ViewMail";
 import MailsControl from "../MailsControl/MailsControl";
 
-function TrashScreen() {
+function SpamScreen() {
+  // State variables for spam data and UI state
   const [messages, setMessages] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const { id } = useParams();
-  const disabledActions = true;
+  const isSpamScreen = true;
 
   const {
     starredMails,
     importantMails,
-    toggleStar,
-    toggleImportant,
-    handleDelete,
-    handleMoveToSpam,
     handleMailClick,
+    handleDelete,
     setSelectedMail,
     selectedMail,
   } = useOutletContext();
 
-  // Fetch inbox data from the server for the current page
-  const fetchTrash = useCallback(
+  // Fetch spam data from the server for the current page
+  const fetchSpam = useCallback(
     async (page = currentPage) => {
       try {
         const token = sessionStorage.getItem("jwt");
-        if (!token) return;
 
         const res = await fetch(`/api/mails?page=${page}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
             authorization: "bearer " + token,
-            label: "Trash",
+            label: "Spam",
           },
         });
 
-        if (!res.ok) throw new Error("Failed to load trash");
+        if (!res.ok) throw new Error("Failed to load spam");
+        setError("");
         const data = await res.json();
         setMessages(data.mails);
         setTotalCount(data.totalCount);
-        setError("");
       } catch (err) {
-        setError("Failed to load trash");
+        setError(err.message);
       }
     },
     [currentPage]
   );
 
-  // Fetch trash whenever the page changes
+  // Fetch spam whenever the page changes
   useEffect(() => {
-    fetchTrash(currentPage);
-  }, [fetchTrash, currentPage]);
+    fetchSpam(currentPage);
+  }, [fetchSpam, currentPage]);
 
   // When user clicks empty trash button
-  const handleEmptyTrash = async () => {
+  const RestoreFromSpam = async (id) => {
     setError("");
 
     try {
       const token = sessionStorage.getItem("jwt");
-      if (!token) return;
-      const res = await fetch("/api/mails/trash", {
+      const res = await fetch(`/api/mails/spam/${id}`, {
         method: "DELETE",
         headers: {
-          "Content-Type": "application/json",
           authorization: "bearer " + token,
         },
       });
 
-      if (!res.ok) throw new Error("Failed to empty trash");
+      if (!res.ok) throw new Error("Failed to remove from spam");
 
       // Updated values after delete all mails from user's trash
-      setSelectedMail(null);
-      setMessages([]);
-      setTotalCount(0);
-      setCurrentPage(1);
+      setMessages((prev) => prev.filter((mail) => mail.id !== id));
+      if (selectedMail?.id === id) setSelectedMail(null);
     } catch (err) {
-      setError("Failed empty trash");
+      setError(err.message);
     }
   };
 
@@ -90,14 +83,10 @@ function TrashScreen() {
       {id ? (
         <Outlet
           context={{
-            starredMails,
-            importantMails,
-            toggleStar,
-            toggleImportant,
             handleDelete,
-            handleMoveToSpam,
-            disabledActions,
+            isSpamScreen,
             setMessages,
+            RestoreFromSpam,
           }}
         />
       ) : (
@@ -106,9 +95,8 @@ function TrashScreen() {
             <MailsControl
               currentPage={currentPage}
               totalCount={totalCount}
-              onRefresh={fetchTrash}
+              onRefresh={fetchSpam}
               onPageChange={setCurrentPage}
-              onEmptyTrash={handleEmptyTrash}
             />
           )}
 
@@ -121,7 +109,8 @@ function TrashScreen() {
                 starred={starredMails}
                 important={importantMails}
                 onSelect={handleMailClick}
-                disabledActions={true}
+                onDelete={handleDelete}
+                isSpamScreen={true}
                 setMessages={setMessages}
               />
             </div>
@@ -131,8 +120,9 @@ function TrashScreen() {
               onClose={() => setSelectedMail(null)}
               starred={starredMails}
               important={importantMails}
-              moveToSpam={handleMoveToSpam}
-              disabledActions={disabledActions}
+              onDelete={handleDelete}
+              isSpamScreen={isSpamScreen}
+              restore={RestoreFromSpam}
               setMessages={setMessages}
             />
           )}
@@ -142,4 +132,4 @@ function TrashScreen() {
   );
 }
 
-export default TrashScreen;
+export default SpamScreen;

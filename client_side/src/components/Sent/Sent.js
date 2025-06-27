@@ -5,13 +5,13 @@ import MailList from "../MailList/MailList";
 import MailDetails from "../ViewMail/ViewMail";
 import MailsControl from "../MailsControl/MailsControl";
 
-function TrashScreen() {
+function SentScreen() {
+  // State variables for sent data and UI state
   const [messages, setMessages] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const { id } = useParams();
-  const disabledActions = true;
 
   const {
     starredMails,
@@ -25,8 +25,8 @@ function TrashScreen() {
     selectedMail,
   } = useOutletContext();
 
-  // Fetch inbox data from the server for the current page
-  const fetchTrash = useCallback(
+  // Fetch sent mails from the server for the current page
+  const fetchSent = useCallback(
     async (page = currentPage) => {
       try {
         const token = sessionStorage.getItem("jwt");
@@ -37,53 +37,26 @@ function TrashScreen() {
           headers: {
             "Content-Type": "application/json",
             authorization: "bearer " + token,
-            label: "Trash",
+            label: "Sent",
           },
         });
 
-        if (!res.ok) throw new Error("Failed to load trash");
+        if (!res.ok) throw new Error("Failed to load sent mails");
+        setError("");
         const data = await res.json();
         setMessages(data.mails);
         setTotalCount(data.totalCount);
-        setError("");
       } catch (err) {
-        setError("Failed to load trash");
+        setError(err.message);
       }
     },
     [currentPage]
   );
 
-  // Fetch trash whenever the page changes
+  // Fetch sent mails whenever the page changes
   useEffect(() => {
-    fetchTrash(currentPage);
-  }, [fetchTrash, currentPage]);
-
-  // When user clicks empty trash button
-  const handleEmptyTrash = async () => {
-    setError("");
-
-    try {
-      const token = sessionStorage.getItem("jwt");
-      if (!token) return;
-      const res = await fetch("/api/mails/trash", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: "bearer " + token,
-        },
-      });
-
-      if (!res.ok) throw new Error("Failed to empty trash");
-
-      // Updated values after delete all mails from user's trash
-      setSelectedMail(null);
-      setMessages([]);
-      setTotalCount(0);
-      setCurrentPage(1);
-    } catch (err) {
-      setError("Failed empty trash");
-    }
-  };
+    fetchSent(currentPage);
+  }, [fetchSent, currentPage]);
 
   return (
     <div className="inboxScreen">
@@ -96,7 +69,7 @@ function TrashScreen() {
             toggleImportant,
             handleDelete,
             handleMoveToSpam,
-            disabledActions,
+            setSelectedMail,
             setMessages,
           }}
         />
@@ -106,9 +79,8 @@ function TrashScreen() {
             <MailsControl
               currentPage={currentPage}
               totalCount={totalCount}
-              onRefresh={fetchTrash}
+              onRefresh={fetchSent}
               onPageChange={setCurrentPage}
-              onEmptyTrash={handleEmptyTrash}
             />
           )}
 
@@ -121,7 +93,9 @@ function TrashScreen() {
                 starred={starredMails}
                 important={importantMails}
                 onSelect={handleMailClick}
-                disabledActions={true}
+                onStarToggle={toggleStar}
+                onImportantToggle={toggleImportant}
+                onDelete={handleDelete}
                 setMessages={setMessages}
               />
             </div>
@@ -129,10 +103,12 @@ function TrashScreen() {
             <MailDetails
               mail={selectedMail}
               onClose={() => setSelectedMail(null)}
+              onStarToggle={toggleStar}
+              onImportantToggle={toggleImportant}
+              onDelete={handleDelete}
+              moveToSpam={handleMoveToSpam}
               starred={starredMails}
               important={importantMails}
-              moveToSpam={handleMoveToSpam}
-              disabledActions={disabledActions}
               setMessages={setMessages}
             />
           )}
@@ -142,4 +118,4 @@ function TrashScreen() {
   );
 }
 
-export default TrashScreen;
+export default SentScreen;
