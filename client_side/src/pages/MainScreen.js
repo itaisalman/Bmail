@@ -171,6 +171,10 @@ function MainScreen() {
     setSelectedMail(data);
   };
 
+  const handleCloseMail = () => {
+    setSelectedMail(null);
+  };
+
   return (
     <div className="main-container">
       <Sidebar
@@ -185,6 +189,7 @@ function MainScreen() {
           setLabelToDelete(label);
           setShowDeleteConfirm(true);
         }}
+        onCloseMail={handleCloseMail}
       />
       <main className="main-content">
         <Topbar />
