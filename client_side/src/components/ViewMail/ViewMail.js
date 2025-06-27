@@ -22,6 +22,7 @@ function MailDetails({
   // Check if the screen is spam to present restorefrom spam button
   const location = useLocation();
   const showRestoreFromSpamBtn = location.pathname === "/main/spam";
+  const isSentScreen = location.pathname === "/main/sent";
 
   // Don't render anything if no mail is selected
   if (!mail) return null;
@@ -112,8 +113,12 @@ function MailDetails({
         <h3 className="mail-details-subject">{mail.title}</h3>
       </div>
 
-      <div className="mail-details-label">From:</div>
-      <div className="mail-details-sender-box">{mail.sender_address}</div>
+      <div className="mail-details-label">
+        {isSentScreen ? "To: " : "From: "}
+      </div>
+      <div className="mail-details-sender-box">
+        {isSentScreen ? mail.receiver_address : mail.sender_address}
+      </div>
 
       <div className="mail-details-label">Content:</div>
       <p className="mail-details-content-body">{mail.content}</p>
