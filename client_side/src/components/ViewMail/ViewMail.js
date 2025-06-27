@@ -1,6 +1,8 @@
 import { RxCross2 } from "react-icons/rx";
 import { MdReport } from "react-icons/md";
+import { FiShare } from "react-icons/fi";
 import { MdOutlineDelete, MdOutlineFlag, MdFlag } from "react-icons/md";
+import { useLocation } from "react-router-dom";
 import "./ViewMail.css";
 
 function MailDetails({
@@ -15,7 +17,12 @@ function MailDetails({
   disabledActions = false,
   setMessages,
   isSpamScreen = false,
+  restore,
 }) {
+  // Check if the screen is spam to present restorefrom spam button
+  const location = useLocation();
+  const showRestoreFromSpamBtn = location.pathname === "/main/spam";
+
   // Don't render anything if no mail is selected
   if (!mail) return null;
 
@@ -37,23 +44,23 @@ function MailDetails({
         <div className="mail-details-icons">
           <span
             onClick={() => {
-              if (!disabledActions) onStarToggle(mail.id, setMessages);
+              if (!disabledActions) onStarToggle(mail.id);
             }}
             className={`star-icon ${starred.has(mail.id) ? "active" : ""} ${
               disabledActions || isSpamScreen ? "disabled" : ""
             }`}
-            title="Star"
+            title="Mark with Star"
           >
             {starred.has(mail.id) && !isSpamScreen ? "⭐" : "☆"}
           </span>
           <span
             onClick={() => {
-              if (!disabledActions) onImportantToggle(mail.id, setMessages);
+              if (!disabledActions) onImportantToggle(mail.id);
             }}
             className={`flag-icon ${
               important.has(mail.id) && !isSpamScreen ? "important" : ""
             } ${disabledActions || isSpamScreen ? "disabled" : ""}`}
-            title="Important"
+            title="Mark as Important"
           >
             {important.has(mail.id) && !isSpamScreen ? (
               <MdFlag />
@@ -66,7 +73,7 @@ function MailDetails({
               if (!disabledActions) onDelete(mail.id, setMessages);
             }}
             className={`trash-icon ${disabledActions ? "disabled" : ""}`}
-            title="Delete"
+            title="Move to trash"
           >
             <MdOutlineDelete />
           </span>
@@ -79,6 +86,16 @@ function MailDetails({
           >
             <MdReport />
           </span>
+          {showRestoreFromSpamBtn && (
+            <span
+              className="restore-from-spam-button"
+              onClick={() => restore(mail.id)}
+              aria-label="restore to inbox"
+              title="Restore from Spam"
+            >
+              <FiShare />
+            </span>
+          )}
         </div>
 
         <button

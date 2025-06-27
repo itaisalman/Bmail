@@ -56,8 +56,9 @@ function MailList({
             <div className="mail-icons" onClick={(e) => e.stopPropagation()}>
               <span
                 onClick={() => {
-                  if (!disabledActions) onStarToggle(mail.id, setMessages);
+                  if (!disabledActions) onStarToggle(mail.id);
                 }}
+                title="Mark with Star"
                 aria-label="Star mail"
                 className={`star-icon ${
                   disabledActions || isSpamScreen ? "disabled" : ""
@@ -68,8 +69,9 @@ function MailList({
 
               <span
                 onClick={() => {
-                  if (!disabledActions) onImportantToggle(mail.id, setMessages);
+                  if (!disabledActions) onImportantToggle(mail.id);
                 }}
+                title="Mark as Important"
                 aria-label="Important mail"
                 className={`flag-icon ${
                   important?.has(mail.id) && !isSpamScreen ? "important" : ""
@@ -86,6 +88,7 @@ function MailList({
                   if (!disabledActions || showDelete)
                     onDelete(mail.id, setMessages);
                 }}
+                title="Move to trash"
                 aria-label="Delete mail"
                 className={`delete-icon ${
                   !disabledActions || showDelete ? "" : "disabled"

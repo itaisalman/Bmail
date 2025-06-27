@@ -242,6 +242,15 @@ const createNewDraft = (sender, receiver, title, content) => {
   return;
 };
 
+const restoreSpammedMail = (user_id, mail_id) => {
+  const user = users.getUserById(user_id);
+  const wanted_mail = getSpecificMail(user_id, mail_id);
+  if (!wanted_mail) return;
+  removeMailFromArray(user.spam, mail_id);
+  user.received_mails.push(wanted_mail);
+  return true;
+};
+
 module.exports = {
   getFiftyMails,
   createMail,
@@ -256,4 +265,5 @@ module.exports = {
   toggleImportant,
   emptyUserTrash,
   mailToSpam,
+  restoreSpammedMail,
 };

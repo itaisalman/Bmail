@@ -53,6 +53,29 @@ function SpamScreen() {
     fetchSpam(currentPage);
   }, [fetchSpam, currentPage]);
 
+  // When user clicks empty trash button
+  const RestoreFromSpam = async (id) => {
+    setError("");
+
+    try {
+      const token = sessionStorage.getItem("jwt");
+      const res = await fetch(`/api/mails/spam/${id}`, {
+        method: "DELETE",
+        headers: {
+          authorization: "bearer " + token,
+        },
+      });
+
+      if (!res.ok) throw new Error("Failed to remove from spam");
+
+      // Updated values after delete all mails from user's trash
+      setMessages((prev) => prev.filter((mail) => mail.id !== id));
+      if (selectedMail?.id === id) setSelectedMail(null);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   return (
     <div className="inboxScreen">
       {!selectedMail && (
@@ -86,6 +109,7 @@ function SpamScreen() {
           important={importantMails}
           onDelete={handleDelete}
           isSpamScreen={true}
+          restore={RestoreFromSpam}
           setMessages={setMessages}
         />
       )}
