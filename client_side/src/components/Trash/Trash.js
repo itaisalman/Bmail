@@ -6,19 +6,18 @@ import MailDetails from "../ViewMail/ViewMail";
 import MailsControl from "../MailsControl/MailsControl";
 
 function TrashScreen() {
-  // State variables for inbox data and UI state
   const [messages, setMessages] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [error, setError] = useState("");
-  const [selectedMail, setSelectedMail] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
   const {
-    handleStarToggle,
-    handleImportantToggle,
-    handleDelete,
     starredMails,
     importantMails,
+    handleMoveToSpam,
+    handleMailClick,
+    setSelectedMail,
+    selectedMail,
   } = useOutletContext();
 
   // Fetch inbox data from the server for the current page
@@ -49,23 +48,10 @@ function TrashScreen() {
     [currentPage]
   );
 
-  // Fetch inbox whenever the page changes
+  // Fetch trash whenever the page changes
   useEffect(() => {
     fetchTrash(currentPage);
   }, [fetchTrash, currentPage]);
-
-  // Load and show the full details of a selected mail
-  const handleMailClick = async (id) => {
-    if (!id) return;
-    const token = sessionStorage.getItem("jwt");
-    const res = await fetch(`/api/mails/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data = await res.json();
-    setSelectedMail(data);
-  };
 
   // When user clicks empty trash button
   const handleEmptyTrash = async () => {
@@ -115,22 +101,19 @@ function TrashScreen() {
             starred={starredMails}
             important={importantMails}
             onSelect={handleMailClick}
-            onStarToggle={handleStarToggle}
-            onImportantToggle={handleImportantToggle}
-            onDelete={handleDelete}
             disabledActions={true}
+            setMessages={setMessages}
           />
         </div>
       ) : (
         <MailDetails
           mail={selectedMail}
           onClose={() => setSelectedMail(null)}
-          onStarToggle={handleStarToggle}
-          onImportantToggle={handleImportantToggle}
-          onDelete={handleDelete}
           starred={starredMails}
           important={importantMails}
+          moveToSpam={handleMoveToSpam}
           disabledActions={true}
+          setMessages={setMessages}
         />
       )}
     </div>

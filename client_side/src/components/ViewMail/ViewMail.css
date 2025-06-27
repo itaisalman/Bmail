@@ -41,7 +41,8 @@
 
 .mail-details-icons .star-icon,
 .mail-details-icons .flag-icon,
-.mail-details-icons .trash-icon {
+.mail-details-icons .trash-icon,
+.mail-details-icons .restore-from-spam-button {
   transition: color 0.2s;
 }
 
@@ -51,6 +52,15 @@
 
 .mail-details-icons span:hover {
   color: #555;
+}
+
+.mail-details-icons .spam-icon {
+  transition: color 0.2s;
+  color: #3b3b3a;
+}
+
+.mail-details-icons .spam-icon:hover {
+  color: #d93025;
 }
 
 .mail-details-actions {
@@ -145,7 +155,8 @@
 
 .star-icon.disabled,
 .flag-icon.disabled,
-.trash-icon.disabled {
+.trash-icon.disabled,
+.spam-icon.disabled {
   opacity: 0.5;
   pointer-events: none;
   cursor: default;

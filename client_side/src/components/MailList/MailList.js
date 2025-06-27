@@ -11,6 +11,8 @@ function MailList({
   onImportantToggle,
   onDelete,
   disabledActions = false,
+  setMessages,
+  isSpamScreen = false,
 }) {
   const location = useLocation();
   // We use this component for several usages.
@@ -56,27 +58,37 @@ function MailList({
                 onClick={() => {
                   if (!disabledActions) onStarToggle(mail.id);
                 }}
+                title="Mark with Star"
                 aria-label="Star mail"
-                className={`star-icon ${disabledActions ? "disabled" : ""}`}
+                className={`star-icon ${
+                  disabledActions || isSpamScreen ? "disabled" : ""
+                }`}
               >
-                {starred?.has(mail.id) ? "⭐" : "☆"}
+                {starred?.has(mail.id) && !isSpamScreen ? "⭐" : "☆"}
               </span>
 
               <span
                 onClick={() => {
                   if (!disabledActions) onImportantToggle(mail.id);
                 }}
+                title="Mark as Important"
                 aria-label="Important mail"
                 className={`flag-icon ${
-                  important?.has(mail.id) ? "important" : ""
-                } ${disabledActions ? "disabled" : ""}`}
+                  important?.has(mail.id) && !isSpamScreen ? "important" : ""
+                } ${disabledActions || isSpamScreen ? "disabled" : ""}`}
               >
-                {important?.has(mail.id) ? <MdFlag /> : <MdOutlineFlag />}
+                {important?.has(mail.id) && !isSpamScreen ? (
+                  <MdFlag />
+                ) : (
+                  <MdOutlineFlag />
+                )}
               </span>
               <span
                 onClick={() => {
-                  if (!disabledActions || showDelete) onDelete(mail.id);
+                  if (!disabledActions || showDelete)
+                    onDelete(mail.id, setMessages);
                 }}
+                title="Move to trash"
                 aria-label="Delete mail"
                 className={`delete-icon ${
                   !disabledActions || showDelete ? "" : "disabled"
