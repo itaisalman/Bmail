@@ -1,12 +1,7 @@
 import { useEffect } from "react";
 import "./LabelDropdown.css";
 
-function LabelDropdown({
-  labels,
-  onSelect,
-  onClose,
-  hideDefaultLabels = false,
-}) {
+function LabelDropdown({ labels, onSelect, onClose }) {
   // Automatically close when clicked outside the dropdown
   useEffect(() => {
     function handleClickOutside(event) {
@@ -21,13 +16,10 @@ function LabelDropdown({
     };
   }, [onClose]);
 
-  const defaultLabels = hideDefaultLabels ? [] : [{ id: 1995, name: "Inbox" }];
-  const allLabels = [...defaultLabels, ...labels];
-
   return (
     <div className="label-dropdown">
       <div className="label-dropdown-title">Assign to category</div>
-      {allLabels.map((label) => (
+      {labels.map((label) => (
         <div
           key={label.id}
           className="label-option"

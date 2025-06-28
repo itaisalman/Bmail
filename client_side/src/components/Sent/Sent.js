@@ -113,7 +113,6 @@ function SentScreen() {
               setMessages={setMessages}
               labels={labels}
               onAssignLabel={onAssignLabel}
-              hideDefaultLabels={true}
             />
           )}
         </>

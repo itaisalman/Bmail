@@ -253,15 +253,6 @@ const assignLabel = (user_id, mail_id, label_id) => {
   const mail = getSpecificMail(user_id, Number(mail_id));
   if (!mail) return false;
 
-  // Return to the inbox
-  if (Number(label_id) === 1995) {
-    const alreadyInInbox = user.received_mails.some((m) => m.id === mail.id);
-    if (!alreadyInInbox) {
-      user.received_mails.push(mail);
-    }
-    return true;
-  }
-
   // Find the new label
   const label = user.labels.find((label) => label.id === Number(label_id));
   if (!label) return false;

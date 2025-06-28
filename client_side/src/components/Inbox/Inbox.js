@@ -113,7 +113,6 @@ function InboxScreen() {
               setMessages={setMessages}
               onAssignLabel={onAssignLabel}
               labels={labels}
-              hideDefaultLabels={true}
             />
           )}
         </>

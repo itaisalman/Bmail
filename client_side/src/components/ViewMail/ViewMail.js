@@ -23,7 +23,6 @@ function MailDetails({
   isSpamScreen = false,
   restore,
   labels = [],
-  hideDefaultLabels = false,
 }) {
   const [showDropdown, setShowDropdown] = useState(false);
   // Check if the screen is spam to present restorefrom spam button
@@ -124,7 +123,6 @@ function MailDetails({
                   setShowDropdown(false);
                 }}
                 onClose={() => setShowDropdown(false)}
-                hideDefaultLabels={hideDefaultLabels}
               />
             )}
           </div>
