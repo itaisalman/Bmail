@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from "react";
 import { Outlet, useParams, useOutletContext } from "react-router-dom";
 import "../Inbox/Inbox.css";
 import MailList from "../MailList/MailList";
-import MailDetails from "../ViewMail/ViewMail";
 import MailsControl from "../MailsControl/MailsControl";
 
 function SentScreen() {
@@ -21,9 +20,6 @@ function SentScreen() {
     toggleImportant,
     handleDelete,
     handleMoveToSpam,
-    handleMailClick,
-    setSelectedMail,
-    selectedMail,
   } = useOutletContext();
 
   // Fetch sent mails from the server for the current page
@@ -70,49 +66,30 @@ function SentScreen() {
             toggleImportant,
             handleDelete,
             handleMoveToSpam,
-            setSelectedMail,
             setMessages,
           }}
         />
       ) : (
         <>
-          {!selectedMail && (
-            <MailsControl
-              currentPage={currentPage}
-              totalCount={totalCount}
-              onRefresh={fetchSent}
-              onPageChange={setCurrentPage}
-            />
-          )}
+          <MailsControl
+            currentPage={currentPage}
+            totalCount={totalCount}
+            onRefresh={fetchSent}
+            onPageChange={setCurrentPage}
+          />
 
           {error && <p className="error-message">{error}</p>}
-
-          {!selectedMail ? (
-            <div className="inbox-body">
-              <MailList
-                mails={messages}
-                starred={starredMails}
-                important={importantMails}
-                onSelect={handleMailClick}
-                onStarToggle={toggleStar}
-                onImportantToggle={toggleImportant}
-                onDelete={handleDelete}
-                setMessages={setMessages}
-              />
-            </div>
-          ) : (
-            <MailDetails
-              mail={selectedMail}
-              onClose={() => setSelectedMail(null)}
+          <div className="inbox-body">
+            <MailList
+              mails={messages}
+              starred={starredMails}
+              important={importantMails}
               onStarToggle={toggleStar}
               onImportantToggle={toggleImportant}
               onDelete={handleDelete}
-              moveToSpam={handleMoveToSpam}
-              starred={starredMails}
-              important={importantMails}
               setMessages={setMessages}
             />
-          )}
+          </div>
         </>
       )}
     </div>

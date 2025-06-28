@@ -1,5 +1,5 @@
 import { MdOutlineFlag, MdFlag, MdOutlineDelete } from "react-icons/md";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./MailList.css";
 
 function MailList({
@@ -15,6 +15,7 @@ function MailList({
   isSpamScreen = false,
 }) {
   const location = useLocation();
+  const navigate = useNavigate();
   // We use this component for several usages.
   // When the user is on drafts/sent labels, we would like to show the appropriate data on screen.
   const showReceiver =
@@ -25,6 +26,12 @@ function MailList({
   function formatDateShort(dateString) {
     return dateString ? dateString.split("T")[0] : "";
   }
+
+  const handleSelect = (mail) => {
+    navigate(`${location.pathname}/${mail.id}`, {
+      state: { mail, from: location.pathname },
+    });
+  };
 
   return (
     <div className="mail-list-wrapper">
@@ -43,7 +50,7 @@ function MailList({
           <li
             key={mail.id}
             className="mail-preview"
-            onClick={() => onSelect(mail.id)}
+            onClick={() => handleSelect(mail)}
           >
             <div className="mail-sender">
               {showReceiver

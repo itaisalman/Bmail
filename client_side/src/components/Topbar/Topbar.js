@@ -89,10 +89,6 @@ function Topbar() {
   };
 
   useEffect(() => {
-    console.log("Updated results:", results);
-  }, [results]);
-
-  useEffect(() => {
     fetchTopbar();
 
     // Handle focus and blur across the entire search container

@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from "react";
 import { Outlet, useParams, useOutletContext } from "react-router-dom";
 import "../Inbox/Inbox.css";
 import MailList from "../MailList/MailList";
-import MailDetails from "../ViewMail/ViewMail";
 import MailsControl from "../MailsControl/MailsControl";
 
 function TrashScreen() {
@@ -13,17 +12,7 @@ function TrashScreen() {
   const { id } = useParams();
   const disabledActions = true;
 
-  const {
-    starredMails,
-    importantMails,
-    toggleStar,
-    toggleImportant,
-    handleDelete,
-    handleMoveToSpam,
-    handleMailClick,
-    setSelectedMail,
-    selectedMail,
-  } = useOutletContext();
+  const { handleMoveToSpam } = useOutletContext();
 
   // Fetch inbox data from the server for the current page
   const fetchTrash = useCallback(
@@ -75,12 +64,11 @@ function TrashScreen() {
       if (!res.ok) throw new Error("Failed to empty trash");
 
       // Updated values after delete all mails from user's trash
-      setSelectedMail(null);
       setMessages([]);
       setTotalCount(0);
       setCurrentPage(1);
     } catch (err) {
-      setError("Failed empty trash");
+      setError(err.message);
     }
   };
 
@@ -89,11 +77,6 @@ function TrashScreen() {
       {id ? (
         <Outlet
           context={{
-            starredMails,
-            importantMails,
-            toggleStar,
-            toggleImportant,
-            handleDelete,
             handleMoveToSpam,
             disabledActions,
             setMessages,
@@ -101,40 +84,23 @@ function TrashScreen() {
         />
       ) : (
         <>
-          {!selectedMail && (
-            <MailsControl
-              currentPage={currentPage}
-              totalCount={totalCount}
-              onRefresh={fetchTrash}
-              onPageChange={setCurrentPage}
-              onEmptyTrash={handleEmptyTrash}
-            />
-          )}
+          <MailsControl
+            currentPage={currentPage}
+            totalCount={totalCount}
+            onRefresh={fetchTrash}
+            onPageChange={setCurrentPage}
+            onEmptyTrash={handleEmptyTrash}
+          />
 
           {error && <p className="error-message">{error}</p>}
 
-          {!selectedMail ? (
-            <div className="inbox-body">
-              <MailList
-                mails={messages}
-                starred={starredMails}
-                important={importantMails}
-                onSelect={handleMailClick}
-                disabledActions={true}
-                setMessages={setMessages}
-              />
-            </div>
-          ) : (
-            <MailDetails
-              mail={selectedMail}
-              onClose={() => setSelectedMail(null)}
-              starred={starredMails}
-              important={importantMails}
-              moveToSpam={handleMoveToSpam}
-              disabledActions={disabledActions}
+          <div className="inbox-body">
+            <MailList
+              mails={messages}
+              disabledActions={true}
               setMessages={setMessages}
             />
-          )}
+          </div>
         </>
       )}
     </div>

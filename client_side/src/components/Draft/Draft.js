@@ -53,22 +53,22 @@ function Draft() {
     fetchDraft();
   }, [fetchDraft]);
 
-  const handleMailClick = async (id) => {
-    const token = sessionStorage.getItem("jwt");
-    const res = await fetch(`/api/mails/draft/${id}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      setError(data.error || "Failed to fetch draft");
-      return;
-    }
-    setSelectedDraft(data);
-    setShowComposer((prev) => !prev);
-  };
+  // const handleMailClick = async (id) => {
+  //   const token = sessionStorage.getItem("jwt");
+  //   const res = await fetch(`/api/mails/draft/${id}`, {
+  //     method: "GET",
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //   });
+  //   const data = await res.json();
+  //   if (!res.ok) {
+  //     setError(data.error || "Failed to fetch draft");
+  //     return;
+  //   }
+  //   setSelectedDraft(data);
+  //   setShowComposer((prev) => !prev);
+  // };
 
   // Remove a draft from drafts array.
   const toggleDelete = async (id) => {
@@ -107,7 +107,6 @@ function Draft() {
       <div className="inbox-body">
         <MailList
           mails={drafts}
-          onSelect={handleMailClick}
           onDelete={toggleDelete}
           disabledActions={true}
         />

@@ -7,6 +7,9 @@ function ViewResult() {
   const navigate = useNavigate();
   const mail = location.state?.mail;
   const path = location.state?.from;
+  const label = location.pathname.split("/")[2];
+  const isStarredLabel = label === "starred";
+  const isImportantLabel = label === "important";
 
   const {
     starredMails,
@@ -31,18 +34,25 @@ function ViewResult() {
   const handleClose = () => {
     navigate(path);
   };
-
-  const handleDeleteResult = () => {
-    handleDelete(mail.id, setMessages);
-    handleClose();
-  };
   return (
     <MailDetails
       mail={mail}
       onClose={handleClose}
-      onStarToggle={toggleStar}
-      onImportantToggle={toggleImportant}
-      onDelete={handleDeleteResult}
+      onStarToggle={(mail_id) => {
+        if (isStarredLabel) {
+          handleClose();
+        }
+        toggleStar(mail_id);
+      }}
+      onImportantToggle={(mail_id) => {
+        if (isImportantLabel) {
+          handleClose();
+        }
+        toggleImportant(mail_id);
+      }}
+      onDelete={(mail_id, setMessages) =>
+        handleClosingFunctions(mail_id, setMessages, handleDelete)
+      }
       moveToSpam={(mail_id, setMessages) =>
         handleClosingFunctions(mail_id, setMessages, handleMoveToSpam)
       }

@@ -46,15 +46,21 @@ function App() {
 
           <Route path="drafts" element={<Draft />} />
 
-          <Route path="starred" element={<StarredScreen />} />
+          <Route path="starred" element={<StarredScreen />}>
+            <Route path=":id" element={<ViewResult />} />
+          </Route>
 
-          <Route path="important" element={<ImportantScreen />} />
+          <Route path="important" element={<ImportantScreen />}>
+            <Route path=":id" element={<ViewResult />} />
+          </Route>
 
           <Route path="trash" element={<TrashScreen />}>
             <Route path=":id" element={<ViewResult />} />
           </Route>
 
-          <Route path="labels/:labelName" element={<LabelView />} />
+          <Route path="labels/:labelName" element={<LabelView />}>
+            <Route path=":id" element={<ViewResult />} />
+          </Route>
         </Route>
       </Routes>
     </ThemeProvider>
