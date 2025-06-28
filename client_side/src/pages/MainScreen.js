@@ -23,7 +23,6 @@ function MainScreen() {
 
   const toggleStar = useCallback(async (id) => {
     const token = sessionStorage.getItem("jwt");
-    if (!token) return;
 
     const res = await fetch(`/api/mails/star/${id}`, {
       method: "PATCH",
@@ -43,7 +42,6 @@ function MainScreen() {
 
   const toggleImportant = useCallback(async (id) => {
     const token = sessionStorage.getItem("jwt");
-    if (!token) return;
 
     const res = await fetch(`/api/mails/important/${id}`, {
       method: "PATCH",
@@ -99,7 +97,6 @@ function MainScreen() {
 
   const deleteMail = async (id) => {
     const token = sessionStorage.getItem("jwt");
-    if (!token) return;
 
     const res = await fetch(`/api/mails/${id}`, {
       method: "DELETE",
@@ -132,7 +129,6 @@ function MainScreen() {
 
   const moveToSpam = async (id) => {
     const token = sessionStorage.getItem("jwt");
-    if (!token) return;
 
     const res = await fetch(`/api/mails/spam/${id}`, {
       method: "POST",
@@ -175,6 +171,10 @@ function MainScreen() {
     setSelectedMail(data);
   };
 
+  const handleCloseMail = () => {
+    setSelectedMail(null);
+  };
+
   return (
     <div className="main-container">
       <Sidebar
@@ -189,6 +189,7 @@ function MainScreen() {
           setLabelToDelete(label);
           setShowDeleteConfirm(true);
         }}
+        onCloseMail={handleCloseMail}
       />
       <main className="main-content">
         <Topbar />

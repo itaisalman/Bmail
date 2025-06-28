@@ -30,7 +30,6 @@ function TrashScreen() {
     async (page = currentPage) => {
       try {
         const token = sessionStorage.getItem("jwt");
-        if (!token) return;
 
         const res = await fetch(`/api/mails?page=${page}`, {
           method: "GET",
@@ -64,7 +63,7 @@ function TrashScreen() {
 
     try {
       const token = sessionStorage.getItem("jwt");
-      if (!token) return;
+
       const res = await fetch("/api/mails/trash", {
         method: "DELETE",
         headers: {
