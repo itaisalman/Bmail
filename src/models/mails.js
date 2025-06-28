@@ -1,7 +1,6 @@
 let mail_counter = 0;
 let draft_counter = 0;
 const users = require("./users");
-const blacklist = require("./blacklist");
 
 // extract wanted label - where to get the mails from
 function findFiftyMails(get_user, label_name, page) {
@@ -37,9 +36,14 @@ function findFiftyMails(get_user, label_name, page) {
   return { mails: page_mails, totalCount };
 }
 
-function findMailsInArray(result_set, mails_array, query) {
+// Save the mail in a map so that a mail would not be saved twice.
+function findMailsInArray(result_map, mails_array, query, label) {
   for (const mail of mails_array) {
-    if (checkIfContainQueryInMail(mail, query)) result_set.add(mail);
+    if (checkIfContainQueryInMail(mail, query)) {
+      if (!result_map.has(mail.id)) {
+        result_map.set(mail.id, { mail, label });
+      }
+    }
   }
 }
 
@@ -142,19 +146,19 @@ const getSpecificMail = (user_id, mail_id) => {
 
 // Create the wanted mails array.
 // Search if the mails in sent_mails and received_mails contain the query.
-const getMailsByQuery = (user_id, query) => {
+function getMailsByQuery(user_id, query) {
   const user = users.getUserById(user_id);
-  const result_set = new Set();
-  // findMailsInSent(result_set, user.sent_mails, query);
-  // findMailsInReceived(result_set, user.received_mails, query);
-  findMailsInArray(result_set, user.received_mails, query);
-  findMailsInArray(result_set, user.sent_mails, query);
-  return result_set;
-};
+  const result_map = new Map();
+  findMailsInArray(result_map, user.received_mails, query, "inbox");
+  findMailsInArray(result_map, user.sent_mails, query, "sent");
+  findMailsInArray(result_map, user.spam, query, "spam");
+  findMailsInArray(result_map, user.trash, query, "trash");
+  return Array.from(result_map.values());
+}
 
 // Change the wanted fields in draft.
 const editDraft = (draft, receiver, title, content) => {
-  draft.receiver = receiver.toString();
+  draft.receiver_address = receiver.toString();
   draft.title = title.toString();
   draft.content = content.toString();
   return;
@@ -229,11 +233,11 @@ const emptyUserTrash = (user_id) => {
   return true;
 };
 // Create a new draft with the passed arguments.
-const createNewDraft = (sender, receiver, title, content) => {
+const createNewDraft = (sender, receiver_address, title, content) => {
   const sender_user = users.getUserById(sender);
   const new_draft = {
     id: ++draft_counter,
-    receiver,
+    receiver_address,
     title,
     content,
     date: new Date(),

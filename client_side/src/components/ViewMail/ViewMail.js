@@ -21,8 +21,8 @@ function MailDetails({
 }) {
   // Check if the screen is spam to present restorefrom spam button
   const location = useLocation();
-  const showRestoreFromSpamBtn = location.pathname === "/main/spam";
-  const isSentScreen = location.pathname === "/main/sent";
+  const showRestoreFromSpamBtn = location.pathname.startsWith("/main/spam");
+  const isSentScreen = location.pathname.startsWith("/main/sent");
 
   // Don't render anything if no mail is selected
   if (!mail) return null;
@@ -47,23 +47,23 @@ function MailDetails({
             onClick={() => {
               if (!disabledActions) onStarToggle(mail.id);
             }}
-            className={`star-icon ${starred.has(mail.id) ? "active" : ""} ${
+            className={`star-icon ${starred?.has(mail.id) ? "active" : ""} ${
               disabledActions || isSpamScreen ? "disabled" : ""
             }`}
             title="Mark with Star"
           >
-            {starred.has(mail.id) && !isSpamScreen ? "⭐" : "☆"}
+            {starred?.has(mail.id) && !isSpamScreen ? "⭐" : "☆"}
           </span>
           <span
             onClick={() => {
               if (!disabledActions) onImportantToggle(mail.id);
             }}
             className={`flag-icon ${
-              important.has(mail.id) && !isSpamScreen ? "important" : ""
+              important?.has(mail.id) && !isSpamScreen ? "important" : ""
             } ${disabledActions || isSpamScreen ? "disabled" : ""}`}
             title="Mark as Important"
           >
-            {important.has(mail.id) && !isSpamScreen ? (
+            {important?.has(mail.id) && !isSpamScreen ? (
               <MdFlag />
             ) : (
               <MdOutlineFlag />

@@ -153,6 +153,8 @@ function Topbar() {
           <LiveSearchResult
             results={results}
             isLoading={query?.length && !results}
+            setQuery={setQuery}
+            setResults={setResults}
           />
         )}
       </div>

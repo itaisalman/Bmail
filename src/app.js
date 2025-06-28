@@ -17,5 +17,9 @@ app.use("/api/tokens", tokens);
 app.use("/api/labels", middleware.isLoggedIn, labels);
 app.use("/api/blacklist", middleware.isLoggedIn, blacklist);
 app.use("/upload", express.static(path.join(__dirname, "../data/upload")));
+app.get("/api/auth/validate", middleware.isLoggedIn, (req, res) => {
+  // If token is valid, isLoggedIn calls next(), so we end here
+  res.status(200).json({ valid: true, userId: req.headers.user });
+});
 
 app.listen(3000);
