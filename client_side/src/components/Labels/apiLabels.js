@@ -2,10 +2,6 @@
 export const getAuthHeaders = (extraHeaders = {}) => {
   const token = sessionStorage.getItem("jwt");
 
-  if (!token) {
-    throw new Error("Missing authentication token");
-  }
-
   return {
     authorization: "Bearer " + token,
     "Content-Type": "application/json",

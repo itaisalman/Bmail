@@ -19,7 +19,7 @@ function Topbar() {
   const fetchTopbar = async () => {
     try {
       const token = sessionStorage.getItem("jwt");
-      if (!token) return;
+
       const res = await fetch("/api/users", {
         method: "GET",
         headers: {
@@ -153,6 +153,8 @@ function Topbar() {
           <LiveSearchResult
             results={results}
             isLoading={query?.length && !results}
+            setQuery={setQuery}
+            setResults={setResults}
           />
         )}
       </div>

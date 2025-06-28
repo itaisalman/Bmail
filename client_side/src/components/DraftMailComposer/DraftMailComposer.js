@@ -90,7 +90,7 @@ function DraftMailComposer({ draft, onClose }) {
       onSend={onSend}
       onClose={onMailClose}
       errors={errors}
-      receiver={draft.receiver}
+      receiver={draft.receiver_address}
       title={draft.title}
       content={draft.content}
     />

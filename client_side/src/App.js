@@ -11,6 +11,7 @@ import LabelView from "./components/Labels/LabelView";
 import StarredScreen from "./components/Star/Star";
 import ImportantScreen from "./components/Important/Important";
 import TrashScreen from "./components/Trash/Trash";
+import ViewResult from "./components/ViewResult/ViewResult";
 import SpamScreen from "./components/Spam/Spam";
 import SentScreen from "./components/Sent/Sent";
 
@@ -30,14 +31,30 @@ function App() {
           }
         >
           <Route index element={<Navigate to="inbox" replace />} />
-          <Route path="inbox" element={<InboxScreen />} />
-          <Route path="sent" element={<SentScreen />} />
-          <Route path="spam" element={<SpamScreen />} />
+
+          <Route path="inbox" element={<InboxScreen />}>
+            <Route path=":id" element={<ViewResult />} />
+          </Route>
+
+          <Route path="sent" element={<SentScreen />}>
+            <Route path=":id" element={<ViewResult />} />
+          </Route>
+
+          <Route path="spam" element={<SpamScreen />}>
+            <Route path=":id" element={<ViewResult />} />
+          </Route>
+
           <Route path="drafts" element={<Draft />} />
+
           <Route path="starred" element={<StarredScreen />} />
+
           <Route path="important" element={<ImportantScreen />} />
+
+          <Route path="trash" element={<TrashScreen />}>
+            <Route path=":id" element={<ViewResult />} />
+          </Route>
+
           <Route path="labels/:labelName" element={<LabelView />} />
-          <Route path="trash" element={<TrashScreen />} />
         </Route>
       </Routes>
     </ThemeProvider>
