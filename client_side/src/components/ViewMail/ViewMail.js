@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { RxCross2 } from "react-icons/rx";
-import { useOutletContext } from "react-router-dom";
 import { CiBookmarkPlus } from "react-icons/ci";
 import { MdReport } from "react-icons/md";
 import { FiShare } from "react-icons/fi";
@@ -23,8 +22,9 @@ function MailDetails({
   setMessages,
   isSpamScreen = false,
   restore,
+  labels = [],
+  hideDefaultLabels = false,
 }) {
-  const { labels } = useOutletContext();
   const [showDropdown, setShowDropdown] = useState(false);
   // Check if the screen is spam to present restorefrom spam button
   const location = useLocation();
@@ -124,6 +124,7 @@ function MailDetails({
                   setShowDropdown(false);
                 }}
                 onClose={() => setShowDropdown(false)}
+                hideDefaultLabels={hideDefaultLabels}
               />
             )}
           </div>
