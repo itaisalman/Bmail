@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Outlet } from "react-router-dom";
 import ButtonMailComposer from "../components/ButtonMailComposer/ButtonMailComposer";
 import Sidebar from "../components/Sidebar/Sidebar";
@@ -20,6 +20,8 @@ function MainScreen() {
   const [starredMails, setStarredMails] = useState(new Set());
   const [importantMails, setImportantMails] = useState(new Set());
   const [selectedMail, setSelectedMail] = useState(null);
+  // Used for trigger re-fetching the wanted components (Like inbox/sent etc.)
+  const actionRef = useRef(null);
 
   const toggleStar = useCallback(async (id) => {
     const token = sessionStorage.getItem("jwt");
@@ -61,6 +63,9 @@ function MainScreen() {
 
   const toggleComposer = () => {
     setShowComposer((prev) => !prev);
+    if (actionRef.current) {
+      actionRef.current();
+    }
   };
 
   // Reverses the state – if the label is open -> closes and vice versa
@@ -205,10 +210,16 @@ function MainScreen() {
             setSelectedMail,
             selectedMail,
             handleMoveToSpam,
+            setAction: (fn) => (actionRef.current = fn),
           }}
         />
       </main>
-      {showComposer && <ButtonMailComposer onClose={toggleComposer} />}
+      {showComposer && (
+        <ButtonMailComposer
+          onClose={toggleComposer}
+          onAction={() => actionRef.current?.()}
+        />
+      )}
       {showLabels && (
         <LabelEditor
           onClose={() => {

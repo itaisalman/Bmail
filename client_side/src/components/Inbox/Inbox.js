@@ -12,6 +12,7 @@ function InboxScreen() {
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const { id } = useParams();
+  const { setAction } = useOutletContext();
 
   const {
     starredMails,
@@ -45,11 +46,12 @@ function InboxScreen() {
         const data = await res.json();
         setMessages(data.mails);
         setTotalCount(data.totalCount);
+        setAction(() => fetchInbox);
       } catch (err) {
         setError("Error loading inbox: " + err.message);
       }
     },
-    [currentPage]
+    [currentPage, setAction]
   );
 
   // Fetch inbox whenever the page changes

@@ -1,6 +1,7 @@
 import DraftMailComposer from "../DraftMailComposer/DraftMailComposer";
 import MailsControl from "../MailsControl/MailsControl";
 import { useEffect, useState, useCallback } from "react";
+import { useOutletContext } from "react-router-dom";
 import MailList from "../MailList/MailList";
 import "./Draft.css";
 
@@ -11,6 +12,7 @@ function Draft() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedDraft, setSelectedDraft] = useState(null);
   const [showComposer, setShowComposer] = useState(false);
+  const { setAction } = useOutletContext();
 
   const toggleComposer = async () => {
     setShowComposer((prev) => !prev);
@@ -39,11 +41,12 @@ function Draft() {
         }
         setDrafts(data.mails);
         setTotalCount(data.totalCount);
+        setAction(() => fetchDraft);
       } catch (err) {
         setError("Error loading draft: " + err.message);
       }
     },
-    [currentPage]
+    [currentPage, setAction]
   );
   // Fetch drafts whenever the page changes
   useEffect(() => {

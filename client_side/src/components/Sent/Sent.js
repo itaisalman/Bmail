@@ -12,6 +12,7 @@ function SentScreen() {
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const { id } = useParams();
+  const { setAction } = useOutletContext();
 
   const {
     starredMails,
@@ -45,11 +46,12 @@ function SentScreen() {
         const data = await res.json();
         setMessages(data.mails);
         setTotalCount(data.totalCount);
+        setAction(() => fetchSent);
       } catch (err) {
         setError(err.message);
       }
     },
-    [currentPage]
+    [currentPage, setAction]
   );
 
   // Fetch sent mails whenever the page changes
