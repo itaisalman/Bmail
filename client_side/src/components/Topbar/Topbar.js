@@ -14,6 +14,7 @@ function Topbar() {
   const [isFocused, setIsFocused] = useState(false);
   const debounceRef = useRef(null);
   const searchRef = useRef(null);
+  const latestQueryRef = useRef("");
 
   // Fetch the current user data on mount
   const fetchTopbar = async () => {
@@ -40,8 +41,8 @@ function Topbar() {
     navigate("/login");
   };
 
-  // Handle search input changes
   const handleChange = (value) => {
+    latestQueryRef.current = value;
     setResults(null);
     setQuery(value);
     if (value) {
@@ -64,7 +65,7 @@ function Topbar() {
         }
       );
       const data = await res.json();
-      setResults(data);
+      if (latestQueryRef.current === value) setResults(data);
     } catch (err) {
       alert(err.message);
     }
@@ -84,7 +85,7 @@ function Topbar() {
 
     debounceRef.current = setTimeout(() => {
       searchMails(value);
-    }, 300);
+    }, 100);
   };
 
   useEffect(() => {
@@ -110,7 +111,7 @@ function Topbar() {
         ) {
           setIsFocused(false);
         }
-      }, 100);
+      }, 400);
     };
 
     // Attach focus listeners to the whole document
@@ -143,6 +144,11 @@ function Topbar() {
             className="search-input"
             value={query}
             onChange={(e) => handleChange(e.target.value)}
+            onFocus={() => {
+              if (query) {
+                handleChange(query);
+              }
+            }}
           />
           <button type="submit" className="search-button" aria-label="Search">
             <FaSearch />
