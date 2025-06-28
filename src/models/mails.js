@@ -249,16 +249,12 @@ const assignLabel = (user_id, mail_id, label_id) => {
   const mail = getSpecificMail(user_id, Number(mail_id));
   if (!mail) return false;
 
-  // Remove from all user labels
-  user.labels.forEach((label) => {
-    label.mails = label.mails.filter((m) => m.id !== mail.id);
-  });
-
-  user.received_mails = user.received_mails.filter((m) => m.id !== mail.id);
-
   // Return to the inbox
   if (Number(label_id) === 1995) {
-    user.received_mails.push(mail);
+    const alreadyInInbox = user.received_mails.some((m) => m.id === mail.id);
+    if (!alreadyInInbox) {
+      user.received_mails.push(mail);
+    }
     return true;
   }
 
@@ -266,7 +262,10 @@ const assignLabel = (user_id, mail_id, label_id) => {
   const label = user.labels.find((label) => label.id === Number(label_id));
   if (!label) return false;
 
-  label.mails.push(mail);
+  const alreadyExists = label.mails.some((m) => m.id === mail.id);
+  if (!alreadyExists) {
+    label.mails.push(mail);
+  }
 
   return true;
 };

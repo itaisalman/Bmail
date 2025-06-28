@@ -21,6 +21,8 @@ function StarredScreen() {
     handleMailClick,
     setSelectedMail,
     selectedMail,
+    labels,
+    onAssignLabel,
   } = useOutletContext();
 
   // Fetch starred mails from the server for the current page
@@ -100,6 +102,8 @@ function StarredScreen() {
           starred={starredMails}
           important={importantMails}
           setMessages={setMessages}
+          labels={labels}
+          onAssignLabel={onAssignLabel}
         />
       )}
     </div>

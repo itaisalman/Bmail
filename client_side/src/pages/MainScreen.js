@@ -21,6 +21,7 @@ function MainScreen() {
   const [starredMails, setStarredMails] = useState(new Set());
   const [importantMails, setImportantMails] = useState(new Set());
   const [selectedMail, setSelectedMail] = useState(null);
+  const [, setMessages] = useState([]);
 
   const toggleStar = useCallback(async (id) => {
     const token = sessionStorage.getItem("jwt");
@@ -124,14 +125,6 @@ function MainScreen() {
     });
   };
 
-  const handleAssignLabel = async (mailId, labelId) => {
-    try {
-      await assignLabelToMail(mailId, labelId);
-    } catch (error) {
-      console.error("Failed to assign label:", error.message);
-    }
-  };
-
   // Delete the mail from all labels
   const handleDelete = async (id, setMessages) => {
     await deleteMail(id);
@@ -184,6 +177,21 @@ function MainScreen() {
     setSelectedMail(data);
   };
 
+  const onAssignLabel = async (mailId, labelId) => {
+    try {
+      assignLabelToMail(mailId, labelId);
+      setMessages((prev) =>
+        prev.map((mail) =>
+          mail.id === mailId
+            ? { ...mail, labels: [...(mail.labels || []), { id: labelId }] }
+            : mail
+        )
+      );
+    } catch (err) {
+      console.error("Failed to assign label:", err.message);
+    }
+  };
+
   return (
     <div className="main-container">
       <Sidebar
@@ -208,13 +216,13 @@ function MainScreen() {
             toggleStar,
             toggleImportant,
             labels,
-            assignLabel: handleAssignLabel,
             handleDelete,
             moveToSpam,
             handleMailClick,
             setSelectedMail,
             selectedMail,
             handleMoveToSpam,
+            onAssignLabel,
           }}
         />
       </main>

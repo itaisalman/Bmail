@@ -4,7 +4,6 @@ import "../Inbox/Inbox.css";
 import MailList from "../MailList/MailList";
 import MailDetails from "../ViewMail/ViewMail";
 import MailsControl from "../MailsControl/MailsControl";
-import { assignLabelToMail } from "./apiLabels";
 
 function LabelView() {
   const { labelName } = useParams();
@@ -23,22 +22,8 @@ function LabelView() {
     deleteMail,
     toggleLabel,
     labels,
+    onAssignLabel,
   } = useOutletContext();
-
-  const onAssignLabel = async (mailId, labelId) => {
-    try {
-      assignLabelToMail(mailId, labelId);
-      setMessages((prev) =>
-        prev.map((mail) =>
-          mail.id === mailId
-            ? { ...mail, labels: [...(mail.labels || []), { id: labelId }] }
-            : mail
-        )
-      );
-    } catch (err) {
-      console.error("Failed to assign label:", err.message);
-    }
-  };
 
   // Designed to load the list of emails associated with a specific label
   const fetchAssignLabel = useCallback(

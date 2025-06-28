@@ -4,7 +4,6 @@ import "../Inbox/Inbox.css";
 import MailList from "../MailList/MailList";
 import MailDetails from "../ViewMail/ViewMail";
 import MailsControl from "../MailsControl/MailsControl";
-import { assignLabelToMail } from "../Labels/apiLabels";
 
 function InboxScreen() {
   // State variables for inbox data and UI state
@@ -23,6 +22,8 @@ function InboxScreen() {
     handleMailClick,
     setSelectedMail,
     selectedMail,
+    labels,
+    onAssignLabel,
   } = useOutletContext();
 
   // Fetch inbox data from the server for the current page
@@ -94,8 +95,10 @@ function InboxScreen() {
           moveToSpam={handleMoveToSpam}
           starred={starredMails}
           important={importantMails}
-          onAssignLabel={onAssignLabel}
           setMessages={setMessages}
+          onAssignLabel={onAssignLabel}
+          labels={labels}
+          hideDefaultLabels={true}
         />
       )}
     </div>

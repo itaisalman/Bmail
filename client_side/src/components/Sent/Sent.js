@@ -22,6 +22,8 @@ function SentScreen() {
     handleMailClick,
     setSelectedMail,
     selectedMail,
+    labels,
+    onAssignLabel,
   } = useOutletContext();
 
   // Fetch sent mails from the server for the current page
@@ -94,6 +96,9 @@ function SentScreen() {
           starred={starredMails}
           important={importantMails}
           setMessages={setMessages}
+          labels={labels}
+          onAssignLabel={onAssignLabel}
+          hideDefaultLabels={true}
         />
       )}
     </div>

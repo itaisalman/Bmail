@@ -21,6 +21,8 @@ function ImportantScreen() {
     handleMailClick,
     setSelectedMail,
     selectedMail,
+    labels,
+    onAssignLabel,
   } = useOutletContext();
 
   const fetchImportant = useCallback(
@@ -100,6 +102,8 @@ function ImportantScreen() {
           starred={starredMails}
           important={importantMails}
           setMessages={setMessages}
+          labels={labels}
+          onAssignLabel={onAssignLabel}
         />
       )}
     </div>
