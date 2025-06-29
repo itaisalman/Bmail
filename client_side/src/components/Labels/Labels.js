@@ -26,7 +26,6 @@ function Labels({ onClose, onNewLabelCreated }) {
         onClose();
       } else {
         const data = await res.json();
-        console.log(data);
         setError(data.error || "Failed to create label");
       }
     } catch (err) {

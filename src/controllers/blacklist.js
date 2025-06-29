@@ -11,7 +11,7 @@ function checkIfExist(user_id) {
   return users.getUserById(user_id);
 }
 
-function passRequestToServer(requestString, res, method) {
+function passRequestToServer(requestString, res) {
   blacklist.connectToBloomFilterServer(requestString, (err, response) => {
     // If error occured
     if (err) {
@@ -54,7 +54,7 @@ function handleBlacklistOperation(req, res, method) {
 
   // Chain request type and url
   const requestString = `${method} ${url}`;
-  passRequestToServer(requestString, res, method);
+  passRequestToServer(requestString, res);
 }
 
 exports.addUrlToBlacklist = (req, res) => {

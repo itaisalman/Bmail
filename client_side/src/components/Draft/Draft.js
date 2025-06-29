@@ -1,6 +1,11 @@
-import DraftMailComposer from "../DraftMailComposer/DraftMailComposer";
 import MailsControl from "../MailsControl/MailsControl";
 import { useEffect, useState, useCallback } from "react";
+import {
+  Outlet,
+  useNavigate,
+  useOutletContext,
+  useParams,
+} from "react-router-dom";
 import MailList from "../MailList/MailList";
 import "./Draft.css";
 
@@ -9,13 +14,10 @@ function Draft() {
   const [totalCount, setTotalCount] = useState(0);
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedDraft, setSelectedDraft] = useState(null);
-  const [showComposer, setShowComposer] = useState(false);
-
-  const toggleComposer = async () => {
-    setShowComposer((prev) => !prev);
-    await fetchDraft();
-  };
+  const { setAction } = useOutletContext();
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const selectedDraft = drafts.find((d) => d.id === Number(id));
 
   // Fetch inbox data from the server for the current page
   const fetchDraft = useCallback(
@@ -39,33 +41,17 @@ function Draft() {
         }
         setDrafts(data.mails);
         setTotalCount(data.totalCount);
+        setAction(() => fetchDraft);
       } catch (err) {
         setError("Error loading draft: " + err.message);
       }
     },
-    [currentPage]
+    [currentPage, setAction]
   );
   // Fetch drafts whenever the page changes
   useEffect(() => {
     fetchDraft();
   }, [fetchDraft]);
-
-  const handleMailClick = async (id) => {
-    const token = sessionStorage.getItem("jwt");
-    const res = await fetch(`/api/mails/draft/${id}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      setError(data.error || "Failed to fetch draft");
-      return;
-    }
-    setSelectedDraft(data);
-    setShowComposer((prev) => !prev);
-  };
 
   // Remove a draft from drafts array.
   const toggleDelete = async (id) => {
@@ -104,14 +90,22 @@ function Draft() {
       <div className="inbox-body">
         <MailList
           mails={drafts}
-          onSelect={handleMailClick}
           onDelete={toggleDelete}
+          onSelect={(mail) => {
+            navigate(`/main/drafts/${mail.id}`);
+          }}
           disabledActions={true}
         />
       </div>
-      {showComposer && (
-        <DraftMailComposer draft={selectedDraft} onClose={toggleComposer} />
-      )}
+      <Outlet
+        context={{
+          draft: selectedDraft,
+          onClose: () => {
+            navigate("/main/drafts");
+            fetchDraft();
+          },
+        }}
+      />
     </div>
   );
 }
