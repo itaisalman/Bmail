@@ -1,7 +1,6 @@
-import DraftMailComposer from "../DraftMailComposer/DraftMailComposer";
 import MailsControl from "../MailsControl/MailsControl";
 import { useEffect, useState, useCallback } from "react";
-import { useOutletContext } from "react-router-dom";
+import { Outlet, useNavigate, useOutletContext } from "react-router-dom";
 import MailList from "../MailList/MailList";
 import "./Draft.css";
 
@@ -11,13 +10,8 @@ function Draft() {
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedDraft, setSelectedDraft] = useState(null);
-  const [showComposer, setShowComposer] = useState(false);
   const { setAction } = useOutletContext();
-
-  const toggleComposer = async () => {
-    setShowComposer((prev) => !prev);
-    await fetchDraft();
-  };
+  const navigate = useNavigate();
 
   // Fetch inbox data from the server for the current page
   const fetchDraft = useCallback(
@@ -52,23 +46,6 @@ function Draft() {
   useEffect(() => {
     fetchDraft();
   }, [fetchDraft]);
-
-  // const handleMailClick = async (id) => {
-  //   const token = sessionStorage.getItem("jwt");
-  //   const res = await fetch(`/api/mails/draft/${id}`, {
-  //     method: "GET",
-  //     headers: {
-  //       Authorization: `Bearer ${token}`,
-  //     },
-  //   });
-  //   const data = await res.json();
-  //   if (!res.ok) {
-  //     setError(data.error || "Failed to fetch draft");
-  //     return;
-  //   }
-  //   setSelectedDraft(data);
-  //   setShowComposer((prev) => !prev);
-  // };
 
   // Remove a draft from drafts array.
   const toggleDelete = async (id) => {
@@ -108,12 +85,25 @@ function Draft() {
         <MailList
           mails={drafts}
           onDelete={toggleDelete}
+          onSelect={(mail) => {
+            setSelectedDraft(mail);
+            navigate(`/main/drafts/${mail.id}`);
+          }}
           disabledActions={true}
         />
       </div>
-      {showComposer && (
-        <DraftMailComposer draft={selectedDraft} onClose={toggleComposer} />
-      )}
+      <Outlet
+        context={{
+          draft: selectedDraft,
+          onClose: () => {
+            navigate("/main/drafts");
+            setTimeout(() => {
+              setSelectedDraft(null);
+            }, 100);
+            fetchDraft();
+          },
+        }}
+      />
     </div>
   );
 }

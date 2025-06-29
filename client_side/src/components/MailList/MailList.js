@@ -6,31 +6,41 @@ function MailList({
   mails,
   starred,
   important,
-  onSelect,
   onStarToggle,
   onImportantToggle,
   onDelete,
   disabledActions = false,
   setMessages,
   isSpamScreen = false,
+  onSelect = false,
 }) {
   const location = useLocation();
   const navigate = useNavigate();
   // We use this component for several usages.
   // When the user is on drafts/sent labels, we would like to show the appropriate data on screen.
   const showReceiver =
-    location.pathname === "/main/drafts" || location.pathname === "/main/sent";
-  const showDelete = location.pathname === "/main/drafts";
+    location.pathname.startsWith("/main/drafts") ||
+    location.pathname.startsWith("/main/sent");
+
+  const showDelete = location.pathname.startsWith("/main/drafts");
 
   // Format date string to "YYYY-MM-DD" (short format)
   function formatDateShort(dateString) {
     return dateString ? dateString.split("T")[0] : "";
   }
 
+  // const handleSelect = (mail) => {
+  //   navigate(`${location.pathname}/${mail.id}`, {
+  //     state: { mail, from: location.pathname },
+  //   });
+  // };
   const handleSelect = (mail) => {
-    navigate(`${location.pathname}/${mail.id}`, {
-      state: { mail, from: location.pathname },
-    });
+    if (onSelect) onSelect(mail);
+    // fallback: navigate directly
+    else
+      navigate(`${location.pathname}/${mail.id}`, {
+        state: { mail, from: location.pathname },
+      });
   };
 
   return (

@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MailComposer from "../MailComposer/MailComposer";
+import { useOutletContext } from "react-router-dom";
 
 // Wrapper component to MailComposer
 // When reaching MailComposer from the Create New Mail button - i want that MailComposer will do the functionality below on Send and X buttons.
-function DraftMailComposer({ draft, onClose }) {
+function DraftMailComposer() {
   const [errors, setErrors] = useState("");
+  const { draft, onClose } = useOutletContext();
 
   // Send function.
   const onSend = async ({ to, subject, message }) => {
