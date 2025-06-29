@@ -28,15 +28,8 @@ function MailList({
   function formatDateShort(dateString) {
     return dateString ? dateString.split("T")[0] : "";
   }
-
-  // const handleSelect = (mail) => {
-  //   navigate(`${location.pathname}/${mail.id}`, {
-  //     state: { mail, from: location.pathname },
-  //   });
-  // };
   const handleSelect = (mail) => {
     if (onSelect) onSelect(mail);
-    // fallback: navigate directly
     else
       navigate(`${location.pathname}/${mail.id}`, {
         state: { mail, from: location.pathname },

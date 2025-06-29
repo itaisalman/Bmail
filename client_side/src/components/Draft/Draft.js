@@ -1,6 +1,11 @@
 import MailsControl from "../MailsControl/MailsControl";
 import { useEffect, useState, useCallback } from "react";
-import { Outlet, useNavigate, useOutletContext } from "react-router-dom";
+import {
+  Outlet,
+  useNavigate,
+  useOutletContext,
+  useParams,
+} from "react-router-dom";
 import MailList from "../MailList/MailList";
 import "./Draft.css";
 
@@ -9,9 +14,10 @@ function Draft() {
   const [totalCount, setTotalCount] = useState(0);
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedDraft, setSelectedDraft] = useState(null);
   const { setAction } = useOutletContext();
   const navigate = useNavigate();
+  const { id } = useParams();
+  const selectedDraft = drafts.find((d) => d.id === Number(id));
 
   // Fetch inbox data from the server for the current page
   const fetchDraft = useCallback(
@@ -86,7 +92,6 @@ function Draft() {
           mails={drafts}
           onDelete={toggleDelete}
           onSelect={(mail) => {
-            setSelectedDraft(mail);
             navigate(`/main/drafts/${mail.id}`);
           }}
           disabledActions={true}
@@ -97,9 +102,6 @@ function Draft() {
           draft: selectedDraft,
           onClose: () => {
             navigate("/main/drafts");
-            setTimeout(() => {
-              setSelectedDraft(null);
-            }, 100);
             fetchDraft();
           },
         }}
