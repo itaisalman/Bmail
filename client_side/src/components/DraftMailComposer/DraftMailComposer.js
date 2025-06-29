@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import MailComposer from "../MailComposer/MailComposer";
 import { useOutletContext } from "react-router-dom";
 
