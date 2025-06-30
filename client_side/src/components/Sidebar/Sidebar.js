@@ -30,7 +30,6 @@ function Sidebar({
   onEditLabel,
   onStartEditLabel,
   onDeleteLabel,
-  onCloseMail,
 }) {
   return (
     <nav className="sidebar">
@@ -61,7 +60,6 @@ function Sidebar({
         <NavLink
           key={name}
           to={path}
-          onClick={onCloseMail}
           className={({ isActive }) =>
             `sidebar-link ${isActive ? "active" : ""}`
           }
@@ -74,8 +72,6 @@ function Sidebar({
           </div>
         </NavLink>
       ))}
-
-      {/* Labels section header */}
       <div className="sidebar-link labels-header">
         <div className="link-main">
           <div className="link-content">
@@ -95,8 +91,6 @@ function Sidebar({
           </button>
         </div>
       </div>
-
-      {/* Custom user-defined labels */}
       <div className="labels-list-container">
         {labels.map((label) => (
           <LabelItem

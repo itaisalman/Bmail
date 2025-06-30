@@ -14,6 +14,7 @@ import TrashScreen from "./components/Trash/Trash";
 import ViewResult from "./components/ViewResult/ViewResult";
 import SpamScreen from "./components/Spam/Spam";
 import SentScreen from "./components/Sent/Sent";
+import DraftMailComposer from "./components/DraftMailComposer/DraftMailComposer";
 
 function App() {
   return (
@@ -44,17 +45,25 @@ function App() {
             <Route path=":id" element={<ViewResult />} />
           </Route>
 
-          <Route path="drafts" element={<Draft />} />
+          <Route path="drafts" element={<Draft />}>
+            <Route path=":id" element={<DraftMailComposer />} />
+          </Route>
 
-          <Route path="starred" element={<StarredScreen />} />
+          <Route path="starred" element={<StarredScreen />}>
+            <Route path=":id" element={<ViewResult />} />
+          </Route>
 
-          <Route path="important" element={<ImportantScreen />} />
+          <Route path="important" element={<ImportantScreen />}>
+            <Route path=":id" element={<ViewResult />} />
+          </Route>
 
           <Route path="trash" element={<TrashScreen />}>
             <Route path=":id" element={<ViewResult />} />
           </Route>
 
-          <Route path="labels/:labelName" element={<LabelView />} />
+          <Route path="labels/:labelName" element={<LabelView />}>
+            <Route path=":id" element={<ViewResult />} />
+          </Route>
         </Route>
       </Routes>
     </ThemeProvider>

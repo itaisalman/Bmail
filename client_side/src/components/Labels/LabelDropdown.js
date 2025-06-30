@@ -19,15 +19,20 @@ function LabelDropdown({ labels, onSelect, onClose }) {
   return (
     <div className="label-dropdown">
       <div className="label-dropdown-title">Assign to category</div>
-      {labels.map((label) => (
-        <div
-          key={label.id}
-          className="label-option"
-          onClick={() => onSelect(label)}
-        >
-          {label.name}
-        </div>
-      ))}
+
+      <div className="label-list">
+        {labels.map((label) => (
+          <button
+            key={label.id}
+            className="label-option"
+            type="button"
+            onClick={() => onSelect(label)}
+          >
+            {label.name}
+          </button>
+        ))}
+      </div>
+
       <button className="label-cancel" onClick={onClose}>
         Cancel
       </button>

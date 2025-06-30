@@ -1,8 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
-import { useOutletContext } from "react-router-dom";
+import { Outlet, useParams, useOutletContext } from "react-router-dom";
 import "../Inbox/Inbox.css";
 import MailList from "../MailList/MailList";
-import MailDetails from "../ViewMail/ViewMail";
 import MailsControl from "../MailsControl/MailsControl";
 
 function StarredScreen() {
@@ -10,6 +9,7 @@ function StarredScreen() {
   const [totalCount, setTotalCount] = useState(0);
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const { id } = useParams();
 
   const {
     starredMails,
@@ -18,9 +18,6 @@ function StarredScreen() {
     toggleImportant,
     handleDelete,
     handleMoveToSpam,
-    handleMailClick,
-    setSelectedMail,
-    selectedMail,
     labels,
     onAssignLabel,
   } = useOutletContext();
@@ -61,49 +58,47 @@ function StarredScreen() {
     await toggleStar(id);
     // Remove mail localy
     setMessages((prev) => prev.filter((mail) => mail.id !== id));
-    if (selectedMail?.id === id) setSelectedMail(null);
   };
 
   return (
     <div className="inboxScreen">
-      {!selectedMail && (
-        <MailsControl
-          currentPage={currentPage}
-          totalCount={totalCount}
-          onRefresh={fetchStarred}
-          onPageChange={setCurrentPage}
+      {id ? (
+        <Outlet
+          context={{
+            starredMails,
+            importantMails,
+            toggleStar: handleStarToggle,
+            toggleImportant,
+            handleDelete,
+            handleMoveToSpam,
+            setMessages,
+            labels,
+            onAssignLabel,
+          }}
         />
-      )}
-
-      {error && <p className="error-message">{error}</p>}
-
-      {!selectedMail ? (
-        <div className="inbox-body">
-          <MailList
-            mails={messages}
-            starred={starredMails}
-            important={importantMails}
-            onSelect={handleMailClick}
-            onStarToggle={handleStarToggle}
-            onImportantToggle={toggleImportant}
-            onDelete={handleDelete}
-            setMessages={setMessages}
-          />
-        </div>
       ) : (
-        <MailDetails
-          mail={selectedMail}
-          onClose={() => setSelectedMail(null)}
-          onStarToggle={handleStarToggle}
-          onImportantToggle={toggleImportant}
-          onDelete={handleDelete}
-          moveToSpam={handleMoveToSpam}
-          starred={starredMails}
-          important={importantMails}
-          setMessages={setMessages}
-          labels={labels}
-          onAssignLabel={onAssignLabel}
-        />
+        <>
+          <MailsControl
+            currentPage={currentPage}
+            totalCount={totalCount}
+            onRefresh={fetchStarred}
+            onPageChange={setCurrentPage}
+          />
+
+          {error && <p className="error-message">{error}</p>}
+
+          <div className="inbox-body">
+            <MailList
+              mails={messages}
+              starred={starredMails}
+              important={importantMails}
+              onStarToggle={handleStarToggle}
+              onImportantToggle={toggleImportant}
+              onDelete={handleDelete}
+              setMessages={setMessages}
+            />
+          </div>
+        </>
       )}
     </div>
   );

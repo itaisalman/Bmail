@@ -3,7 +3,7 @@ import MailComposer from "../MailComposer/MailComposer";
 
 // Wrapper component to MailComposer
 // When reaching MailComposer from the Create New Mail button - i want that MailComposer will do the functionality below on Send and X buttons.
-function ButtonMailComposer({ onClose }) {
+function ButtonMailComposer({ onClose, onAction }) {
   const [errors, setErrors] = useState("");
 
   // Send function.
@@ -43,6 +43,7 @@ function ButtonMailComposer({ onClose }) {
         // Success
         setErrors("");
         onClose();
+        onAction?.();
       } catch (err) {
         setErrors("Failed to connect to the server. Please try again later.");
       }
@@ -75,6 +76,7 @@ function ButtonMailComposer({ onClose }) {
         return;
       }
       onClose();
+      onAction?.();
     } catch (err) {
       setErrors("Failed to connect to the server. Please try again later.");
     }

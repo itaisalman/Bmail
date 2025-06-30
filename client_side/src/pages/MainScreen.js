@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Outlet } from "react-router-dom";
 import ButtonMailComposer from "../components/ButtonMailComposer/ButtonMailComposer";
 import Sidebar from "../components/Sidebar/Sidebar";
@@ -20,8 +20,8 @@ function MainScreen() {
   const [labelToDelete, setLabelToDelete] = useState(null);
   const [starredMails, setStarredMails] = useState(new Set());
   const [importantMails, setImportantMails] = useState(new Set());
-  const [selectedMail, setSelectedMail] = useState(null);
-  const [, setMessages] = useState([]);
+  // Used for trigger re-fetching the wanted components (Like inbox/sent etc.)
+  const actionRef = useRef(null);
 
   const toggleStar = useCallback(async (id) => {
     const token = sessionStorage.getItem("jwt");
@@ -63,6 +63,9 @@ function MainScreen() {
 
   const toggleComposer = () => {
     setShowComposer((prev) => !prev);
+    if (actionRef.current) {
+      actionRef.current();
+    }
   };
 
   // Reverses the state – if the label is open -> closes and vice versa
@@ -71,16 +74,13 @@ function MainScreen() {
   const handleLabelUpdated = (updatedLabel) => {
     setLabels((prev) =>
       prev.map((label) =>
-        // If label.id is equal to updatedLabel.id,
-        // then return a new label with the updated name.
-        // Otherwise, return the label as is.
         label.id === updatedLabel.id
           ? { ...label, name: updatedLabel.name }
           : label
       )
     );
   };
-  // Closes the modal without deleting – if the user clicks "Cancel"
+
   const closeDeletePopup = () => {
     setShowDeleteConfirm(false);
     setLabelToDelete(null);
@@ -126,7 +126,6 @@ function MainScreen() {
   const handleDelete = async (id, setMessages) => {
     await deleteMail(id);
     setMessages((prev) => prev.filter((mail) => mail.id !== id));
-    if (selectedMail?.id === id) setSelectedMail(null);
   };
 
   const moveToSpam = async (id) => {
@@ -157,23 +156,9 @@ function MainScreen() {
   const handleMoveToSpam = async (id, setMessages) => {
     await moveToSpam(id);
     setMessages((prev) => prev.filter((mail) => mail.id !== id));
-    if (selectedMail?.id === id) {
-      setSelectedMail(null);
-    }
   };
 
-  const handleMailClick = async (id) => {
-    const token = sessionStorage.getItem("jwt");
-    const res = await fetch(`/api/mails/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data = await res.json();
-    setSelectedMail(data);
-  };
-
-  const onAssignLabel = async (mailId, labelId) => {
+  const onAssignLabel = async (mailId, labelId, setMessages) => {
     try {
       assignLabelToMail(mailId, labelId);
       setMessages((prev) =>
@@ -186,9 +171,6 @@ function MainScreen() {
     } catch (err) {
       console.error("Failed to assign label:", err.message);
     }
-  };
-  const handleCloseMail = () => {
-    setSelectedMail(null);
   };
 
   return (
@@ -205,7 +187,6 @@ function MainScreen() {
           setLabelToDelete(label);
           setShowDeleteConfirm(true);
         }}
-        onCloseMail={handleCloseMail}
       />
       <main className="main-content">
         <Topbar />
@@ -218,15 +199,18 @@ function MainScreen() {
             labels,
             handleDelete,
             moveToSpam,
-            handleMailClick,
-            setSelectedMail,
-            selectedMail,
             handleMoveToSpam,
             onAssignLabel,
+            setAction: (fn) => (actionRef.current = fn),
           }}
         />
       </main>
-      {showComposer && <ButtonMailComposer onClose={toggleComposer} />}
+      {showComposer && (
+        <ButtonMailComposer
+          onClose={toggleComposer}
+          onAction={() => actionRef.current?.()}
+        />
+      )}
       {showLabels && (
         <LabelEditor
           onClose={() => {

@@ -42,6 +42,7 @@
 .mail-details-icons .star-icon,
 .mail-details-icons .flag-icon,
 .mail-details-icons .trash-icon,
+.mail-details-actions .label-icon,
 .mail-details-icons .restore-from-spam-button {
   transition: color 0.2s;
 }
@@ -156,6 +157,7 @@
 .star-icon.disabled,
 .flag-icon.disabled,
 .trash-icon.disabled,
+.label-icon.disabled,
 .spam-icon.disabled {
   opacity: 0.5;
   pointer-events: none;

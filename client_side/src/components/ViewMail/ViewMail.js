@@ -16,13 +16,13 @@ function MailDetails({
   onImportantToggle,
   starred,
   important,
-  onAssignLabel,
   moveToSpam,
   disabledActions = false,
   setMessages,
   isSpamScreen = false,
   restore,
-  labels = [],
+  labels,
+  onAssignLabel,
 }) {
   const [showDropdown, setShowDropdown] = useState(false);
   // Check if the screen is spam to present restorefrom spam button
@@ -30,8 +30,6 @@ function MailDetails({
   const showRestoreFromSpamBtn = location.pathname.startsWith("/main/spam");
   const isSentScreen = location.pathname.startsWith("/main/sent");
 
-  // Don't render anything if no mail is selected
-  if (!mail) return null;
   // Format a date string to "YYYY-MM-DD HH:mm"
   function formatDateTime(dateString) {
     if (!dateString) return "";
@@ -104,22 +102,24 @@ function MailDetails({
           )}
           <div style={{ position: "relative" }}>
             <span
-              className="label-icon"
+              className={`label-icon ${
+                disabledActions || isSpamScreen ? "disabled" : ""
+              }`}
               title="Assign label"
-              onClick={(e) => {
-                console.log("clicked!");
-                e.stopPropagation();
-                setShowDropdown((prev) => !prev);
+              onClick={() => {
+                if (!isSpamScreen || !disabledActions) {
+                  setShowDropdown((prev) => !prev);
+                }
               }}
             >
               <CiBookmarkPlus size={22} />
             </span>
 
-            {showDropdown && (
+            {showDropdown && !isSpamScreen && (
               <LabelDropdown
                 labels={labels}
                 onSelect={(label) => {
-                  onAssignLabel(mail.id, label.id);
+                  onAssignLabel(mail.id, label.id, setMessages);
                   setShowDropdown(false);
                 }}
                 onClose={() => setShowDropdown(false)}

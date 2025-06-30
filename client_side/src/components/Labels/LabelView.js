@@ -1,30 +1,27 @@
-import { useParams, useOutletContext } from "react-router-dom";
+import { Outlet, useParams, useOutletContext } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
 import "../Inbox/Inbox.css";
 import MailList from "../MailList/MailList";
-import MailDetails from "../ViewMail/ViewMail";
 import MailsControl from "../MailsControl/MailsControl";
 
 function LabelView() {
-  const { labelName } = useParams();
+  const params = useParams();
   const [messages, setMessages] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [error, setError] = useState("");
-  const [selectedMail, setSelectedMail] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
   const {
     starredMails,
     importantMails,
-    userLabelsMails,
     toggleStar,
     toggleImportant,
-    deleteMail,
+    handleDelete,
+    handleMoveToSpam,
     toggleLabel,
     labels,
     onAssignLabel,
   } = useOutletContext();
-
   // Designed to load the list of emails associated with a specific label
   const fetchAssignLabel = useCallback(
     async (page = currentPage) => {
@@ -36,7 +33,7 @@ function LabelView() {
           headers: {
             "Content-Type": "application/json",
             authorization: "bearer " + token,
-            label: labelName,
+            label: params.labelName,
           },
         });
 
@@ -50,79 +47,55 @@ function LabelView() {
         setError(err.message);
       }
     },
-    [currentPage, labelName]
+    [currentPage, params.labelName]
   );
 
   useEffect(() => {
     fetchAssignLabel();
   }, [fetchAssignLabel]);
-
-  // Opening a specific email
-  const handleMailClick = async (id) => {
-    const token = sessionStorage.getItem("jwt");
-    const res = await fetch(`/api/mails/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data = await res.json();
-    setSelectedMail(data);
-  };
-
   // After removing a label – removes the email from the list
   const handleLabelToggle = async (id) => {
     await toggleLabel(id);
     setMessages((prev) => prev.filter((mail) => mail.id !== id));
-    if (selectedMail?.id === id) setSelectedMail(null);
   };
-
-  const handleDelete = async (id) => {
-    await deleteMail(id);
-    setMessages((prev) => prev.filter((mail) => mail.id !== id));
-    if (selectedMail?.id === id) setSelectedMail(null);
-  };
-
   return (
     <div className="inboxScreen">
-      {!selectedMail && (
-        <MailsControl
-          currentPage={currentPage}
-          totalCount={totalCount}
-          onRefresh={fetchAssignLabel}
-          onPageChange={setCurrentPage}
+      {params.id ? (
+        <Outlet
+          context={{
+            starredMails,
+            importantMails,
+            toggleStar,
+            toggleImportant,
+            handleDelete,
+            handleMoveToSpam,
+            setMessages,
+            handleLabelToggle,
+            onAssignLabel,
+            labels,
+          }}
         />
-      )}
+      ) : (
+        <>
+          <MailsControl
+            currentPage={currentPage}
+            totalCount={totalCount}
+            onRefresh={fetchAssignLabel}
+            onPageChange={setCurrentPage}
+          />
 
-      {error && <p className="error-message">{error}</p>}
+          {error && <p className="error-message">{error}</p>}
 
-      {!selectedMail ? (
-        <div className="inbox-body">
           <MailList
             mails={messages}
             starred={starredMails}
             important={importantMails}
-            onSelect={handleMailClick}
             onStarToggle={toggleStar}
             onImportantToggle={toggleImportant}
-            onLabelToggle={handleLabelToggle}
             onDelete={handleDelete}
-            onAssignLabel={onAssignLabel}
+            setMessages={setMessages}
           />
-        </div>
-      ) : (
-        <MailDetails
-          mail={selectedMail}
-          onClose={() => setSelectedMail(null)}
-          onStarToggle={toggleStar}
-          onImportantToggle={toggleImportant}
-          onLabelToggle={handleLabelToggle}
-          labels={labels}
-          onDelete={handleDelete}
-          starred={starredMails}
-          important={importantMails}
-          userLabels={userLabelsMails}
-          onAssignLabel={onAssignLabel}
-        />
+        </>
       )}
     </div>
   );

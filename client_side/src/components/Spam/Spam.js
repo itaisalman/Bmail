@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from "react";
 import { Outlet, useParams, useOutletContext } from "react-router-dom";
 import "../Inbox/Inbox.css";
 import MailList from "../MailList/MailList";
-import MailDetails from "../ViewMail/ViewMail";
 import MailsControl from "../MailsControl/MailsControl";
 
 function SpamScreen() {
@@ -14,14 +13,7 @@ function SpamScreen() {
   const { id } = useParams();
   const isSpamScreen = true;
 
-  const {
-    starredMails,
-    importantMails,
-    handleMailClick,
-    handleDelete,
-    setSelectedMail,
-    selectedMail,
-  } = useOutletContext();
+  const { starredMails, importantMails, handleDelete } = useOutletContext();
 
   // Fetch spam data from the server for the current page
   const fetchSpam = useCallback(
@@ -72,7 +64,6 @@ function SpamScreen() {
 
       // Updated values after delete all mails from user's trash
       setMessages((prev) => prev.filter((mail) => mail.id !== id));
-      if (selectedMail?.id === id) setSelectedMail(null);
     } catch (err) {
       setError(err.message);
     }
@@ -91,41 +82,25 @@ function SpamScreen() {
         />
       ) : (
         <>
-          {!selectedMail && (
-            <MailsControl
-              currentPage={currentPage}
-              totalCount={totalCount}
-              onRefresh={fetchSpam}
-              onPageChange={setCurrentPage}
-            />
-          )}
+          <MailsControl
+            currentPage={currentPage}
+            totalCount={totalCount}
+            onRefresh={fetchSpam}
+            onPageChange={setCurrentPage}
+          />
 
           {error && <p className="error-message">{error}</p>}
 
-          {!selectedMail ? (
-            <div className="inbox-body">
-              <MailList
-                mails={messages}
-                starred={starredMails}
-                important={importantMails}
-                onSelect={handleMailClick}
-                onDelete={handleDelete}
-                isSpamScreen={true}
-                setMessages={setMessages}
-              />
-            </div>
-          ) : (
-            <MailDetails
-              mail={selectedMail}
-              onClose={() => setSelectedMail(null)}
+          <div className="inbox-body">
+            <MailList
+              mails={messages}
               starred={starredMails}
               important={importantMails}
               onDelete={handleDelete}
-              isSpamScreen={isSpamScreen}
-              restore={RestoreFromSpam}
+              isSpamScreen={true}
               setMessages={setMessages}
             />
-          )}
+          </div>
         </>
       )}
     </div>
