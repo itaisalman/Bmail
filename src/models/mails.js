@@ -246,6 +246,25 @@ const createNewDraft = (sender, receiver_address, title, content) => {
   return;
 };
 
+const assignLabel = (user_id, mail_id, label_id) => {
+  const user = users.getUserById(user_id);
+  if (!user) return false;
+
+  const mail = getSpecificMail(user_id, Number(mail_id));
+  if (!mail) return false;
+
+  // Find the new label
+  const label = user.labels.find((label) => label.id === Number(label_id));
+  if (!label) return false;
+
+  const alreadyExists = label.mails.some((m) => m.id === mail.id);
+  if (!alreadyExists) {
+    label.mails.push(mail);
+  }
+
+  return true;
+};
+
 const restoreSpammedMail = (user_id, mail_id) => {
   const user = users.getUserById(user_id);
   if (!user) return;
@@ -276,6 +295,7 @@ module.exports = {
   toggleStarred,
   toggleImportant,
   emptyUserTrash,
+  assignLabel,
   mailToSpam,
   restoreSpammedMail,
 };

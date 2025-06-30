@@ -22,6 +22,8 @@ function ViewResult() {
     isSpamScreen = false,
     RestoreFromSpam,
     setMessages,
+    labels,
+    onAssignLabel,
   } = useOutletContext();
 
   // When pressing spam or trash while viewing a mail, the view mail should be closed.
@@ -61,6 +63,8 @@ function ViewResult() {
       disabledActions={disabledActions}
       isSpamScreen={isSpamScreen}
       setMessages={setMessages}
+      labels={labels}
+      onAssignLabel={onAssignLabel}
       restore={(mail_id, setMessages) =>
         handleClosingFunctions(mail_id, setMessages, RestoreFromSpam)
       }

@@ -1,3 +1,4 @@
+const users = require("../models/users");
 const labels = require("../models/labels");
 
 // Checks if the id given is valid
@@ -135,12 +136,23 @@ exports.deleteLabel = (req, res) => {
     return res.status(400).json({ error: "Missing/Invalid label ID" });
   }
 
+  const user = users.getUserById(user_id);
+  const label = user.labels.find((l) => l.id === Number(label_id));
+
+  if (!label) return res.status(404).json({ error: "Label not found" });
+
+  // Extracts the array's emails before deletion
+  const labelMails = label.mails || [];
+
   const deleted_label = labels.deleteLabel(user_id, Number(label_id));
   // Check if the user ID does not exist
   if (deleted_label === null)
     return res.status(404).json({ error: "User not found" });
-  // If the label does not exist
-  if (!deleted_label) return res.status(404).json({ error: "Label not found" });
+
+  // Moves the label emails back to the inbox
+  labelMails.forEach((mail) => {
+    user.received_mails.push(mail);
+  });
 
   res.status(204).send();
 };

@@ -291,6 +291,20 @@ exports.createNewDraft = ({ headers, body }, res) => {
   res.status(201).json({ message: "Draft created" });
 };
 
+// Associate the email with a label for the user
+exports.assignLabelToMail = ({ headers, params, body }, res) => {
+  const user_id = headers.user;
+  const mail_id = params.id;
+  const label_id = body.labelId;
+
+  const result = mails.assignLabel(user_id, mail_id, label_id);
+  if (!result) {
+    return res.status(404).json({ error: "User, mail or label not found" });
+  }
+
+  res.sendStatus(204);
+};
+
 // Add url into the blacklist by calling the bloomfilter server
 function sendUrlBlacklist(url) {
   return new Promise((resolve, reject) => {

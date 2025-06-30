@@ -18,6 +18,8 @@ function ImportantScreen() {
     toggleImportant,
     handleDelete,
     handleMoveToSpam,
+    labels,
+    onAssignLabel,
   } = useOutletContext();
 
   const fetchImportant = useCallback(
@@ -70,6 +72,8 @@ function ImportantScreen() {
             handleDelete,
             handleMoveToSpam,
             setMessages,
+            labels,
+            onAssignLabel,
           }}
         />
       ) : (

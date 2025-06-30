@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { RxCross2 } from "react-icons/rx";
+import { CiBookmarkPlus } from "react-icons/ci";
 import { MdReport } from "react-icons/md";
 import { FiShare } from "react-icons/fi";
 import { MdOutlineDelete, MdOutlineFlag, MdFlag } from "react-icons/md";
 import { useLocation } from "react-router-dom";
 import "./ViewMail.css";
+import LabelDropdown from "../Labels/LabelDropdown";
 
 function MailDetails({
   mail,
@@ -18,14 +21,14 @@ function MailDetails({
   setMessages,
   isSpamScreen = false,
   restore,
+  labels,
+  onAssignLabel,
 }) {
+  const [showDropdown, setShowDropdown] = useState(false);
   // Check if the screen is spam to present restorefrom spam button
   const location = useLocation();
   const showRestoreFromSpamBtn = location.pathname.startsWith("/main/spam");
   const isSentScreen = location.pathname.startsWith("/main/sent");
-
-  // Don't render anything if no mail is selected
-  if (!mail) return null;
 
   // Format a date string to "YYYY-MM-DD HH:mm"
   function formatDateTime(dateString) {
@@ -97,6 +100,32 @@ function MailDetails({
               <FiShare />
             </span>
           )}
+          <div style={{ position: "relative" }}>
+            <span
+              className={`label-icon ${
+                disabledActions || isSpamScreen ? "disabled" : ""
+              }`}
+              title="Assign label"
+              onClick={() => {
+                if (!isSpamScreen || !disabledActions) {
+                  setShowDropdown((prev) => !prev);
+                }
+              }}
+            >
+              <CiBookmarkPlus size={22} />
+            </span>
+
+            {showDropdown && !isSpamScreen && (
+              <LabelDropdown
+                labels={labels}
+                onSelect={(label) => {
+                  onAssignLabel(mail.id, label.id, setMessages);
+                  setShowDropdown(false);
+                }}
+                onClose={() => setShowDropdown(false)}
+              />
+            )}
+          </div>
         </div>
 
         <button

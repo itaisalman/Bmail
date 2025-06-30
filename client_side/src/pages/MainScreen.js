@@ -5,6 +5,7 @@ import Sidebar from "../components/Sidebar/Sidebar";
 import Topbar from "../components/Topbar/Topbar";
 import LabelEditor from "../components/Labels/LabelEditor";
 import LabelDeleteConfirm from "../components/Labels/LabelDelete";
+import { assignLabelToMail } from "../components/Labels/apiLabels";
 import "./MainScreen.css";
 
 function MainScreen() {
@@ -73,16 +74,13 @@ function MainScreen() {
   const handleLabelUpdated = (updatedLabel) => {
     setLabels((prev) =>
       prev.map((label) =>
-        // If label.id is equal to updatedLabel.id,
-        // then return a new label with the updated name.
-        // Otherwise, return the label as is.
         label.id === updatedLabel.id
           ? { ...label, name: updatedLabel.name }
           : label
       )
     );
   };
-  // Closes the modal without deleting – if the user clicks "Cancel"
+
   const closeDeletePopup = () => {
     setShowDeleteConfirm(false);
     setLabelToDelete(null);
@@ -160,6 +158,21 @@ function MainScreen() {
     setMessages((prev) => prev.filter((mail) => mail.id !== id));
   };
 
+  const onAssignLabel = async (mailId, labelId, setMessages) => {
+    try {
+      assignLabelToMail(mailId, labelId);
+      setMessages((prev) =>
+        prev.map((mail) =>
+          mail.id === mailId
+            ? { ...mail, labels: [...(mail.labels || []), { id: labelId }] }
+            : mail
+        )
+      );
+    } catch (err) {
+      console.error("Failed to assign label:", err.message);
+    }
+  };
+
   return (
     <div className="main-container">
       <Sidebar
@@ -183,9 +196,11 @@ function MainScreen() {
             importantMails,
             toggleStar,
             toggleImportant,
+            labels,
             handleDelete,
             moveToSpam,
             handleMoveToSpam,
+            onAssignLabel,
             setAction: (fn) => (actionRef.current = fn),
           }}
         />
