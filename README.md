@@ -251,8 +251,30 @@ git clone - https://github.com/itaisalman/Bmail
 
 ### Build:
 
-here will be image of building
+<img src="photos/Build_part4.png" alt="build" width = "600" height="300"/>
 
 ### Runs:
 
-here will be images of program flow
+<img src="photos/homeScreen_part4.png" alt="home screen" width = "600" height="300"/>
+
+<img src="photos/signUpScreen_part4.png" alt="sign up screen" width = "600" height="300"/>
+
+<img src="photos/loginScreen_part4.png" alt="login screen" width = "600" height="300"/>
+
+<img src="photos/mainScreen_part4.png" alt="main screen" width = "600" height="300"/>
+
+<img src="photos/ViewMail_part4.png" alt="view mail" width = "600" height="300"/>
+
+<img src="photos/ComposeMail_part4.png" alt="create new mail" width = "600" height="300"/>
+
+<img src="photos/PatchDraft_part4.png" alt="edit draft" width = "600" height="300"/>
+
+<img src="photos/CreateLabel_part4.png" alt="creat label" width = "600" height="300"/>
+
+<img src="photos/assignToLabel_part4.png" alt="assign to label" width = "600" height="300"/>
+
+<img src="photos/searchBar_part4.png" alt="search bar" width = "600" height="300"/>
+
+<img src="photos/Trash_part4.png" alt="trash" width = "600" height="300"/>
+
+<img src="photos/darkMode_part4.png" alt="dark mode" width = "600" height="300"/>
