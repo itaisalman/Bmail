@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { RxCross2 } from "react-icons/rx";
 import { CiBookmarkPlus } from "react-icons/ci";
 import { MdReport } from "react-icons/md";
 import { FiShare } from "react-icons/fi";
 import { MdOutlineDelete, MdOutlineFlag, MdFlag } from "react-icons/md";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import "./ViewMail.css";
 import LabelDropdown from "../Labels/LabelDropdown";
+import { getSelectedLabelsOfMail } from "../Labels/apiLabels";
 
 function MailDetails({
   mail,
@@ -21,14 +22,19 @@ function MailDetails({
   setMessages,
   isSpamScreen = false,
   restore,
-  labels,
   onAssignLabel,
+  removeMailFromLabel,
+  labels,
 }) {
   const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedLabel, setSelectedLabel] = useState([]);
   // Check if the screen is spam to present restorefrom spam button
   const location = useLocation();
+  const isLabelScreen = location.pathname.startsWith("/main/labels/");
   const showRestoreFromSpamBtn = location.pathname.startsWith("/main/spam");
   const isSentScreen = location.pathname.startsWith("/main/sent");
+  const navigate = useNavigate();
+  const { labelName } = useParams();
 
   // Format a date string to "YYYY-MM-DD HH:mm"
   function formatDateTime(dateString) {
@@ -41,6 +47,20 @@ function MailDetails({
     const minutes = String(date.getMinutes()).padStart(2, "0");
     return `${year}-${month}-${day} ${hours}:${minutes}`;
   }
+
+  useEffect(() => {
+  async function fetchLabels() {
+      try {
+        const labels = await getSelectedLabelsOfMail(mail.id);
+        console.log("Selected labels from server:", labels);
+        setSelectedLabel(labels.map((l) => l.id));
+      } catch (err) {
+        console.error("Failed to load mail labels:", err.message);
+      }
+    }
+
+    fetchLabels();
+}, [mail.id]);
 
   return (
     <div className="mail-details">
@@ -106,8 +126,10 @@ function MailDetails({
                 disabledActions || isSpamScreen ? "disabled" : ""
               }`}
               title="Assign label"
-              onClick={() => {
+              onClick={async () => {
                 if (!isSpamScreen || !disabledActions) {
+                  const labels = await getSelectedLabelsOfMail(mail.id);
+                   setSelectedLabel(labels.map((l) => l.id));
                   setShowDropdown((prev) => !prev);
                 }
               }}
@@ -118,9 +140,20 @@ function MailDetails({
             {showDropdown && !isSpamScreen && (
               <LabelDropdown
                 labels={labels}
-                onSelect={(label) => {
-                  onAssignLabel(mail.id, label.id, setMessages);
-                  setShowDropdown(false);
+                selected={selectedLabel}
+                onSelect={(label, isChecked) => {
+                  if (isChecked) {
+                    onAssignLabel(mail.id, label.id, setMessages);
+                    if (!selectedLabel.includes(label.id)) {
+                      setSelectedLabel([...selectedLabel, label.id]);
+                    }
+                  } else {
+                    removeMailFromLabel(mail.id, label.id, setMessages);
+                    setSelectedLabel(selectedLabel.filter((id) => id !== label.id));
+                    if (isLabelScreen) {
+                      navigate("/main/labels/" + labelName);
+                    }
+                 }
                 }}
                 onClose={() => setShowDropdown(false)}
               />

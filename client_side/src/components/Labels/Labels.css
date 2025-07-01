@@ -117,7 +117,13 @@ body.dark .label-composer-container {
   box-sizing: border-box;
 }
 
-.label-link:hover,
+.label-link:hover {
+  background-color: #57606f;
+  box-shadow: 0 2px 8px rgba(30, 144, 255, 0.4);
+  color: #ffffff;
+}
+
+
 .label-link.active {
   background-color: #1e90ff;
   box-shadow: 0 2px 10px rgba(30, 144, 255, 0.7);

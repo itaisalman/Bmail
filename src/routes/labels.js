@@ -10,4 +10,6 @@ router
   .patch(controller.updateLabel)
   .delete(controller.deleteLabel);
 
+  router.route("/mail/:mail_id").get(controller.getMailLabels).delete(controller.removeMailFromLabel);
+
 module.exports = router;

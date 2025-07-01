@@ -20,6 +20,7 @@ function StarredScreen() {
     handleMoveToSpam,
     labels,
     onAssignLabel,
+    removeMailFromLabel,
   } = useOutletContext();
 
   // Fetch starred mails from the server for the current page
@@ -74,6 +75,7 @@ function StarredScreen() {
             setMessages,
             labels,
             onAssignLabel,
+            removeMailFromLabel,
           }}
         />
       ) : (

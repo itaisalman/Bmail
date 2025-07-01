@@ -22,6 +22,7 @@ function SentScreen() {
     handleMoveToSpam,
     labels,
     onAssignLabel,
+    removeMailFromLabel,
   } = useOutletContext();
 
   // Fetch sent mails from the server for the current page
@@ -71,6 +72,7 @@ function SentScreen() {
             setMessages,
             labels,
             onAssignLabel,
+            removeMailFromLabel,
           }}
         />
       ) : (

@@ -20,6 +20,7 @@ function ImportantScreen() {
     handleMoveToSpam,
     labels,
     onAssignLabel,
+    removeMailFromLabel,
   } = useOutletContext();
 
   const fetchImportant = useCallback(
@@ -74,6 +75,7 @@ function ImportantScreen() {
             setMessages,
             labels,
             onAssignLabel,
+            removeMailFromLabel,
           }}
         />
       ) : (

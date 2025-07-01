@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import "./LabelDropdown.css";
 
-function LabelDropdown({ labels, onSelect, onClose }) {
-  // Automatically close when clicked outside the dropdown
+function LabelDropdown({ labels, selected = [], onSelect, onClose }) {
+  
   useEffect(() => {
     function handleClickOutside(event) {
       if (!event.target.closest(".label-dropdown")) {
@@ -16,21 +16,35 @@ function LabelDropdown({ labels, onSelect, onClose }) {
     };
   }, [onClose]);
 
+  const toggleLabel = (label) => {
+    const isSelected = selected.includes(label.id);
+    onSelect(label, !isSelected); // true = add, false = remove
+  };
+
   return (
     <div className="label-dropdown">
       <div className="label-dropdown-title">Assign to category</div>
 
       <div className="label-list">
-        {labels.map((label) => (
-          <button
-            key={label.id}
-            className="label-option"
-            type="button"
-            onClick={() => onSelect(label)}
-          >
-            {label.name}
-          </button>
-        ))}
+        {labels.map((label) => {
+          const isChecked = selected.map(Number).includes(Number(label.id));
+          console.log(
+            `Label: ${label.name}, label.id=${label.id}, checked=${isChecked}`
+          );
+
+          return (
+            <div key={label.id} className="label-option">
+              <label htmlFor={`label-${label.id}`} className="label-name">{label.name}</label>
+            <input
+              className="label-toggle"
+              type="checkbox"
+              checked={isChecked}
+              onChange={() => toggleLabel(label)}
+              id={`label-${label.id}`}
+            />
+          </div>
+          );
+        })}
       </div>
 
       <button className="label-cancel" onClick={onClose}>
