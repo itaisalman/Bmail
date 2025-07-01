@@ -107,17 +107,17 @@
   transform: scale(1.2);
 }
 
-body.dark .inbox-header,
 body.dark .search-input,
 body.dark .logout-button,
 body.dark .theme-toggle-button {
+  border-color: #ffffff;
+  border: 2px solid white;
   background-color: var(--bg-color);
   color: var(--text-color);
 }
 
-body.dark .search-input,
-body.dark .logout-button {
-  border-color: #ffffff;
+body.dark .search-button {
+  color: #1e90ff;
 }
 
 .live-search-dropdown {

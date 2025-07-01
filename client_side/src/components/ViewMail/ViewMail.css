@@ -168,3 +168,30 @@
   margin-left: 10px;
   font-size: 18px;
 }
+
+body.dark .mail-details-actions,
+body.dark .mail-details-label,
+body.dark .mail-details-sender-box,
+body.dark .mail-details-content-body
+ {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+body.dark .star-icon,
+body.dark .flag-icon,
+body.dark .trash-icon,
+body.dark .label-icon,
+body.dark .spam-icon {
+  color: var(--text-color)
+}
+
+body.dark .mail-details-header {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+body.dark .mail-details {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}

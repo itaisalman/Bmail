@@ -33,14 +33,12 @@
   font-weight: bold;
 }
 
-
 .label-list {
   overflow-x: hidden;
   overflow-y: auto;
   max-height: 16rem;
   padding: 0;
 }
-
 
 .label-option {
   all: unset;
@@ -61,11 +59,9 @@
   max-width: 8rem;
 }
 
-
 .label-option:hover {
   background-color: #f0f0f0;
 }
-
 
 .label-cancel {
   flex-shrink: 0;
@@ -111,4 +107,40 @@ input.label-toggle:focus {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+body.dark .label-dropdown {
+  background-color: #000000;
+  color: var(--text-color);
+}
+
+body.dark .label-dropdown-title {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+body.dark .label-option {
+  color: var(--text-color);
+}
+
+body.dark .label-option:hover {
+  background-color: #000000;
+}
+
+body.dark .label-cancel {
+  color: var(--text-color);
+}
+
+body.dark .label-cancel:hover {
+  background-color: #000000;
+}
+
+body.dark .label-toggle:checked {
+  outline: 3px solid #1e90ff;
+  outline-offset: 2px;
+  border: 2px solid #1e90ff;
+}
+
+body.dark input.label-toggle:focus {
+  border: 2px solid #1e90ff !important;
 }
