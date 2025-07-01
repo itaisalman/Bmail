@@ -21,6 +21,7 @@ function LabelView() {
     toggleLabel,
     labels,
     onAssignLabel,
+    removeMailFromLabel,
   } = useOutletContext();
   // Designed to load the list of emails associated with a specific label
   const fetchAssignLabel = useCallback(
@@ -72,6 +73,7 @@ function LabelView() {
             setMessages,
             handleLabelToggle,
             onAssignLabel,
+            removeMailFromLabel,
             labels,
           }}
         />

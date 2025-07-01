@@ -33,31 +33,19 @@ function LabelEditor({
       return;
     }
 
-    // If we are editing – it is permissible for the label with the same name to be the one we are editing
-    const isDuplicate = labels.some(
-      (lbl) =>
-        lbl.name.toLowerCase() === trimmedName.toLowerCase() &&
-        (!isEdit || lbl.id !== labelToEdit.id)
-    );
-
-    if (isDuplicate) {
-      setError("A label with this name already exists.");
-      return;
-    }
-
     try {
       if (isEdit) {
         try {
           await updateLabel(labelToEdit.id, trimmedName);
+          onLabelUpdated({ id: labelToEdit.id, name: trimmedName });
         } catch (error) {
           setError(error.message || "Failed to update label");
+          return;
         }
-        onLabelUpdated({ id: labelToEdit.id, name: trimmedName });
       } else {
         const newLabel = await createLabel(trimmedName);
         onNewLabelCreated(newLabel);
       }
-
       onClose();
     } catch (err) {
       setError(err.message || "Server error");

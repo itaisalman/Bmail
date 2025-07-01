@@ -22,6 +22,7 @@ function InboxScreen() {
     handleMoveToSpam,
     labels,
     onAssignLabel,
+    removeMailFromLabel,
   } = useOutletContext();
 
   // Fetch inbox data from the server for the current page
@@ -71,6 +72,7 @@ function InboxScreen() {
             setMessages,
             labels,
             onAssignLabel,
+            removeMailFromLabel,
           }}
         />
       ) : (

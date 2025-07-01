@@ -5,7 +5,7 @@ import Sidebar from "../components/Sidebar/Sidebar";
 import Topbar from "../components/Topbar/Topbar";
 import LabelEditor from "../components/Labels/LabelEditor";
 import LabelDeleteConfirm from "../components/Labels/LabelDelete";
-import { assignLabelToMail } from "../components/Labels/apiLabels";
+import { assignLabelToMail, removeLabelFromMail } from "../components/Labels/apiLabels";
 import "./MainScreen.css";
 
 function MainScreen() {
@@ -173,6 +173,16 @@ function MainScreen() {
     }
   };
 
+  const removeMailFromLabel = (mailId, labelId, setMessages) => {
+   try {
+    removeLabelFromMail(mailId, labelId)
+    setMessages((prev) => prev.filter((mail) => mail.id !== mailId));
+    } catch (err) {
+      console.error("Failed to assign label:", err.message);
+    }
+};
+
+
   return (
     <div className="main-container">
       <Sidebar
@@ -201,6 +211,7 @@ function MainScreen() {
             moveToSpam,
             handleMoveToSpam,
             onAssignLabel,
+            removeMailFromLabel,
             setAction: (fn) => (actionRef.current = fn),
           }}
         />

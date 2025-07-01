@@ -127,7 +127,7 @@ body.dark .sidebar {
   padding: 0;
 }
 .new-label-button:hover {
-  color: #00cfff;
+  transform: scale(1.45);
 }
 
 .link-main {
@@ -200,4 +200,11 @@ body.dark .labels-list-container {
   background-color: #1e90ff;
   box-shadow: 0 2px 10px rgba(30, 144, 255, 0.7);
   color: white;
+}
+
+.sidebar-link.labels-header:hover {
+  background-color: transparent;
+  box-shadow: none;
+  color: inherit;
+  cursor: default;
 }
