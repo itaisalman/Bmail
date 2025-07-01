@@ -124,3 +124,7 @@
   pointer-events: none;
   cursor: default;
 }
+
+body.dark .mail-list-header{
+  color: var(--text-color);
+}

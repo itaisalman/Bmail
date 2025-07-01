@@ -83,3 +83,20 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+body.dark .search-result {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+body.dark .info-container,
+body.dark .date-container,
+body.dark .icon-container,
+body.dark .mail-meta,
+body.dark .mail-separator,
+body.dark .mail-title,
+body.dark .mail-sender,
+body.dark .mail-receiver {
+    color: var(--text-color);
+}
+
