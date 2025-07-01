@@ -91,9 +91,6 @@ body.dark .label-composer-container {
   color: var(--text-color);
 }
 
-/* הוספות ועדכונים בקובץ Labels.css לשם תיקון תצוגת רקע ה־label */
-
-/* ודא שזה קיים או עדכן לפי הצורך */
 .sidebar-label-row {
   display: flex;
   align-items: center;
