@@ -111,20 +111,22 @@ exports.updateLabel = (req, res) => {
 
   //Trying to update the label with the new name, after removing spaces
   const updated_label = labels.updateLabel(user_id, Number(label_id), name);
+
   // If the user is not found
   if (updated_label === null)
     return res.status(404).json({ error: "User not found" });
 
   // Check if there is already a label with the same name except for the label itself
-  if (updated_label === "conflict")
+  if (updated_label === "conflict") {
     return res.status(409).json({
       error: "The label name you selected already exists. Try a different name",
     });
-
+  }
   // If the label is not found
   if (updated_label === undefined)
     return res.status(404).json({ error: "Label not found" });
-  res.status(204).send();
+
+  res.status(200).json(updated_label);
 };
 
 exports.deleteLabel = (req, res) => {
@@ -155,4 +157,35 @@ exports.deleteLabel = (req, res) => {
   });
 
   res.status(204).send();
+};
+
+exports.removeMailFromLabel = ({ headers, params, body}, res) => {
+  const user_id = +headers.user;
+  const labelId = +body.labelId;
+  const mailId = +params.mail_id;
+
+  const user = users.getUserById(user_id);
+  if (!user) return res.status(404).json({ error: "User not found" });
+
+  const label = user.labels.find((l) => l.id === labelId);
+  if (!label) return res.status(404).json({ error: "Label not found" });
+
+  const success = labels.removeMail(labelId, mailId, user_id);
+  if (!success) {
+    return res.status(404).json({ error: "Label or mail not found" });
+  }
+
+  res.sendStatus(204);
+};
+
+exports.getMailLabels = ({ headers, params }, res) => {
+  const user_id = +headers.user;
+  const mail_id = +params.mail_id;
+
+  const result = labels.getSpecificMailLabels(user_id, mail_id);
+  if (!result) {
+    return res.status(404).json({ error: "User or mail not found" });
+  }
+
+  res.status(200).json(result);
 };

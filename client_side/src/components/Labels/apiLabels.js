@@ -32,7 +32,6 @@ export const fetchLabels = async () => {
   }
 };
 
-// Create a new label
 export const createLabel = async (name) => {
   try {
     const res = await fetch("/api/labels", {
@@ -55,7 +54,6 @@ export const createLabel = async (name) => {
   }
 };
 
-// Update label name
 export const updateLabel = async (id, name) => {
   try {
     const res = await fetch(`/api/labels/${id}`, {
@@ -64,16 +62,19 @@ export const updateLabel = async (id, name) => {
       body: JSON.stringify({ name }),
     });
 
-    if (res.status !== 204) {
-      const data = await res.json();
+    if (res.status === 204) return;
+
+    const data = await res.json();
+    if (!res.ok) {
       throw new Error(data.error || "Failed to update label");
     }
+
+    return data;
   } catch (err) {
     throw err;
   }
 };
 
-// Delete label
 export const deleteLabel = async (id) => {
   try {
     const res = await fetch(`/api/labels/${id}`, {
@@ -90,7 +91,6 @@ export const deleteLabel = async (id) => {
   }
 };
 
-// Assign a specific mail to label
 export async function assignLabelToMail(mailId, labelId) {
   const res = await fetch(`/api/mails/${mailId}/assign-label`, {
     method: "PATCH",
@@ -105,3 +105,32 @@ export async function assignLabelToMail(mailId, labelId) {
 
   return;
 }
+
+// Assign a specific mail to label
+export async function getSelectedLabelsOfMail(mail_id) {
+  const res = await fetch(`/api/labels/mail/${mail_id}`, {
+    method: "GET",
+    headers: getAuthHeaders(),
+  });
+
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error("Failed to assign label: " + error);
+  }
+  const data = await res.json();
+  return data;
+}
+
+export async function removeLabelFromMail(mailId, labelId) {
+  const res = await fetch(`/api/labels/mail/${mailId}`, {
+    method: "DELETE",
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ labelId }),
+  });
+
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error("Failed to remove label: " + error);
+  }
+}
+

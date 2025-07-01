@@ -24,6 +24,7 @@ function ViewResult() {
     setMessages,
     labels,
     onAssignLabel,
+    removeMailFromLabel, 
   } = useOutletContext();
 
   // When pressing spam or trash while viewing a mail, the view mail should be closed.
@@ -65,6 +66,7 @@ function ViewResult() {
       setMessages={setMessages}
       labels={labels}
       onAssignLabel={onAssignLabel}
+      removeMailFromLabel={removeMailFromLabel}
       restore={(mail_id, setMessages) =>
         handleClosingFunctions(mail_id, setMessages, RestoreFromSpam)
       }
