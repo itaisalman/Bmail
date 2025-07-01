@@ -1,60 +1,72 @@
-let user_counter = 0;
-const users = [];
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-// Create new user
-const createUser = (
-  first_name,
-  last_name,
-  birth_date,
-  gender,
-  username,
-  password,
-  imagePath
-) => {
-  const newUser = {
-    id: ++user_counter,
-    first_name: first_name,
-    last_name: last_name,
-    birth_date: birth_date,
-    gender: gender,
-    username: username + "@bmail.com",
-    password: password,
-    image: imagePath,
-    received_mails: [],
-    sent_mails: [],
-    labels: [],
-    drafts: [],
-    starred: [],
-    important: [],
-    spam: [],
-    trash: [],
-    theme: "light",
-  };
-  // Add to users array
-  users.push(newUser);
-  return { id: newUser.id, mail_address: newUser.username };
-};
+const User = new Schema({
+  first_name: {
+    type: String,
+    required: true,
+  },
+  last_name: {
+    type: String,
+    required: true,
+  },
+  birth_date: {
+    type: Date,
+    required: true,
+  },
+  gender: {
+    type: String,
+    enum: ["Male", "Female", "Other"],
+    required: true,
+  },
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  image: {
+    type: String,
+  },
+  theme: {
+    type: String,
+    default: "light",
+  },
+  received_mails: {
+    type: [Object], // temporary until mails schema creation
+    default: [],
+  },
+  sent_mails: {
+    type: [Object], // temporary until mails schema creation
+    default: [],
+  },
+  drafts: {
+    type: [Object], // temporary until mails schema creation
+    default: [],
+  },
+  starred: {
+    type: [Object], // temporary until mails schema creation
+    default: [],
+  },
+  important: {
+    type: [Object], // temporary until mails schema creation
+    default: [],
+  },
+  spam: {
+    type: [Object], // temporary until mails schema creation
+    default: [],
+  },
+  trash: {
+    type: [Object], // temporary until mails schema creation
+    default: [],
+  },
+  labels: {
+    type: [Object], // temporary until mails schema creation
+    default: [],
+  },
+});
 
-// Check that username is not already in use
-const isEmailTaken = (username) => {
-  return users.some((user) => user.username === username);
-};
-
-// Get user by id from users array (if exists)
-const getUserById = (id) => users.find((a) => a.id === id);
-
-const getUserByUsername = (username) =>
-  users.find((user) => user.username === username);
-
-// Get users array
-const getAllUsers = () => {
-  return users;
-};
-
-module.exports = {
-  createUser,
-  isEmailTaken,
-  getUserById,
-  getAllUsers,
-  getUserByUsername,
-};
+module.exports = mongoose.model("User", User);
