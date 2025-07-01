@@ -18,7 +18,7 @@ function LabelDropdown({ labels, selected = [], onSelect, onClose }) {
 
   const toggleLabel = (label) => {
     const isSelected = selected.includes(label.id);
-    onSelect(label, !isSelected); // true = add, false = remove
+    onSelect(label, !isSelected);
   };
 
   return (
