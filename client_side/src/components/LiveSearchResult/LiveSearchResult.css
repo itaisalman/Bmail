@@ -22,3 +22,9 @@
   font-style: italic;
   user-select: none;
 }
+
+body.dark .result-list,
+body.dark .empty-search {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}

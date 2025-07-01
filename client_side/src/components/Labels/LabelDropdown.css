@@ -141,6 +141,20 @@ body.dark .label-toggle:checked {
   border: 2px solid #1e90ff;
 }
 
-body.dark input.label-toggle:focus {
-  border: 2px solid #1e90ff !important;
+body.dark .label-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+body.dark .label-list::-webkit-scrollbar-track {
+  background: #000000;
+  border-radius: 10px;
+}
+
+body.dark .label-list::-webkit-scrollbar-thumb {
+  background: var(--bg-color);
+  border-radius: 10px;
+}
+
+body.dark .label-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
