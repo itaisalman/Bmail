@@ -1,9 +1,13 @@
 const express = require("express");
 const path = require("path");
 const app = express();
+const mongoose = require("mongoose");
 const middleware = require("./middleware/auth");
 require("dotenv").config({ path: path.join(__dirname, "../config/.env") });
-
+mongoose.connect(process.env.CONNECTION_STRING, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 const mails = require("./routes/mails");
 const users = require("./routes/users");
 const tokens = require("./routes/tokens");
