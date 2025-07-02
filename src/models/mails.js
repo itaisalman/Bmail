@@ -7,59 +7,20 @@ const MailSchema = new Schema({
     required: true,
     ref: "User",
   },
-  sender_address: {
-    type: String,
-    required: true,
-  },
-  sender_first_name: {
-    type: String,
-    required: true,
-  },
-  sender_last_name: {
-    type: String,
-    required: true,
-  },
   receiver_id: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: "User",
   },
-  receiver_address: {
-    type: String,
-    required: true,
-  },
-  receiver_first_name: {
-    type: String,
-    required: true,
-  },
-  receiver_last_name: {
-    type: String,
-    required: true,
-  },
-  title: {
-    type: String,
-    required: true,
-  },
-  content: {
-    type: String,
-    required: true,
-  },
+  title: String,
+  content: String,
   date: { type: Date, default: Date.now },
 });
 
 const DraftSchema = new Schema({
-  receiver_address: {
-    type: String,
-    required: true,
-  },
-  title: {
-    type: String,
-    required: true,
-  },
-  content: {
-    type: String,
-    required: true,
-  },
+  receiver_address: String,
+  title: String,
+  content: String,
   date: { type: Date, default: Date.now },
 });
 
