@@ -1,4 +1,4 @@
-const users = require("../models/users");
+const userService = require("../services/users");
 const moment = require("moment");
 
 // Validate name
@@ -95,7 +95,7 @@ function validateUserData(data) {
   return null;
 }
 
-exports.createUser = (req, res) => {
+exports.createUser = async (req, res) => {
   const { first_name, last_name, birth_date, gender, username, password } =
     req.body;
 
@@ -109,7 +109,8 @@ exports.createUser = (req, res) => {
   }
 
   // Check if email address already taken
-  if (users.isEmailTaken(username + "@bmail.com")) {
+  const taken = await userService.isEmailTaken(username);
+  if (taken) {
     return res.status(409).json({ error: "Email already registered" });
   }
 
@@ -126,46 +127,62 @@ exports.createUser = (req, res) => {
     finalImage = "upload/" + imageFile.filename;
   }
 
-  const createdUser = users.createUser(
-    first_name,
-    last_name,
-    birth_date,
-    gender,
-    username,
-    password,
-    finalImage
-  );
-  res.status(201).json(createdUser);
+  try {
+    const createdUser = await userService.createUser(
+      first_name,
+      last_name,
+      birth_date,
+      gender,
+      username,
+      password,
+      finalImage
+    );
+    res.status(201).json(createdUser);
+  } catch (err) {
+    res.status(500).json({ error: "Server error while creating user" });
+  }
 };
 
-exports.getUserById = (req, res) => {
+exports.getUserById = async (req, res) => {
+  const user_id = parseInt(req.headers["user"]);
   // Check that got valid user_id
-  if (!checkIfValid(req.headers["user"])) {
+  if (!checkIfValid(user_id)) {
     return res.status(400).json({ error: "Missing/Invalid user ID" });
   }
-  // Check if exist
-  const user = users.getUserById(parseInt(req.headers["user"]));
-  if (!user) {
-    return res.status(404).json({ error: "User not found" });
+
+  try {
+    // Check if exist
+    const user = await userService.getUserById(user_id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Return user details without the password (for security)
+    const { password, ...safe_user } = user.toObject();
+    res.status(200).json(safe_user);
+  } catch (err) {
+    res.status(500).json({ error: "Server error while fetching user" });
   }
-  // Return user details without the password (for security)
-  const { password, ...safeUser } = user;
-  res.json(safeUser);
 };
 
-exports.updateUserTheme = (req, res) => {
-  const userId = req.headers["user"];
+exports.updateUserTheme = async (req, res) => {
+  const user_id = parseInt(req.headers["user"]);
   const { theme } = req.body;
 
-  if (!userId || (theme !== "dark" && theme !== "light")) {
+  if (!checkIfValid(user_id) || (theme !== "dark" && theme !== "light")) {
     return res.status(400).json({ error: "Invalid request" });
   }
 
-  const user = users.getUserById(parseInt(userId));
-  if (!user) {
-    return res.status(404).json({ error: "User not found" });
-  }
+  try {
+    const user = await userService.getUserById(user_id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
-  user.theme = theme;
-  return res.status(200).json({ theme });
+    user.theme = theme;
+    await user.save();
+    return res.status(200).json({ theme });
+  } catch (err) {
+    res.status(500).json({ error: "Server error while updating theme" });
+  }
 };
