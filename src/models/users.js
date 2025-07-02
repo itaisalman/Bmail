@@ -35,38 +35,54 @@ const User = new Schema({
     type: String,
     default: "light",
   },
-  received_mails: {
-    type: [Object], // temporary until mails schema creation
-    default: [],
-  },
-  sent_mails: {
-    type: [Object], // temporary until mails schema creation
-    default: [],
-  },
-  drafts: {
-    type: [Object], // temporary until mails schema creation
-    default: [],
-  },
-  starred: {
-    type: [Object], // temporary until mails schema creation
-    default: [],
-  },
-  important: {
-    type: [Object], // temporary until mails schema creation
-    default: [],
-  },
-  spam: {
-    type: [Object], // temporary until mails schema creation
-    default: [],
-  },
-  trash: {
-    type: [Object], // temporary until mails schema creation
-    default: [],
-  },
-  labels: {
-    type: [Object], // temporary until mails schema creation
-    default: [],
-  },
+  received_mails: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Mail",
+    },
+  ],
+  sent_mails: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Mail",
+    },
+  ],
+  drafts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Draft",
+    },
+  ],
+  starred: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Mail",
+    },
+  ],
+  important: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Mail",
+    },
+  ],
+  spam: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Mail",
+    },
+  ],
+  trash: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Mail",
+    },
+  ],
+  labels: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Label",
+    },
+  ],
 });
 
 module.exports = mongoose.model("User", User);
