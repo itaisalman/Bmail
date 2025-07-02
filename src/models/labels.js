@@ -6,10 +6,12 @@ const Label = new Schema({
     type: String,
     required: true,
   },
-  mails: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Mail",
-  },
+  mails: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Mail",
+    },
+  ],
 });
 
 module.exports = mongoose.model("Label", Label);
