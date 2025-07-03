@@ -1,4 +1,5 @@
 const userService = require("../services/users");
+const mongoose = require("mongoose");
 const moment = require("moment");
 
 // Validate name
@@ -49,9 +50,9 @@ function isValidPassword(password) {
   );
 }
 
-// Checks if got numeric argument
+// Checks if got valid ObjectId for the user.
 function checkIfValid(user_id) {
-  return /^\d+$/.test(user_id);
+  return mongoose.Types.ObjectId.isValid(user_id);
 }
 
 function validateUserData(data) {
@@ -144,7 +145,7 @@ exports.createUser = async (req, res) => {
 };
 
 exports.getUserById = async (req, res) => {
-  const user_id = parseInt(req.headers["user"]);
+  const user_id = req.headers["user"];
   // Check that got valid user_id
   if (!checkIfValid(user_id)) {
     return res.status(400).json({ error: "Missing/Invalid user ID" });
@@ -166,7 +167,7 @@ exports.getUserById = async (req, res) => {
 };
 
 exports.updateUserTheme = async (req, res) => {
-  const user_id = parseInt(req.headers["user"]);
+  const user_id = req.headers["user"];
   const { theme } = req.body;
 
   if (!checkIfValid(user_id) || (theme !== "dark" && theme !== "light")) {
