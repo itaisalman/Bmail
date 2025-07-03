@@ -115,6 +115,15 @@ async function checkTrashMails(trash) {
   }
 }
 
+function toggleMailInArray(array, mail_id) {
+  const index = array.findIndex((id) => id.toString() === mail_id.toString());
+  if (index !== -1) {
+    array.splice(index, 1);
+  } else {
+    array.push(mail_id);
+  }
+}
+
 // Find and return fifty mails by the given page.
 const getFiftyMails = async (user_id, label, page = 1) => {
   const user = await userService.getUserById(user_id);
@@ -134,18 +143,18 @@ const createMail = async (sender, receiver, title, content, isSpam) => {
   const sender_user = await userService.getUserById(sender);
   const receiver_user = await userService.getUserByUsername(receiver);
   const new_mail = new Mail({
-    sender_id: sender_user.id,
-    receiver_id: receiver_user.id,
+    sender_id: sender_user._id,
+    receiver_id: receiver_user._id,
     title,
     content,
   });
   await new_mail.save();
-  sender_user.sent_mails.push(new_mail.id);
+  sender_user.sent_mails.push(new_mail._id);
   // If isSpam - mail contains "bad URL" and will be added to reciever's spam and not inbox
   if (isSpam) {
-    receiver_user.spam.push(new_mail.id);
+    receiver_user.spam.push(new_mail._id);
   } else {
-    receiver_user.received_mails.push(new_mail.id);
+    receiver_user.received_mails.push(new_mail._id);
   }
   await sender_user.save();
   await receiver_user.save();
@@ -192,7 +201,7 @@ const createNewDraft = async (sender, receiver_address, title, content) => {
   const sender_user = await userService.getUserById(sender);
   const new_draft = new Draft({ receiver_address, title, content });
   await new_draft.save();
-  sender_user.drafts.push(new_draft.id);
+  sender_user.drafts.push(new_draft._id);
   await sender_user.save();
   return;
 };
@@ -201,7 +210,7 @@ const createNewDraft = async (sender, receiver_address, title, content) => {
 const deleteDraftById = async (user_id, draft_id) => {
   const user = await userService.getUserById(user_id);
   const draft_index = user.drafts.findIndex(
-    (draft) => draft.toString() === draft_id
+    (draft) => draft.toString() === draft_id.toString()
   );
 
   user.drafts.splice(draft_index, 1);
@@ -209,15 +218,6 @@ const deleteDraftById = async (user_id, draft_id) => {
   await user.save();
   return;
 };
-
-function toggleMailInArray(array, mail_id) {
-  const index = array.findIndex((id) => id.toString() === mail_id.toString());
-  if (index !== -1) {
-    array.splice(index, 1);
-  } else {
-    array.push(mail_id);
-  }
-}
 
 const toggleStarred = async (user_id, mail_id) => {
   const user = await userService.getUserById(user_id);
