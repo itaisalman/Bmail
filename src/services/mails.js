@@ -95,22 +95,23 @@ async function findMailsInArray(result_map, mails_array, query, label) {
 async function checkIfDelete(user, mail_id) {
   const labels = ["received_mails", "sent_mails", "spam", "trash"];
   const foundMail = labels.some((label) => {
-    return user[label].some((id) => id.toString() === mail_id);
+    return user[label].some((id) => id.toString() === mail_id.toString());
   });
-
-  if (!foundMail) {
-    await Mail.deleteOne({ _id: mail_id });
-  }
+  return foundMail;
 }
 
 // Iterate over the mails to check whether or not to delete them from the schema.
 async function checkTrashMails(trash) {
   for (const mail_id of trash) {
-    const mail = await Mail.findById(mail_id);
+    const mail = await getSpecificMail(mail_id);
     const sender = await userService.getUserById(mail.sender_id);
     const receiver = await userService.getUserById(mail.receiver_id);
-    if (sender) await checkIfDelete(sender, mail_id);
-    if (receiver) await checkIfDelete(receiver, mail_id);
+    if (sender && receiver) {
+      const senderCheck = await checkIfDelete(sender, mail_id);
+      const receiverCheck = await checkIfDelete(receiver, mail_id);
+      if (!(senderCheck || receiverCheck))
+        await Mail.deleteOne({ _id: mail_id });
+    }
   }
 }
 
