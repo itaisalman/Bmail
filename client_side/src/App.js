@@ -18,55 +18,55 @@ import DraftMailComposer from "./components/DraftMailComposer/DraftMailComposer"
 
 function App() {
   return (
-    <ThemeProvider>
-      <Routes>
-        <Route path="/" element={<HomeScreen />} />
-        <Route path="/signup" element={<SignupScreen />} />
-        <Route path="/login" element={<LoginScreen />} />
-        <Route
-          path="/main"
-          element={
-            <ProtectedRoute>
+    <Routes>
+      <Route path="/" element={<HomeScreen />} />
+      <Route path="/signup" element={<SignupScreen />} />
+      <Route path="/login" element={<LoginScreen />} />
+      <Route
+        path="/main"
+        element={
+          <ProtectedRoute>
+            <ThemeProvider>
               <MainScreen />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<Navigate to="inbox" replace />} />
+            </ThemeProvider>
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Navigate to="inbox" replace />} />
 
-          <Route path="inbox" element={<InboxScreen />}>
-            <Route path=":id" element={<ViewResult />} />
-          </Route>
-
-          <Route path="sent" element={<SentScreen />}>
-            <Route path=":id" element={<ViewResult />} />
-          </Route>
-
-          <Route path="spam" element={<SpamScreen />}>
-            <Route path=":id" element={<ViewResult />} />
-          </Route>
-
-          <Route path="drafts" element={<Draft />}>
-            <Route path=":id" element={<DraftMailComposer />} />
-          </Route>
-
-          <Route path="starred" element={<StarredScreen />}>
-            <Route path=":id" element={<ViewResult />} />
-          </Route>
-
-          <Route path="important" element={<ImportantScreen />}>
-            <Route path=":id" element={<ViewResult />} />
-          </Route>
-
-          <Route path="trash" element={<TrashScreen />}>
-            <Route path=":id" element={<ViewResult />} />
-          </Route>
-
-          <Route path="labels/:labelName" element={<LabelView />}>
-            <Route path=":id" element={<ViewResult />} />
-          </Route>
+        <Route path="inbox" element={<InboxScreen />}>
+          <Route path=":id" element={<ViewResult />} />
         </Route>
-      </Routes>
-    </ThemeProvider>
+
+        <Route path="sent" element={<SentScreen />}>
+          <Route path=":id" element={<ViewResult />} />
+        </Route>
+
+        <Route path="spam" element={<SpamScreen />}>
+          <Route path=":id" element={<ViewResult />} />
+        </Route>
+
+        <Route path="drafts" element={<Draft />}>
+          <Route path=":id" element={<DraftMailComposer />} />
+        </Route>
+
+        <Route path="starred" element={<StarredScreen />}>
+          <Route path=":id" element={<ViewResult />} />
+        </Route>
+
+        <Route path="important" element={<ImportantScreen />}>
+          <Route path=":id" element={<ViewResult />} />
+        </Route>
+
+        <Route path="trash" element={<TrashScreen />}>
+          <Route path=":id" element={<ViewResult />} />
+        </Route>
+
+        <Route path="labels/:labelName" element={<LabelView />}>
+          <Route path=":id" element={<ViewResult />} />
+        </Route>
+      </Route>
+    </Routes>
   );
 }
 
