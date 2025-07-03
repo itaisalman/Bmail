@@ -12,10 +12,6 @@ const createLabel = async (user_id, name) => {
   };
 };
 
-const getAllLabels = async () => {
-  return await Label.find({});
-};
-
 const getAllUserLabelIds = async (user_id) => {
   return await Label.find({ user: user_id });
 };
@@ -52,7 +48,6 @@ const removeMailFromLabel = async (label_id, mail_id) => {
 
 module.exports = {
   createLabel,
-  getAllLabels,
   getAllUserLabelIds,
   getLabelById,
   updateLabel,
