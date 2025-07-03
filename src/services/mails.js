@@ -94,9 +94,6 @@ async function findMailsInArray(result_map, mails_array, query, label) {
 // Check if the mail exists somewhere.
 async function checkIfDelete(user, mail_id) {
   const labels = ["received_mails", "sent_mails", "spam", "trash"];
-  //   const foundMail = labels.some((label) => {
-  //     return user[label].includes(mail_id);
-  //   });
   const foundMail = labels.some((label) => {
     return user[label].some((id) => id.toString() === mail_id);
   });
