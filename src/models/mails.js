@@ -223,6 +223,7 @@ const mailToSpam = (user_id, mail_id) => {
   if (!wanted_mail) return;
   cleanupMailReferences(user, mail_id);
   user.spam.push(wanted_mail);
+  return true;
 };
 
 // Empty the user's trash array
