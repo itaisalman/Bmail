@@ -134,7 +134,24 @@ const getFiftyMails = async (user_id, label, page = 1) => {
 // Find the specific mail that the user want.
 // Return null if doesnt exist.
 const getSpecificMail = async (id) => {
-  return await Mail.findById(id);
+  const temp = await Mail.findById(id);
+  const sender = await userService.getUserById(temp.sender_id);
+  const receiver = await userService.getUserById(temp.receiver_id);
+  const mail = {
+    id: temp._id,
+    sender_id: temp.sender_id,
+    sender_address: sender.username,
+    sender_first_name: sender.first_name,
+    sender_last_name: sender.last_name,
+    receiver_id: temp.receiver_id,
+    receiver_address: receiver.username,
+    receiver_first_name: receiver.first_name,
+    receiver_last_name: receiver.last_name,
+    title: temp.title,
+    content: temp.content,
+    date: temp.date,
+  };
+  return mail;
 };
 
 // Create a new mail
