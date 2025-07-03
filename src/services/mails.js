@@ -24,7 +24,7 @@ async function findFiftyMails(get_user, label, page) {
     if (!label_id) return null;
     let label = await labelService.getLabelById(label_id);
     if (!label) return null;
-    mail = label.mails;
+    mails = label.mails;
   }
 
   const totalCount = mails.length;

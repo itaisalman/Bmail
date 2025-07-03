@@ -70,11 +70,6 @@ exports.getAllUserLabels = async (req, res) => {
     }
 
     const userLabels = await labelService.getAllUserLabelIds(user_id);
-
-    if (userLabels.length === 0) {
-      return res.status(404).json({ error: "User not found or has no labels" });
-    }
-
     res.status(200).json(userLabels);
   } catch (err) {
     console.error("Error in getAllLabels:", err);
