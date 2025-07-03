@@ -1,7 +1,8 @@
 const { Mail, Draft } = require("../models/mails");
 const userService = require("./users");
+const labelService = require("./labels");
 
-async function findFiftyMails(get_user, label_name, page) {
+async function findFiftyMails(get_user, label, page) {
   // For built-in labels
   const labelMap = {
     Inbox: get_user.received_mails,
@@ -13,13 +14,17 @@ async function findFiftyMails(get_user, label_name, page) {
     Trash: get_user.trash,
   };
 
-  let mails = labelMap[label_name];
+  let mails = labelMap[label];
 
   // Check if got a label created by the user
   if (!mails) {
-    const label = get_user.labels.find((label) => label.name === label_name);
-    if (!label || !Array.isArray(label.mails)) return null;
-    mails = label.mails;
+    const label_id = get_user.labels.find(
+      (id) => id.toString() === label.toString()
+    );
+    if (!label_id) return null;
+    let label = await labelService.getLabelById(label_id);
+    if (!label) return null;
+    mail = label.mails;
   }
 
   const totalCount = mails.length;
