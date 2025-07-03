@@ -1,5 +1,5 @@
-const blacklist = require("../models/blacklist");
-const users = require("../models/users");
+const blacklist = require("../services/blacklist");
+const userService = require("../services/users");
 
 // Checks if got numeric argument
 function checkIfValid(user_id) {
@@ -8,7 +8,7 @@ function checkIfValid(user_id) {
 
 // Check if the user id exists in the users list.
 function checkIfExist(user_id) {
-  return users.getUserById(user_id);
+  return userService.getUserById(user_id);
 }
 
 function passRequestToServer(requestString, res) {
