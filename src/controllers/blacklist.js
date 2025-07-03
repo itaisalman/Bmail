@@ -1,14 +1,15 @@
+const mongoose = require("mongoose");
 const blacklist = require("../services/blacklist");
 const userService = require("../services/users");
 
-// Checks if got numeric argument
+// Checks if got valid ObjectId for the user.
 function checkIfValid(user_id) {
-  return /^\d+$/.test(user_id);
+  return mongoose.Types.ObjectId.isValid(user_id);
 }
 
 // Check if the user id exists in the users list.
-function checkIfExist(user_id) {
-  return userService.getUserById(user_id);
+async function checkIfExist(user_id) {
+  return await userService.getUserById(user_id);
 }
 
 function passRequestToServer(requestString, res) {
@@ -36,14 +37,14 @@ function passRequestToServer(requestString, res) {
 }
 
 // Pass the wanted request to server and check for validation
-function handleBlacklistOperation(req, res, method) {
+async function handleBlacklistOperation(req, res, method) {
   // Check that got a number
   if (!checkIfValid(req.headers["user"])) {
     return res.status(400).json({ error: "Missing/Invalid user ID" });
   }
   // Check that given id is exist
-  const user_id = parseInt(req.headers["user"]);
-  if (!checkIfExist(user_id)) {
+  const user_id = req.headers["user"];
+  if (!(await checkIfExist(user_id))) {
     return res.status(404).json({ error: "User not found" });
   }
 
