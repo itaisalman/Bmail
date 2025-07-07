@@ -43,7 +43,8 @@ async function checkParamsId(mail_id, user_id) {
   )
     return { statusCode: 400, error: "Invalid mail ID or user ID" };
   const mail = await mailService.getSpecificMail(mail_id);
-  if (!mail) return { statusCode: 404, error: "Mail not found" };
+  if (mail.type === null)
+    return { statusCode: mail.statusCode, error: mail.error };
   return null;
 }
 
@@ -55,7 +56,8 @@ async function isDraft(draft_id, user_id) {
   )
     return { statusCode: 400, error: "Invalid draft ID or user ID" };
   const draft = await mailService.getSpecificDraft(draft_id);
-  if (!draft) return { statusCode: 404, error: "Draft not found" };
+  if (draft.type === null)
+    return { statusCode: draft.statusCode, error: draft.error };
   return null;
 }
 
@@ -174,7 +176,9 @@ exports.getMailById = async ({ headers, params }, res) => {
 
   // Search the mail in the user's mails.
   const mail = await mailService.getSpecificMail(mail_id);
-  res.status(200).json(mail);
+  if (mail.type === null)
+    return res.status(mail.statusCode).json({ error: mail.error });
+  return res.status(200).json(mail);
 };
 
 // Return a draft by its id.
@@ -192,7 +196,9 @@ exports.getDraftById = async ({ headers, params }, res) => {
 
   // Search the mail in the user's mails.
   const draft = await mailService.getSpecificDraft(draft_id);
-  res.status(200).json(draft);
+  if (draft.type === null)
+    return res.status(draft.statusCode).json({ error: draft.error });
+  return res.status(200).json(draft);
 };
 
 // Return a draft by its id.
@@ -240,6 +246,8 @@ exports.patchMail = async ({ headers, params, body }, res) => {
       .json({ error: returned_json.error });
 
   const draft = await mailService.getSpecificDraft(draft_id);
+  if (draft.type === null)
+    return res.status(draft.statusCode).json({ error: draft.error });
   // Extract title and content from the body and patch the wanted field or throw appropriate status code.
   const { receiver, title, content } = body;
   // Modify the draft as the user wished.
@@ -331,7 +339,8 @@ exports.moveMailToSpam = async ({ headers, params }, res) => {
 
   // Check the mail exists
   const mail = await mailService.getSpecificMail(mail_id);
-  if (!mail) return res.status(404).json({ error: "Mail not found" });
+  if (mail.type === null)
+    return res.status(mail.statusCode).json({ error: mail.error });
 
   // extract urls from mail
   const urls_title = extractUrls(mail.title);
