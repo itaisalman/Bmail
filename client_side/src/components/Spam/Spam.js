@@ -63,7 +63,7 @@ function SpamScreen() {
       if (!res.ok) throw new Error("Failed to remove from spam");
 
       // Updated values after delete all mails from user's trash
-      setMessages((prev) => prev.filter((mail) => mail.id !== id));
+      setMessages((prev) => prev.filter((mail) => mail._id !== id));
     } catch (err) {
       setError(err.message);
     }

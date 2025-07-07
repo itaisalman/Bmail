@@ -17,7 +17,7 @@ function Draft() {
   const { setAction } = useOutletContext();
   const navigate = useNavigate();
   const { id } = useParams();
-  const selectedDraft = drafts.find((d) => d.id === Number(id));
+  const selectedDraft = drafts.find((d) => d._id === id);
 
   // Fetch inbox data from the server for the current page
   const fetchDraft = useCallback(
@@ -92,7 +92,7 @@ function Draft() {
           mails={drafts}
           onDelete={toggleDelete}
           onSelect={(mail) => {
-            navigate(`/main/drafts/${mail.id}`);
+            navigate(`/main/drafts/${mail._id}`);
           }}
           disabledActions={true}
         />

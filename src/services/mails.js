@@ -154,7 +154,7 @@ const getSpecificMail = async (id) => {
       error: "Mail found but sender or receiver ot found.",
     };
   const mail = {
-    id: temp._id,
+    _id: temp._id,
     sender_id: temp.sender_id,
     sender_address: sender.username,
     sender_first_name: sender.first_name,

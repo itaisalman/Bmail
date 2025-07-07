@@ -33,7 +33,7 @@ function DraftMailComposer() {
           setErrors(posted_mail.error);
           return;
         }
-        const delete_draft_res = await fetch(`/api/mails/draft/${draft.id}`, {
+        const delete_draft_res = await fetch(`/api/mails/draft/${draft._id}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -66,7 +66,7 @@ function DraftMailComposer() {
     };
     try {
       const token = sessionStorage.getItem("jwt");
-      const res = await fetch(`/api/mails/${draft.id}`, {
+      const res = await fetch(`/api/mails/${draft._id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

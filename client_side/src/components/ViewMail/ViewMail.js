@@ -49,9 +49,9 @@ function MailDetails({
   }
 
   useEffect(() => {
-  async function fetchLabels() {
+    async function fetchLabels() {
       try {
-        const labels = await getSelectedLabelsOfMail(mail.id);
+        const labels = await getSelectedLabelsOfMail(mail._id);
         setSelectedLabel(labels.map((l) => l.id));
       } catch (err) {
         console.error("Failed to load mail labels:", err.message);
@@ -59,7 +59,7 @@ function MailDetails({
     }
 
     fetchLabels();
-}, [mail.id]);
+  }, [mail._id]);
 
   return (
     <div className="mail-details">
@@ -67,25 +67,25 @@ function MailDetails({
         <div className="mail-details-icons">
           <span
             onClick={() => {
-              if (!disabledActions) onStarToggle(mail.id);
+              if (!disabledActions) onStarToggle(mail._id);
             }}
-            className={`star-icon ${starred?.has(mail.id) ? "active" : ""} ${
+            className={`star-icon ${starred?.has(mail._id) ? "active" : ""} ${
               disabledActions || isSpamScreen ? "disabled" : ""
             }`}
             title="Mark with Star"
           >
-            {starred?.has(mail.id) && !isSpamScreen ? "⭐" : "☆"}
+            {starred?.has(mail._id) && !isSpamScreen ? "⭐" : "☆"}
           </span>
           <span
             onClick={() => {
-              if (!disabledActions) onImportantToggle(mail.id);
+              if (!disabledActions) onImportantToggle(mail._id);
             }}
             className={`flag-icon ${
-              important?.has(mail.id) && !isSpamScreen ? "important" : ""
+              important?.has(mail._id) && !isSpamScreen ? "important" : ""
             } ${disabledActions || isSpamScreen ? "disabled" : ""}`}
             title="Mark as Important"
           >
-            {important?.has(mail.id) && !isSpamScreen ? (
+            {important?.has(mail._id) && !isSpamScreen ? (
               <MdFlag />
             ) : (
               <MdOutlineFlag />
@@ -93,7 +93,7 @@ function MailDetails({
           </span>
           <span
             onClick={() => {
-              if (!disabledActions) onDelete(mail.id, setMessages);
+              if (!disabledActions) onDelete(mail._id, setMessages);
             }}
             className={`trash-icon ${disabledActions ? "disabled" : ""}`}
             title="Move to trash"
@@ -102,7 +102,7 @@ function MailDetails({
           </span>
           <span
             onClick={() => {
-              if (!isSpamScreen) moveToSpam(mail.id, setMessages);
+              if (!isSpamScreen) moveToSpam(mail._id, setMessages);
             }}
             className={`spam-icon ${isSpamScreen ? "disabled" : ""}`}
             title="Mark as Spam"
@@ -112,7 +112,7 @@ function MailDetails({
           {showRestoreFromSpamBtn && (
             <span
               className="restore-from-spam-button"
-              onClick={() => restore(mail.id)}
+              onClick={() => restore(mail._id)}
               aria-label="restore to inbox"
               title="Restore from Spam"
             >
@@ -127,8 +127,8 @@ function MailDetails({
               title="Assign label"
               onClick={async () => {
                 if (!isSpamScreen || !disabledActions) {
-                  const labels = await getSelectedLabelsOfMail(mail.id);
-                   setSelectedLabel(labels.map((l) => l.id));
+                  const labels = await getSelectedLabelsOfMail(mail._id);
+                  setSelectedLabel(labels.map((l) => l.id));
                   setShowDropdown((prev) => !prev);
                 }
               }}
@@ -142,17 +142,19 @@ function MailDetails({
                 selected={selectedLabel}
                 onSelect={(label, isChecked) => {
                   if (isChecked) {
-                    onAssignLabel(mail.id, label.id, setMessages);
+                    onAssignLabel(mail._id, label.id, setMessages);
                     if (!selectedLabel.includes(label.id)) {
                       setSelectedLabel([...selectedLabel, label.id]);
                     }
                   } else {
-                    removeMailFromLabel(mail.id, label.id, setMessages);
-                    setSelectedLabel(selectedLabel.filter((id) => id !== label.id));
+                    removeMailFromLabel(mail._id, label.id, setMessages);
+                    setSelectedLabel(
+                      selectedLabel.filter((id) => id !== label.id)
+                    );
                     if (isLabelScreen) {
                       navigate("/main/labels/" + labelName);
                     }
-                 }
+                  }
                 }}
                 onClose={() => setShowDropdown(false)}
               />

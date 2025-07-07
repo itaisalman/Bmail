@@ -24,12 +24,13 @@ function ViewResult() {
     setMessages,
     labels,
     onAssignLabel,
-    removeMailFromLabel, 
+    removeMailFromLabel,
   } = useOutletContext();
 
   // When pressing spam or trash while viewing a mail, the view mail should be closed.
   const handleClosingFunctions = (mail_id, setMessages, func) => {
     handleClose();
+    console.log(mail_id);
     func(mail_id, setMessages);
   };
 
