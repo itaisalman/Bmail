@@ -24,7 +24,7 @@ function ViewResult() {
     setMessages,
     labels,
     onAssignLabel,
-    removeMailFromLabel, 
+    removeMailFromLabel,
   } = useOutletContext();
 
   // When pressing spam or trash while viewing a mail, the view mail should be closed.

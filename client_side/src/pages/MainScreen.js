@@ -5,7 +5,10 @@ import Sidebar from "../components/Sidebar/Sidebar";
 import Topbar from "../components/Topbar/Topbar";
 import LabelEditor from "../components/Labels/LabelEditor";
 import LabelDeleteConfirm from "../components/Labels/LabelDelete";
-import { assignLabelToMail, removeLabelFromMail } from "../components/Labels/apiLabels";
+import {
+  assignLabelToMail,
+  removeLabelFromMail,
+} from "../components/Labels/apiLabels";
 import "./MainScreen.css";
 
 function MainScreen() {
@@ -125,7 +128,7 @@ function MainScreen() {
   // Delete the mail from all labels
   const handleDelete = async (id, setMessages) => {
     await deleteMail(id);
-    setMessages((prev) => prev.filter((mail) => mail.id !== id));
+    setMessages((prev) => prev.filter((mail) => mail._id !== id));
   };
 
   const moveToSpam = async (id) => {
@@ -155,7 +158,7 @@ function MainScreen() {
 
   const handleMoveToSpam = async (id, setMessages) => {
     await moveToSpam(id);
-    setMessages((prev) => prev.filter((mail) => mail.id !== id));
+    setMessages((prev) => prev.filter((mail) => mail._id !== id));
   };
 
   const onAssignLabel = async (mailId, labelId, setMessages) => {
@@ -163,7 +166,7 @@ function MainScreen() {
       assignLabelToMail(mailId, labelId);
       setMessages((prev) =>
         prev.map((mail) =>
-          mail.id === mailId
+          mail._id === mailId
             ? { ...mail, labels: [...(mail.labels || []), { id: labelId }] }
             : mail
         )
@@ -174,14 +177,13 @@ function MainScreen() {
   };
 
   const removeMailFromLabel = (mailId, labelId, setMessages) => {
-   try {
-    removeLabelFromMail(mailId, labelId)
-    setMessages((prev) => prev.filter((mail) => mail.id !== mailId));
+    try {
+      removeLabelFromMail(mailId, labelId);
+      setMessages((prev) => prev.filter((mail) => mail._id !== mailId));
     } catch (err) {
       console.error("Failed to assign label:", err.message);
     }
-};
-
+  };
 
   return (
     <div className="main-container">

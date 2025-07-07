@@ -1,6 +1,12 @@
-const mails = require("../models/mails");
-const blacklist = require("../models/blacklist");
-const users = require("../models/users");
+const userService = require("../services/users");
+const mailService = require("../services/mails");
+const blacklist = require("../services/blacklist");
+const mongoose = require("mongoose");
+
+async function checkIfAuthorized(id) {
+  if (mongoose.Types.ObjectId.isValid(id))
+    return Boolean(await userService.getUserById(id));
+}
 
 // Checks if the user_id given is valid (is a number, and is existing)
 function checkIfValid(username) {
@@ -8,8 +14,8 @@ function checkIfValid(username) {
 }
 
 // Check if the user id exists in the users list.
-function checkIfExist(username) {
-  return users.getUserByUsername(username);
+async function checkIfExist(username) {
+  return await userService.getUserByUsername(username);
 }
 
 // Extract every url from the given text.
@@ -21,8 +27,8 @@ function extractUrls(text) {
 }
 
 // Check if the requested arguments passed.
-function checkPostArguments(receiver) {
-  if (checkIfValid(receiver) && checkIfExist(receiver)) return null;
+async function checkPostArguments(receiver) {
+  if (checkIfValid(receiver) && (await checkIfExist(receiver))) return null;
   return {
     statusCode: 400,
     error: "Invalid/Missing Receiver",
@@ -30,25 +36,28 @@ function checkPostArguments(receiver) {
 }
 
 // Check the mail ID in the user's mails.
-function checkParamsId(id, user_id) {
-  if (id.trim() !== id || isNaN(+id))
-    return { statusCode: 400, error: "Invalid mail ID" };
-
-  const mail = mails.getSpecificMail(+user_id, +id);
-
-  if (!mail) return { statusCode: 404, error: "Mail not found" };
-
+async function checkParamsId(mail_id, user_id) {
+  if (
+    !mongoose.Types.ObjectId.isValid(mail_id) ||
+    !mongoose.Types.ObjectId.isValid(user_id)
+  )
+    return { statusCode: 400, error: "Invalid mail ID or user ID" };
+  const mail = await mailService.getSpecificMail(mail_id);
+  if (mail.type === null)
+    return { statusCode: mail.statusCode, error: mail.error };
   return null;
 }
 
 // Check the mail ID in the user's drafts.
-function isDraft(draft_id, user_id) {
-  if (draft_id.trim() !== draft_id || isNaN(+draft_id))
-    return { statusCode: 400, error: "Invalid draft ID" };
-
-  const draft = mails.getSpecificDraft(+user_id, +draft_id);
-  if (!draft) return { statusCode: 404, error: "Draft not found" };
-
+async function isDraft(draft_id, user_id) {
+  if (
+    !mongoose.Types.ObjectId.isValid(draft_id) ||
+    !mongoose.Types.ObjectId.isValid(user_id)
+  )
+    return { statusCode: 400, error: "Invalid draft ID or user ID" };
+  const draft = await mailService.getSpecificDraft(draft_id);
+  if (draft.type === null)
+    return { statusCode: draft.statusCode, error: draft.error };
   return null;
 }
 
@@ -74,14 +83,16 @@ function checkUrls(urls, command) {
 }
 
 // Return 50 mails by label and page.
-exports.getFiftyMails = ({ headers, query }, res) => {
+exports.getFiftyMails = async ({ headers, query }, res) => {
   const user_id = headers.user;
   const label = headers.label;
+  if (!(await checkIfAuthorized(user_id)))
+    return res.status(403).json({ error: "Unauthorized." });
 
   // Set default page to 1.
   const page = parseInt(query.page) || 1;
 
-  const user_mails = mails.getFiftyMails(+user_id, label, page);
+  const user_mails = await mailService.getFiftyMails(user_id, label, page);
   if (!user_mails) return res.status(404).json({ error: "No mails found" });
 
   res.json({
@@ -94,8 +105,10 @@ exports.getFiftyMails = ({ headers, query }, res) => {
 // Add it to both sender and receiver mail boxes.
 exports.addMail = async ({ headers, body }, res) => {
   const user_id = headers.user;
+  if (!(await checkIfAuthorized(user_id)))
+    return res.status(403).json({ error: "Unauthorized." });
   const { receiver, title, content } = body;
-  let returned_json = checkPostArguments(receiver);
+  let returned_json = await checkPostArguments(receiver);
   if (returned_json)
     return res
       .status(returned_json.statusCode)
@@ -122,8 +135,8 @@ exports.addMail = async ({ headers, body }, res) => {
     }
   }
   // Always create the mail.
-  const created_mail = mails.createMail(
-    +user_id,
+  const created_mail = await mailService.createMail(
+    user_id,
     receiver,
     title,
     content,
@@ -131,28 +144,30 @@ exports.addMail = async ({ headers, body }, res) => {
   );
   res.status(created_mail.statusCode).json(created_mail.message);
 };
-
 // Delete a specific mail by its id.
-exports.deleteMailById = ({ headers, params }, res) => {
+exports.deleteMailById = async ({ headers, params }, res) => {
   const user_id = headers.user;
+  if (!(await checkIfAuthorized(user_id)))
+    return res.status(403).json({ error: "Unauthorized." });
   const mail_id = params.id;
-  let returned_json = checkParamsId(mail_id, user_id);
+  const returned_json = await checkParamsId(mail_id, user_id);
 
   if (returned_json)
     return res
       .status(returned_json.statusCode)
       .json({ error: returned_json.error });
 
-  // Search the mail in the user's mails.
-  mails.deleteSpecificMail(+user_id, +mail_id);
+  await mailService.deleteSpecificMail(user_id, mail_id);
   res.sendStatus(204);
 };
 
 // Return a mail by its id.
-exports.getMailById = ({ headers, params }, res) => {
+exports.getMailById = async ({ headers, params }, res) => {
   const user_id = headers.user;
+  if (!(await checkIfAuthorized(user_id)))
+    return res.status(403).json({ error: "Unauthorized." });
   const mail_id = params.id;
-  let returned_json = checkParamsId(mail_id, user_id);
+  let returned_json = await checkParamsId(mail_id, user_id);
 
   if (returned_json)
     return res
@@ -160,43 +175,19 @@ exports.getMailById = ({ headers, params }, res) => {
       .json({ error: returned_json.error });
 
   // Search the mail in the user's mails.
-  const mail = mails.getSpecificMail(+user_id, +mail_id);
-  res.status(200).json(mail);
-};
-
-// Check the mail ID in the user's mails.
-function checkDraftId(id, user_id) {
-  if (id.trim() !== id || isNaN(+id))
-    return { statusCode: 400, error: "Invalid draft ID" };
-
-  const draft = mails.getSpecificDraft(+user_id, +id);
-
-  if (!draft) return { statusCode: 404, error: "Draft not found" };
-
-  return null;
-}
-
-// Return a draft by its id.
-exports.getDraftById = ({ headers, params }, res) => {
-  const user_id = headers.user;
-  const draft_id = params.id;
-  let returned_json = checkDraftId(draft_id, user_id);
-
-  if (returned_json)
-    return res
-      .status(returned_json.statusCode)
-      .json({ error: returned_json.error });
-
-  // Search the mail in the user's mails.
-  const draft = mails.getSpecificDraft(+user_id, +draft_id);
-  res.status(200).json(draft);
+  const mail = await mailService.getSpecificMail(mail_id);
+  if (mail.type === null)
+    return res.status(mail.statusCode).json({ error: mail.error });
+  return res.status(200).json(mail);
 };
 
 // Return a draft by its id.
-exports.deleteDraftById = ({ headers, params }, res) => {
+exports.getDraftById = async ({ headers, params }, res) => {
   const user_id = headers.user;
+  if (!(await checkIfAuthorized(user_id)))
+    return res.status(403).json({ error: "Unauthorized." });
   const draft_id = params.id;
-  let returned_json = checkDraftId(draft_id, user_id);
+  let returned_json = await isDraft(draft_id, user_id);
 
   if (returned_json)
     return res
@@ -204,105 +195,123 @@ exports.deleteDraftById = ({ headers, params }, res) => {
       .json({ error: returned_json.error });
 
   // Search the mail in the user's mails.
-  mails.deleteDraftById(+user_id, +draft_id);
+  const draft = await mailService.getSpecificDraft(draft_id);
+  if (draft.type === null)
+    return res.status(draft.statusCode).json({ error: draft.error });
+  return res.status(200).json(draft);
+};
+
+// Return a draft by its id.
+exports.deleteDraftById = async ({ headers, params }, res) => {
+  const user_id = headers.user;
+  if (!(await checkIfAuthorized(user_id)))
+    return res.status(403).json({ error: "Unauthorized." });
+  const draft_id = params.id;
+  let returned_json = await isDraft(draft_id, user_id);
+
+  if (returned_json)
+    return res
+      .status(returned_json.statusCode)
+      .json({ error: returned_json.error });
+
+  // Search the mail in the user's mails.
+  await mailService.deleteDraftById(user_id, draft_id);
   res.sendStatus(204);
 };
 
 // Search for all the mails that contain query.
 // Return an array of all the mails answer the requirement.
-exports.searchMails = ({ headers, params }, res) => {
+exports.searchMails = async ({ headers, params }, res) => {
   const user_id = headers.user;
+  if (!(await checkIfAuthorized(user_id)))
+    return res.status(403).json({ error: "Unauthorized." });
   const query = params.query;
-  const result = mails.getMailsByQuery(+user_id, query);
+  const result = await mailService.getMailsByQuery(user_id, query);
   res.status(200).json(result);
 };
 
 // Edit fields in the mail.
-exports.patchMail = ({ headers, params, body }, res) => {
+exports.patchMail = async ({ headers, params, body }, res) => {
   // Check validation of the user ID passed.
   const user_id = headers.user;
+  if (!(await checkIfAuthorized(user_id)))
+    return res.status(403).json({ error: "Unauthorized." });
   // Check validation of the id sent by params.
   const draft_id = params.id;
-  let returned_json = isDraft(draft_id, user_id);
+  let returned_json = await isDraft(draft_id, user_id);
 
   if (returned_json)
     return res
       .status(returned_json.statusCode)
       .json({ error: returned_json.error });
 
-  const draft = mails.getSpecificDraft(+user_id, +draft_id);
+  const draft = await mailService.getSpecificDraft(draft_id);
+  if (draft.type === null)
+    return res.status(draft.statusCode).json({ error: draft.error });
   // Extract title and content from the body and patch the wanted field or throw appropriate status code.
   const { receiver, title, content } = body;
   // Modify the draft as the user wished.
-  if (checkIfValid(receiver)) mails.editDraft(draft, receiver, title, content);
-  else mails.editDraft(draft, "", title, content);
+  if (checkIfValid(receiver))
+    await mailService.editDraft(draft, receiver, title, content);
+  else await mailService.editDraft(draft, "", title, content);
   res.sendStatus(204);
 };
 
-exports.toggleMailStar = ({ headers, params }, res) => {
+exports.toggleMailStar = async ({ headers, params }, res) => {
   const user_id = headers.user;
+  if (!(await checkIfAuthorized(user_id)))
+    return res.status(403).json({ error: "Unauthorized." });
   const mail_id = params.id;
-  let returned_json = checkParamsId(mail_id, user_id);
+  let returned_json = await checkParamsId(mail_id, user_id);
   if (returned_json)
     return res
       .status(returned_json.statusCode)
       .json({ error: returned_json.error });
 
-  const result = mails.toggleStarred(+user_id, +mail_id);
+  const result = await mailService.toggleStarred(user_id, mail_id);
   if (!result) return res.status(404).json({ error: "Mail not found" });
 
   res.sendStatus(204);
 };
 
-exports.toggleMailImportant = ({ headers, params }, res) => {
+exports.toggleMailImportant = async ({ headers, params }, res) => {
   const user_id = headers.user;
+  if (!(await checkIfAuthorized(user_id)))
+    return res.status(403).json({ error: "Unauthorized." });
   const mail_id = params.id;
-  let returned_json = checkParamsId(mail_id, user_id);
+  let returned_json = await checkParamsId(mail_id, user_id);
   if (returned_json)
     return res
       .status(returned_json.statusCode)
       .json({ error: returned_json.error });
 
-  const result = mails.toggleImportant(+user_id, +mail_id);
+  const result = await mailService.toggleImportant(user_id, mail_id);
   if (!result) return res.status(404).json({ error: "Mail not found" });
 
   res.sendStatus(204);
 };
 
 // Empty the user's trash array
-exports.emptyTrash = ({ headers }, res) => {
+exports.emptyTrash = async ({ headers }, res) => {
   const user_id = headers.user;
-  if (!user_id) {
-    return res.status(400).json({ error: "Missing user header" });
-  }
-  const result = mails.emptyUserTrash(user_id);
+  if (!(await checkIfAuthorized(user_id)))
+    return res.status(403).json({ error: "Unauthorized." });
+  const result = await mailService.emptyUserTrash(user_id);
   if (!result) {
     return res.status(404).json({ error: "User not found" });
   }
   res.sendStatus(204);
 };
 // Creating Draft.
-exports.createNewDraft = ({ headers, body }, res) => {
+exports.createNewDraft = async ({ headers, body }, res) => {
   const user_id = headers.user;
+  if (!(await checkIfAuthorized(user_id)))
+    return res.status(403).json({ error: "Unauthorized." });
   const { receiver, title, content } = body;
   if (checkIfValid(receiver))
-    mails.createNewDraft(user_id, receiver, title, content);
-  else mails.createNewDraft(user_id, "", title, content);
+    await mailService.createNewDraft(user_id, receiver, title, content);
+  else await mailService.createNewDraft(user_id, "", title, content);
   res.status(201).json({ message: "Draft created" });
-};
-
-// Associate the email with a label for the user
-exports.assignLabelToMail = ({ headers, params, body }, res) => {
-  const user_id = headers.user;
-  const mail_id = params.id;
-  const label_id = body.labelId;
-
-  const result = mails.assignLabel(user_id, mail_id, label_id);
-  if (!result) {
-    return res.status(404).json({ error: "User, mail or label not found" });
-  }
-
-  res.sendStatus(204);
 };
 
 // Add url into the blacklist by calling the bloomfilter server
@@ -317,18 +326,21 @@ function sendUrlBlacklist(url) {
 
 exports.moveMailToSpam = async ({ headers, params }, res) => {
   const user_id = headers.user;
+  if (!(await checkIfAuthorized(user_id)))
+    return res.status(403).json({ error: "Unauthorized." });
   const mail_id = params.id;
 
   // Validate parameters
-  const returned_json = checkParamsId(mail_id, user_id);
+  const returned_json = await checkParamsId(mail_id, user_id);
   if (returned_json)
     return res
       .status(returned_json.statusCode)
       .json({ error: returned_json.error });
 
   // Check the mail exists
-  const mail = mails.getSpecificMail(+user_id, +mail_id);
-  if (!mail) return res.status(404).json({ error: "Mail not found" });
+  const mail = await mailService.getSpecificMail(mail_id);
+  if (mail.type === null)
+    return res.status(mail.statusCode).json({ error: mail.error });
 
   // extract urls from mail
   const urls_title = extractUrls(mail.title);
@@ -347,26 +359,25 @@ exports.moveMailToSpam = async ({ headers, params }, res) => {
       .json({ error: "Failed to blacklist URL: " + err.message });
   }
   // Add the mail to spam
-  const spam_result = mails.mailToSpam(+user_id, +mail_id);
-  if (!spam_result) {
-    return res.status(404).json({ error: "User not found" });
-  }
+  await mailService.mailToSpam(user_id, mail_id);
   res.sendStatus(201);
 };
 
 exports.restoreMailFromSpam = async ({ headers, params }, res) => {
   const user_id = headers.user;
+  if (!(await checkIfAuthorized(user_id)))
+    return res.status(403).json({ error: "Unauthorized." });
   const mail_id = params.id;
 
   // Validate parameters
-  const returned_json = checkParamsId(mail_id, user_id);
+  const returned_json = await checkParamsId(mail_id, user_id);
   if (returned_json)
     return res
       .status(returned_json.statusCode)
       .json({ error: returned_json.error });
 
   // Check the mail exists
-  const mail = mails.getSpecificMail(+user_id, +mail_id);
+  const mail = await mailService.getSpecificMail(mail_id);
   if (!mail) return res.status(404).json({ error: "Mail not found" });
 
   // extract urls from mail
@@ -387,9 +398,6 @@ exports.restoreMailFromSpam = async ({ headers, params }, res) => {
       .json({ error: "Failed to delete URL: " + err.message });
   }
   // Add the mail to spam
-  const spam_result = mails.restoreSpammedMail(+user_id, +mail_id);
-  if (!spam_result) {
-    return res.status(404).json({ error: "User not found" });
-  }
+  await mailService.restoreSpammedMail(user_id, mail_id);
   res.sendStatus(204);
 };

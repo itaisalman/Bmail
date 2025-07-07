@@ -24,7 +24,7 @@ async function findFiftyMails(get_user, label, page) {
     if (!label_id) return null;
     let label = await labelService.getLabelById(label_id);
     if (!label) return null;
-    mail = label.mails;
+    mails = label.mails;
   }
 
   const totalCount = mails.length;
@@ -35,10 +35,17 @@ async function findFiftyMails(get_user, label, page) {
   const end = mails.length - (page - 1) * pageSize;
 
   const page_mails = mails.slice(start, end).reverse();
-  const mails_array = await Promise.all(
-    page_mails.map((mail_id) => getSpecificMail(mail_id))
-  );
-
+  let mails_array;
+  let results;
+  if (label === "Draft")
+    results = await Promise.all(
+      page_mails.map((mail_id) => getSpecificDraft(mail_id))
+    );
+  else
+    results = await Promise.all(
+      page_mails.map((mail_id) => getSpecificMail(mail_id))
+    );
+  mails_array = results.filter((mail) => mail.type !== null);
   return { mails: mails_array, totalCount };
 }
 
@@ -79,15 +86,24 @@ async function checkIfContainQueryInMail(mail, query) {
   return false;
 }
 
+// Check if mail_id exists in the result map in order to avoid duplications.
+function idInMap(map, mail_id) {
+  for (const key of map.keys()) {
+    if (key.toString() === mail_id.toString()) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // Save the mail in a map so that a mail would not be saved twice.
 async function findMailsInArray(result_map, mails_array, query, label) {
   for (const mail_id of mails_array) {
     let mail = await getSpecificMail(mail_id);
-    if (await checkIfContainQueryInMail(mail, query)) {
-      if (!result_map.has(mail_id)) {
+    if (mail.type === null) continue;
+    if (await checkIfContainQueryInMail(mail, query))
+      if (!idInMap(result_map, mail_id))
         result_map.set(mail_id, { mail, label });
-      }
-    }
   }
 }
 
@@ -104,6 +120,7 @@ async function checkIfDelete(user, mail_id) {
 async function checkTrashMails(trash) {
   for (const mail_id of trash) {
     const mail = await getSpecificMail(mail_id);
+    if (mail.type === null) continue;
     const sender = await userService.getUserById(mail.sender_id);
     const receiver = await userService.getUserById(mail.receiver_id);
     if (sender && receiver) {
@@ -134,7 +151,31 @@ const getFiftyMails = async (user_id, label, page = 1) => {
 // Find the specific mail that the user want.
 // Return null if doesnt exist.
 const getSpecificMail = async (id) => {
-  return await Mail.findById(id);
+  const temp = await Mail.findById(id);
+  if (!temp) return { type: null, statusCode: "404", error: "Mail not found." };
+  const sender = await userService.getUserById(temp.sender_id);
+  const receiver = await userService.getUserById(temp.receiver_id);
+  if (!(sender && receiver))
+    return {
+      type: null,
+      statusCode: "404",
+      error: "Mail found but sender or receiver not found.",
+    };
+  const mail = {
+    _id: temp._id,
+    sender_id: temp.sender_id,
+    sender_address: sender.username,
+    sender_first_name: sender.first_name,
+    sender_last_name: sender.last_name,
+    receiver_id: temp.receiver_id,
+    receiver_address: receiver.username,
+    receiver_first_name: receiver.first_name,
+    receiver_last_name: receiver.last_name,
+    title: temp.title,
+    content: temp.content,
+    date: temp.date,
+  };
+  return mail;
 };
 
 // Create a new mail
@@ -142,6 +183,11 @@ const getSpecificMail = async (id) => {
 const createMail = async (sender, receiver, title, content, isSpam) => {
   const sender_user = await userService.getUserById(sender);
   const receiver_user = await userService.getUserByUsername(receiver);
+  if (!(sender_user && receiver_user))
+    return {
+      statusCode: "404",
+      error: "Sender or receiver not found.",
+    };
   const new_mail = new Mail({
     sender_id: sender_user._id,
     receiver_id: receiver_user._id,
@@ -193,7 +239,11 @@ const editDraft = async (draft_id, receiver, title, content) => {
 // Find the specific draft that the user want to modify.
 // Return null if doesnt exist.
 const getSpecificDraft = async (id) => {
-  return await Draft.findById(id);
+  // return await Draft.findById(id);
+  const draft = await Draft.findById(id);
+  if (!draft)
+    return { type: null, statusCode: "404", error: "Draft not found." };
+  return draft;
 };
 
 // Create a new draft with the passed arguments.
@@ -256,7 +306,7 @@ const restoreSpammedMail = async (user_id, mail_id) => {
   if (!user) return;
 
   const wanted_mail = await getSpecificMail(mail_id);
-  if (!wanted_mail) return;
+  if (wanted_mail.type === null) return;
 
   removeMailFromArray(user.spam, mail_id);
 

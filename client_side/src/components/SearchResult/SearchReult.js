@@ -18,7 +18,7 @@ function SearchResult({ result, setQuery, setResults }) {
     setQuery("");
     const label = result.label;
     const mail = result.mail;
-    navigate(`/main/${label}/${mail.id}`, {
+    navigate(`/main/${label}/${mail._id}`, {
       state: { mail, from: location.pathname },
     });
   };

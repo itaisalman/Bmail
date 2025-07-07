@@ -31,11 +31,10 @@ function MailList({
   const handleSelect = (mail) => {
     if (onSelect) onSelect(mail);
     else
-      navigate(`${location.pathname}/${mail.id}`, {
+      navigate(`${location.pathname}/${mail._id}`, {
         state: { mail, from: location.pathname },
       });
   };
-
   return (
     <div className="mail-list-wrapper">
       <div className="mail-list-header">
@@ -51,7 +50,7 @@ function MailList({
       <ul className="mail-list">
         {mails.map((mail) => (
           <li
-            key={mail.id}
+            key={mail._id}
             className="mail-preview"
             onClick={() => handleSelect(mail)}
           >
@@ -66,7 +65,7 @@ function MailList({
             <div className="mail-icons" onClick={(e) => e.stopPropagation()}>
               <span
                 onClick={() => {
-                  if (!disabledActions) onStarToggle(mail.id);
+                  if (!disabledActions) onStarToggle(mail._id);
                 }}
                 title="Mark with Star"
                 aria-label="Star mail"
@@ -74,20 +73,20 @@ function MailList({
                   disabledActions || isSpamScreen ? "disabled" : ""
                 }`}
               >
-                {starred?.has(mail.id) && !isSpamScreen ? "⭐" : "☆"}
+                {starred?.has(mail._id) && !isSpamScreen ? "⭐" : "☆"}
               </span>
 
               <span
                 onClick={() => {
-                  if (!disabledActions) onImportantToggle(mail.id);
+                  if (!disabledActions) onImportantToggle(mail._id);
                 }}
                 title="Mark as Important"
                 aria-label="Important mail"
                 className={`flag-icon ${
-                  important?.has(mail.id) && !isSpamScreen ? "important" : ""
+                  important?.has(mail._id) && !isSpamScreen ? "important" : ""
                 } ${disabledActions || isSpamScreen ? "disabled" : ""}`}
               >
-                {important?.has(mail.id) && !isSpamScreen ? (
+                {important?.has(mail._id) && !isSpamScreen ? (
                   <MdFlag />
                 ) : (
                   <MdOutlineFlag />
@@ -96,7 +95,7 @@ function MailList({
               <span
                 onClick={() => {
                   if (!disabledActions || showDelete)
-                    onDelete(mail.id, setMessages);
+                    onDelete(mail._id, setMessages);
                 }}
                 title="Move to trash"
                 aria-label="Delete mail"

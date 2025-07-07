@@ -58,7 +58,7 @@ function StarredScreen() {
   const handleStarToggle = async (id) => {
     await toggleStar(id);
     // Remove mail localy
-    setMessages((prev) => prev.filter((mail) => mail.id !== id));
+    setMessages((prev) => prev.filter((mail) => mail._id !== id));
   };
 
   return (

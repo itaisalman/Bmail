@@ -58,7 +58,7 @@ function ImportantScreen() {
   const handleImportantToggle = async (id) => {
     await toggleImportant(id);
     // Remove mail localy
-    setMessages((prev) => prev.filter((mail) => mail.id !== id));
+    setMessages((prev) => prev.filter((mail) => mail._id !== id));
   };
 
   return (

@@ -13,7 +13,9 @@ const createLabel = async (user_id, name) => {
 };
 
 const getAllUserLabelIds = async (user_id) => {
-  return await Label.find({ user: user_id });
+  const array = await Label.find({ user: user_id });
+  if (!array) return [];
+  return array;
 };
 
 const getLabelById = async (label_id) => {
