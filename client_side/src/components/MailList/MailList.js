@@ -94,10 +94,8 @@ function MailList({
               </span>
               <span
                 onClick={() => {
-                  if (!disabledActions || showDelete) {
-                    console.log(mail._id);
+                  if (!disabledActions || showDelete)
                     onDelete(mail._id, setMessages);
-                  }
                 }}
                 title="Move to trash"
                 aria-label="Delete mail"
