@@ -86,16 +86,24 @@ async function checkIfContainQueryInMail(mail, query) {
   return false;
 }
 
+// Check if mail_id exists in the result map in order to avoid duplications.
+function idInMap(map, mail_id) {
+  for (const key of map.keys()) {
+    if (key.toString() === mail_id.toString()) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // Save the mail in a map so that a mail would not be saved twice.
 async function findMailsInArray(result_map, mails_array, query, label) {
   for (const mail_id of mails_array) {
     let mail = await getSpecificMail(mail_id);
     if (mail.type === null) continue;
-    if (await checkIfContainQueryInMail(mail, query)) {
-      if (!result_map.has(mail_id)) {
+    if (await checkIfContainQueryInMail(mail, query))
+      if (!idInMap(result_map, mail_id))
         result_map.set(mail_id, { mail, label });
-      }
-    }
   }
 }
 
@@ -151,7 +159,7 @@ const getSpecificMail = async (id) => {
     return {
       type: null,
       statusCode: "404",
-      error: "Mail found but sender or receiver ot found.",
+      error: "Mail found but sender or receiver not found.",
     };
   const mail = {
     _id: temp._id,
@@ -175,6 +183,11 @@ const getSpecificMail = async (id) => {
 const createMail = async (sender, receiver, title, content, isSpam) => {
   const sender_user = await userService.getUserById(sender);
   const receiver_user = await userService.getUserByUsername(receiver);
+  if (!(sender_use && receiver_user))
+    return {
+      statusCode: "404",
+      error: "Sender or receiver not found.",
+    };
   const new_mail = new Mail({
     sender_id: sender_user._id,
     receiver_id: receiver_user._id,

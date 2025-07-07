@@ -1,6 +1,6 @@
 const userService = require("../services/users");
 const mailService = require("../services/mails");
-const blacklist = require("./blacklist");
+const blacklist = require("../services/blacklist");
 const mongoose = require("mongoose");
 
 async function checkIfAuthorized(id) {
