@@ -183,7 +183,7 @@ const getSpecificMail = async (id) => {
 const createMail = async (sender, receiver, title, content, isSpam) => {
   const sender_user = await userService.getUserById(sender);
   const receiver_user = await userService.getUserByUsername(receiver);
-  if (!(sender_use && receiver_user))
+  if (!(sender_user && receiver_user))
     return {
       statusCode: "404",
       error: "Sender or receiver not found.",
