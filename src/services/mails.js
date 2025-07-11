@@ -18,13 +18,9 @@ async function findFiftyMails(get_user, label, page) {
 
   // Check if got a label created by the user
   if (!mails) {
-    const label_id = get_user.labels.find(
-      (id) => id.toString() === label.toString()
-    );
-    if (!label_id) return null;
-    let label = await labelService.getLabelById(label_id);
-    if (!label) return null;
-    mails = label.mails;
+    const userLabel = await labelService.getLabelByName(get_user._id, label);
+    if (!userLabel) return null;
+    mails = userLabel.mails;
   }
 
   const totalCount = mails.length;

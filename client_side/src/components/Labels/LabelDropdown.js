@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import "./LabelDropdown.css";
 
 function LabelDropdown({ labels, selected = [], onSelect, onClose }) {
-  
   useEffect(() => {
     function handleClickOutside(event) {
       if (!event.target.closest(".label-dropdown")) {
@@ -17,7 +16,7 @@ function LabelDropdown({ labels, selected = [], onSelect, onClose }) {
   }, [onClose]);
 
   const toggleLabel = (label) => {
-    const isSelected = selected.includes(label.id);
+    const isSelected = selected.includes(label._id);
     onSelect(label, !isSelected);
   };
 
@@ -27,18 +26,20 @@ function LabelDropdown({ labels, selected = [], onSelect, onClose }) {
 
       <div className="label-list">
         {labels.map((label) => {
-          const isChecked = selected.map(Number).includes(Number(label.id));
+          const isChecked = selected.map(String).includes(String(label._id));
           return (
-            <div key={label.id} className="label-option">
-              <label htmlFor={`label-${label.id}`} className="label-name">{label.name}</label>
-            <input
-              className="label-toggle"
-              type="checkbox"
-              checked={isChecked}
-              onChange={() => toggleLabel(label)}
-              id={`label-${label.id}`}
-            />
-          </div>
+            <div key={label._id} className="label-option">
+              <label htmlFor={`label-${label._id}`} className="label-name">
+                {label.name}
+              </label>
+              <input
+                className="label-toggle"
+                type="checkbox"
+                checked={isChecked}
+                onChange={() => toggleLabel(label)}
+                id={`label-${label._id}`}
+              />
+            </div>
           );
         })}
       </div>

@@ -42,10 +42,22 @@ const isEmailTaken = async (username) => {
   return !!user;
 };
 
+const createLabelinUser = async (user_id, label) => {
+  await User.findByIdAndUpdate(user_id, {
+    $push: { labels: label._id },
+  });
+};
+
+const removeLabelFromUser = async (user_id, label_id) => {
+  await User.updateOne({ _id: user_id }, { $pull: { labels: label_id } });
+};
+
 module.exports = {
   createUser,
   getAllUsers,
   getUserById,
   getUserByUsername,
   isEmailTaken,
+  createLabelinUser,
+  removeLabelFromUser,
 };

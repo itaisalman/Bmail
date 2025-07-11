@@ -1,11 +1,12 @@
 import { deleteLabel } from "./apiLabels";
+import "./Labels.css";
 
 function LabelDelete({ label, onSuccess, onCancel }) {
   if (!label) return null;
   const handleDelete = async () => {
     try {
-      await deleteLabel(label.id);
-      onSuccess(label.id);
+      await deleteLabel(label._id);
+      onSuccess(label._id);
     } catch (err) {
       alert("Error deleting label: " + err.message);
     }
@@ -17,8 +18,13 @@ function LabelDelete({ label, onSuccess, onCancel }) {
           <span className="new-label-text">Delete label</span>
         </div>
         <p>
-          Delete the label <strong>"{label.name}"</strong>?
+          Delete the label{" "}
+          <strong>
+            "<span className="delete-label-name">{label.name}</span>"
+          </strong>
+          ?
         </p>
+
         <div className="button-row">
           <button className="create-button" onClick={handleDelete}>
             Delete

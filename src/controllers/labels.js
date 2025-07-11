@@ -110,8 +110,8 @@ exports.createLabel = async (req, res) => {
       return res.status(nameError.status).json({ error: nameError.message });
     }
 
-    const user = await userService.getUserById(user_id);
-    if (isDuplicateLabelName(user.labels, name))
+    const userLabels = await labelService.getAllUserLabelIds(user_id);
+    if (isDuplicateLabelName(userLabels, name))
       return res.status(409).json({
         error:
           "The label name you selected already exists. Try a different name",
@@ -132,15 +132,15 @@ exports.updateLabel = async (req, res) => {
       return res.status(400).json({ error: "Missing/Invalid user ID" });
     }
 
-    const label_id = req.params.id;
+    const label_id = req.params._id;
     if (!checkIfValid(label_id) || !label_id) {
       return res.status(400).json({ error: "Missing/Invalid label ID" });
     }
 
     const { name } = req.body;
 
-    const user = await userService.getUserById(user_id);
-    if (isDuplicateLabelName(user.labels, name, label_id))
+    const userLabels = await labelService.getAllUserLabelIds(user_id);
+    if (isDuplicateLabelName(userLabels, name, label_id))
       return res.status(409).json({
         error:
           "The label name you selected already exists. Try a different name",
@@ -165,17 +165,15 @@ exports.deleteLabel = async (req, res) => {
     if (user_id === null) {
       return res.status(400).json({ error: "Missing/Invalid user ID" });
     }
-
-    const { label_id } = req.params;
+    const label_id = req.params._id;
     if (!checkIfValid(label_id) || !label_id) {
       return res.status(400).json({ error: "Missing/Invalid label ID" });
     }
 
-    const result = await labelService.deleteLabel(label_id);
+    const result = await labelService.deleteLabel(user_id, label_id);
     if (!result.deletedCount) {
       return res.status(404).json({ error: "Label not found" });
     }
-
     res.status(204).send();
   } catch (err) {
     console.error("Error in get deleteLabel:", err);
@@ -186,7 +184,7 @@ exports.deleteLabel = async (req, res) => {
 exports.assignMailToLabel = async (req, res) => {
   try {
     const label_id = req.body.label_id;
-    const mail_id = req.body.mail_id;
+    const mail_id = req.params.mail_id;
 
     if (!checkIfValid(label_id) || !checkIfValid(mail_id)) {
       return res.status(400).json({ error: "Invalid label/mail ID" });
@@ -215,10 +213,6 @@ exports.getMailLabels = async (req, res) => {
     }
 
     const labels = await labelService.getMailLabels(mail_id);
-
-    if (labels.length === 0) {
-      return res.status(404).json({ error: "No labels found for this mail" });
-    }
 
     res.status(200).json(labels);
   } catch (err) {

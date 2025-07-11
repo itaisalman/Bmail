@@ -77,7 +77,7 @@ function MainScreen() {
   const handleLabelUpdated = (updatedLabel) => {
     setLabels((prev) =>
       prev.map((label) =>
-        label.id === updatedLabel.id
+        label._id === updatedLabel._id
           ? { ...label, name: updatedLabel.name }
           : label
       )
@@ -161,13 +161,13 @@ function MainScreen() {
     setMessages((prev) => prev.filter((mail) => mail._id !== id));
   };
 
-  const onAssignLabel = async (mailId, labelId, setMessages) => {
+  const onAssignLabel = async (mail_id, label_id, setMessages) => {
     try {
-      assignLabelToMail(mailId, labelId);
+      assignLabelToMail(mail_id, label_id);
       setMessages((prev) =>
         prev.map((mail) =>
-          mail._id === mailId
-            ? { ...mail, labels: [...(mail.labels || []), { id: labelId }] }
+          mail._id === mail_id
+            ? { ...mail, labels: [...(mail.labels || []), { id: label_id }] }
             : mail
         )
       );
@@ -181,7 +181,7 @@ function MainScreen() {
       removeLabelFromMail(mailId, labelId);
       setMessages((prev) => prev.filter((mail) => mail._id !== mailId));
     } catch (err) {
-      console.error("Failed to assign label:", err.message);
+      console.error("Failed to remove label:", err.message);
     }
   };
 
@@ -242,7 +242,9 @@ function MainScreen() {
         <LabelDeleteConfirm
           label={labelToDelete}
           onSuccess={(deletedId) => {
-            setLabels((prev) => prev.filter((label) => label.id !== deletedId));
+            setLabels((prev) =>
+              prev.filter((label) => label._id.toString() !== deletedId)
+            );
             setShowDeleteConfirm(false);
             setLabelToDelete(null);
           }}

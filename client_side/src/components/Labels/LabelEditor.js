@@ -36,8 +36,8 @@ function LabelEditor({
     try {
       if (isEdit) {
         try {
-          await updateLabel(labelToEdit.id, trimmedName);
-          onLabelUpdated({ id: labelToEdit.id, name: trimmedName });
+          await updateLabel(labelToEdit, trimmedName);
+          onLabelUpdated({ _id: labelToEdit._id, name: trimmedName });
         } catch (error) {
           setError(error.message || "Failed to update label");
           return;

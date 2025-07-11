@@ -4,6 +4,7 @@ const userService = require("./users");
 const createLabel = async (user_id, name) => {
   const label = new Label({ name, user: user_id });
   await label.save();
+  await userService.createLabelinUser(user_id, label);
   return {
     id: label._id,
     name: label.name,
@@ -22,11 +23,16 @@ const getLabelById = async (label_id) => {
   return await Label.findById(label_id);
 };
 
+const getLabelByName = async (user_id, name) => {
+  return await Label.findOne({ user: user_id, name });
+};
+
 const updateLabel = async (label_id, name) => {
   return await Label.updateOne({ _id: label_id }, { $set: { name: name } });
 };
 
-const deleteLabel = async (label_id) => {
+const deleteLabel = async (user_id, label_id) => {
+  await userService.removeLabelFromUser(user_id, label_id);
   return await Label.deleteOne({ _id: label_id });
 };
 
@@ -57,4 +63,5 @@ module.exports = {
   assignLabel,
   getMailLabels,
   removeMailFromLabel,
+  getLabelByName,
 };
