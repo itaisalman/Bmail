@@ -145,14 +145,14 @@ function MailDetails({
                 selected={selectedLabel}
                 onSelect={(label, isChecked) => {
                   if (isChecked) {
-                    onAssignLabel(mail._id, label.id, setMessages);
-                    if (!selectedLabel.includes(label.id)) {
-                      setSelectedLabel([...selectedLabel, label.id]);
+                    onAssignLabel(mail._id, label._id, setMessages);
+                    if (!selectedLabel.includes(label._id)) {
+                      setSelectedLabel([...selectedLabel, label._id]);
                     }
                   } else {
-                    removeMailFromLabel(mail._id, label.id, setMessages);
+                    removeMailFromLabel(mail._id, label._id, setMessages);
                     setSelectedLabel(
-                      selectedLabel.filter((id) => id !== label.id.toString())
+                      selectedLabel.filter((id) => id !== label._id.toString())
                     );
                     if (isLabelScreen) {
                       navigate("/main/labels/" + labelName);

@@ -16,6 +16,8 @@ function MainScreen() {
   const [showLabels, setShowLabels] = useState(false);
   // All user labels
   const [labels, setLabels] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [labelsVersion, setLabelsVersion] = useState("");
   // Label selected for editing
   const [labelToEdit, setLabelToEdit] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -74,6 +76,7 @@ function MainScreen() {
   const toggleLabels = () => setShowLabels((prev) => !prev);
 
   const handleLabelUpdated = (updatedLabel) => {
+    console.log("updated label: ", { updatedLabel });
     setLabels((prev) =>
       prev.map((label) =>
         label.id === updatedLabel.id
@@ -97,7 +100,7 @@ function MainScreen() {
     })
       .then((res) => res.json())
       .then((data) => setLabels(data));
-  }, []);
+  }, [labelsVersion]);
 
   const deleteMail = async (id) => {
     const token = sessionStorage.getItem("jwt");
@@ -160,18 +163,18 @@ function MainScreen() {
     setMessages((prev) => prev.filter((mail) => mail._id !== id));
   };
 
-  const onAssignLabel = async (mail_id, label_id, setMessages) => {
+  const onAssignLabel = async (mailId, labelId, setMessages) => {
     try {
-      assignLabelToMail(mail_id, label_id);
+      assignLabelToMail(mailId, labelId);
       setMessages((prev) =>
         prev.map((mail) =>
-          mail._id === mail_id
-            ? { ...mail, labels: [...(mail.labels || []), { id: label_id }] }
+          mail._id === mailId
+            ? { ...mail, labels: [...(mail.labels || []), { id: labelId }] }
             : mail
         )
       );
     } catch (err) {
-      console.error("Failed to assign label:", err.message);
+      setErrorMessage("Failed to assign label: " + err.message);
     }
   };
 
@@ -180,7 +183,7 @@ function MainScreen() {
       removeLabelFromMail(mailId, labelId);
       setMessages((prev) => prev.filter((mail) => mail._id !== mailId));
     } catch (err) {
-      console.error("Failed to remove label:", err.message);
+      setErrorMessage("Failed to assign label: " + err.message);
     }
   };
 
@@ -201,6 +204,7 @@ function MainScreen() {
       />
       <main className="main-content">
         <Topbar />
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
         <Outlet
           context={{
             starredMails,
@@ -229,9 +233,7 @@ function MainScreen() {
             setShowLabels(false);
             setLabelToEdit(null);
           }}
-          onNewLabelCreated={(newLabel) =>
-            setLabels((prevLabels) => [...prevLabels, newLabel])
-          }
+          onNewLabelCreated={() => setLabelsVersion((v) => v + 1)}
           labelToEdit={labelToEdit}
           onLabelUpdated={handleLabelUpdated}
         />
@@ -240,10 +242,8 @@ function MainScreen() {
       {showDeleteConfirm && (
         <LabelDeleteConfirm
           label={labelToDelete}
-          onSuccess={(deletedId) => {
-            setLabels((prev) =>
-              prev.filter((label) => label.id.toString() !== deletedId)
-            );
+          onSuccess={() => {
+            setLabelsVersion((v) => v + 1);
             setShowDeleteConfirm(false);
             setLabelToDelete(null);
           }}

@@ -53,7 +53,7 @@ export const createLabel = async (name) => {
 
 export const updateLabel = async (label, name) => {
   try {
-    const res = await fetch(`/api/labels/${label.id}`, {
+    const res = await fetch(`/api/labels/${label._id}`, {
       method: "PATCH",
       headers: getAuthHeaders(),
       body: JSON.stringify({ name: name }),
@@ -73,11 +73,8 @@ export const updateLabel = async (label, name) => {
 };
 
 export const deleteLabel = async (label) => {
-  console.log("label ", label);
-  console.log("label.id ", label.id);
-  console.log("label._id ", label._id);
   try {
-    const res = await fetch(`/api/labels/${label.id}`, {
+    const res = await fetch(`/api/labels/${label._id}`, {
       method: "DELETE",
       headers: getAuthHeaders(),
     });
@@ -92,7 +89,6 @@ export const deleteLabel = async (label) => {
 };
 
 export async function assignLabelToMail(mail_id, label_id) {
-  console.log("Label id: ", label_id);
   const res = await fetch(`/api/labels/${mail_id}/assign-label`, {
     method: "PATCH",
     headers: getAuthHeaders(),

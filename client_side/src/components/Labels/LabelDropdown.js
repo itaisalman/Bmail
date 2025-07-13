@@ -16,7 +16,7 @@ function LabelDropdown({ labels, selected = [], onSelect, onClose }) {
   }, [onClose]);
 
   const toggleLabel = (label) => {
-    const isSelected = selected.includes(label.id);
+    const isSelected = selected.includes(label._id);
     onSelect(label, !isSelected);
   };
 
@@ -26,10 +26,10 @@ function LabelDropdown({ labels, selected = [], onSelect, onClose }) {
 
       <div className="label-list">
         {labels.map((label) => {
-          const isChecked = selected.map(String).includes(String(label.id));
+          const isChecked = selected.map(String).includes(label._id.toString());
           return (
-            <div key={label.id} className="label-option">
-              <label htmlFor={`label-${label.id}`} className="label-name">
+            <div key={label._id} className="label-option">
+              <label htmlFor={`label-${label._id}`} className="label-name">
                 {label.name}
               </label>
               <input
@@ -37,7 +37,7 @@ function LabelDropdown({ labels, selected = [], onSelect, onClose }) {
                 type="checkbox"
                 checked={isChecked}
                 onChange={() => toggleLabel(label)}
-                id={`label-${label.id}`}
+                id={`label-${label._id}`}
               />
             </div>
           );

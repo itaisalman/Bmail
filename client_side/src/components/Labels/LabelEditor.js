@@ -7,7 +7,6 @@ function LabelEditor({
   onNewLabelCreated,
   onLabelUpdated,
   labelToEdit,
-  labels = [],
 }) {
   // Makes labelToEdit a boolean – if there is an edit label it will be set to true
   const isEdit = !!labelToEdit;
@@ -43,8 +42,8 @@ function LabelEditor({
           return;
         }
       } else {
-        const newLabel = await createLabel(trimmedName);
-        onNewLabelCreated(newLabel);
+        await createLabel(trimmedName);
+        onNewLabelCreated();
       }
       onClose();
     } catch (err) {
