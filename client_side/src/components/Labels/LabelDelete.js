@@ -1,12 +1,15 @@
+import { useNavigate } from "react-router-dom";
 import { deleteLabel } from "./apiLabels";
 import "./Labels.css";
 
 function LabelDelete({ label, onSuccess, onCancel }) {
+  const navigate = useNavigate();
   if (!label) return null;
   const handleDelete = async () => {
     try {
       await deleteLabel(label);
       onSuccess(label._id);
+      navigate("/main/inbox");
     } catch (err) {
       alert("Error deleting label: " + err.message);
     }
