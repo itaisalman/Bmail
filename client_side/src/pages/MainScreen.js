@@ -76,10 +76,9 @@ function MainScreen() {
   const toggleLabels = () => setShowLabels((prev) => !prev);
 
   const handleLabelUpdated = (updatedLabel) => {
-    console.log("updated label: ", { updatedLabel });
     setLabels((prev) =>
       prev.map((label) =>
-        label.id === updatedLabel.id
+        label._id === updatedLabel._id
           ? { ...label, name: updatedLabel.name }
           : label
       )

@@ -50,6 +50,8 @@ const removeLabelFromUser = async (user_id, label_id) => {
   await User.updateOne({ _id: user_id }, { $pull: { labels: label_id } });
 };
 
+const getLabelsUserById = (id) => User.findById(id).populate("labels");
+
 module.exports = {
   createUser,
   getAllUsers,
@@ -58,4 +60,5 @@ module.exports = {
   isEmailTaken,
   createLabelinUser,
   removeLabelFromUser,
+  getLabelsUserById,
 };

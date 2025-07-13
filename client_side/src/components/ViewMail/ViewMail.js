@@ -154,7 +154,7 @@ function MailDetails({
                     setSelectedLabel(
                       selectedLabel.filter((id) => id !== label._id.toString())
                     );
-                    if (isLabelScreen) {
+                    if (isLabelScreen && labelName === label.name) {
                       navigate("/main/labels/" + labelName);
                     }
                   }
