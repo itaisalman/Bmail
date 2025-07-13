@@ -5,7 +5,7 @@ const controller = require("../controllers/labels");
 router.route("/").get(controller.getAllUserLabels).post(controller.createLabel);
 
 router
-  .route("/:_id")
+  .route("/:id")
   .get(controller.getLabelById)
   .patch(controller.updateLabel)
   .delete(controller.deleteLabel);

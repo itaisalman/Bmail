@@ -16,7 +16,6 @@ function MainScreen() {
   const [showLabels, setShowLabels] = useState(false);
   // All user labels
   const [labels, setLabels] = useState([]);
-
   // Label selected for editing
   const [labelToEdit, setLabelToEdit] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -77,7 +76,7 @@ function MainScreen() {
   const handleLabelUpdated = (updatedLabel) => {
     setLabels((prev) =>
       prev.map((label) =>
-        label._id === updatedLabel._id
+        label.id === updatedLabel.id
           ? { ...label, name: updatedLabel.name }
           : label
       )
@@ -243,7 +242,7 @@ function MainScreen() {
           label={labelToDelete}
           onSuccess={(deletedId) => {
             setLabels((prev) =>
-              prev.filter((label) => label._id.toString() !== deletedId)
+              prev.filter((label) => label.id.toString() !== deletedId)
             );
             setShowDeleteConfirm(false);
             setLabelToDelete(null);

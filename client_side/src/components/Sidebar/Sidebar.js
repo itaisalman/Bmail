@@ -94,7 +94,7 @@ function Sidebar({
       <div className="labels-list-container">
         {labels.map((label) => (
           <LabelItem
-            key={label._id}
+            key={label.id}
             label={label}
             onEditLabel={onEditLabel}
             onStartEdit={onStartEditLabel}

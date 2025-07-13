@@ -5,8 +5,8 @@ function LabelDelete({ label, onSuccess, onCancel }) {
   if (!label) return null;
   const handleDelete = async () => {
     try {
-      await deleteLabel(label._id);
-      onSuccess(label._id);
+      await deleteLabel(label);
+      onSuccess(label.id);
     } catch (err) {
       alert("Error deleting label: " + err.message);
     }

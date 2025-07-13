@@ -132,7 +132,7 @@ exports.updateLabel = async (req, res) => {
       return res.status(400).json({ error: "Missing/Invalid user ID" });
     }
 
-    const label_id = req.params._id;
+    const label_id = req.params.id;
     if (!checkIfValid(label_id) || !label_id) {
       return res.status(400).json({ error: "Missing/Invalid label ID" });
     }
@@ -165,7 +165,7 @@ exports.deleteLabel = async (req, res) => {
     if (user_id === null) {
       return res.status(400).json({ error: "Missing/Invalid user ID" });
     }
-    const label_id = req.params._id;
+    const label_id = req.params.id;
     if (!checkIfValid(label_id) || !label_id) {
       return res.status(400).json({ error: "Missing/Invalid label ID" });
     }
@@ -186,7 +186,7 @@ exports.assignMailToLabel = async (req, res) => {
     const label_id = req.body.label_id;
     const mail_id = req.params.mail_id;
 
-    if (!checkIfValid(label_id) || !checkIfValid(mail_id)) {
+    if (!label_id || !mail_id) {
       return res.status(400).json({ error: "Invalid label/mail ID" });
     }
 

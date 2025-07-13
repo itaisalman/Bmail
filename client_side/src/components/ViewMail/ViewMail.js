@@ -52,7 +52,8 @@ function MailDetails({
     async function fetchLabels() {
       try {
         const labels = await getSelectedLabelsOfMail(mail._id);
-        setSelectedLabel(labels.map((l) => l._id));
+        const validLabels = labels.filter((l) => l && l._id);
+        setSelectedLabel(validLabels.map((l) => l._id));
       } catch (err) {
         console.error("Failed to load mail labels:", err.message);
       }
@@ -144,14 +145,14 @@ function MailDetails({
                 selected={selectedLabel}
                 onSelect={(label, isChecked) => {
                   if (isChecked) {
-                    onAssignLabel(mail._id, label._id, setMessages);
-                    if (!selectedLabel.includes(label._id)) {
-                      setSelectedLabel([...selectedLabel, label._id]);
+                    onAssignLabel(mail._id, label.id, setMessages);
+                    if (!selectedLabel.includes(label.id)) {
+                      setSelectedLabel([...selectedLabel, label.id]);
                     }
                   } else {
-                    removeMailFromLabel(mail._id, label._id, setMessages);
+                    removeMailFromLabel(mail._id, label.id, setMessages);
                     setSelectedLabel(
-                      selectedLabel.filter((id) => id !== label._id.toString())
+                      selectedLabel.filter((id) => id !== label.id.toString())
                     );
                     if (isLabelScreen) {
                       navigate("/main/labels/" + labelName);
