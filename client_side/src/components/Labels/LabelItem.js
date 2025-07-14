@@ -10,7 +10,7 @@ function LabelItem({ label, onEditLabel, onDeleteLabel, onStartEdit }) {
 
   const handleSave = () => {
     if (editedName.trim()) {
-      onEditLabel(label.id, editedName.trim());
+      onEditLabel(label._id, editedName.trim());
     }
     setIsEditing(false);
   };

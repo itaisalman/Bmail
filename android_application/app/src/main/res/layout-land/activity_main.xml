@@ -16,7 +16,7 @@
         android:layout_height="0dp"
         android:layout_marginEnd="24dp"
         android:layout_marginStart="24dp"
-        android:contentDescription="@string/logo_description"
+        android:contentDescription="@string/logo_desc"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -43,7 +43,7 @@
             android:text="@string/app_welcome_message"
             android:textSize="35sp"
             android:textStyle="bold"
-            android:textColor="@color/title_color"
+            android:textColor="@color/blue_title"
             android:layout_marginBottom="8dp" />
 
         <TextView
@@ -90,7 +90,7 @@
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/login_button"
+                android:text="@string/login"
                 android:backgroundTint="@color/button_color"
                 android:paddingVertical="12dp"
                 android:paddingHorizontal="24dp"

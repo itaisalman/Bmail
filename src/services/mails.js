@@ -18,13 +18,9 @@ async function findFiftyMails(get_user, label, page) {
 
   // Check if got a label created by the user
   if (!mails) {
-    const label_id = get_user.labels.find(
-      (id) => id.toString() === label.toString()
-    );
-    if (!label_id) return null;
-    let label = await labelService.getLabelById(label_id);
-    if (!label) return null;
-    mails = label.mails;
+    const userLabel = await labelService.getLabelByName(get_user._id, label);
+    if (!userLabel) return null;
+    mails = userLabel.mails;
   }
 
   const totalCount = mails.length;
@@ -61,11 +57,15 @@ function cleanupMailReferences(user, mail_id) {
   removeMailFromArray(user.important, mail_id);
   removeMailFromArray(user.trash, mail_id);
   removeMailFromArray(user.spam, mail_id);
-
-  user.labels.forEach((label) => {
-    label.mails = label.mails.filter((mail) => mail.toString() !== mail_id);
-  });
 }
+
+const cleanupMailFromLabel = async (user_id, mail_id) => {
+  const user = await userService.getLabelsUserById(user_id);
+  for (const label of user.labels) {
+    await labelService.removeMailFromLabel(label._id, mail_id);
+  }
+  await user.save();
+};
 
 // Check every relevent field in received mails if it contains query.
 async function checkIfContainQueryInMail(mail, query) {
@@ -210,6 +210,7 @@ const createMail = async (sender, receiver, title, content, isSpam) => {
 // delete mail
 const deleteSpecificMail = async (user_id, mail_id) => {
   const user = await userService.getUserById(user_id);
+  cleanupMailFromLabel(user_id, mail_id);
   cleanupMailReferences(user, mail_id);
   user.trash.push(mail_id);
   await user.save();
@@ -296,6 +297,7 @@ const emptyUserTrash = async (user_id) => {
 // Move mail to user's spam.
 const mailToSpam = async (user_id, mail_id) => {
   const user = await userService.getUserById(user_id);
+  cleanupMailFromLabel(user_id, mail_id);
   cleanupMailReferences(user, mail_id);
   user.spam.push(mail_id);
   await user.save();

@@ -28,6 +28,7 @@ function MailDetails({
 }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedLabel, setSelectedLabel] = useState([]);
+  const [error, setError] = useState("");
   // Check if the screen is spam to present restorefrom spam button
   const location = useLocation();
   const isLabelScreen = location.pathname.startsWith("/main/labels/");
@@ -52,18 +53,24 @@ function MailDetails({
     async function fetchLabels() {
       try {
         const labels = await getSelectedLabelsOfMail(mail._id);
-        setSelectedLabel(labels.map((l) => l.id));
+        const validLabels = labels.filter((l) => l && l._id);
+        setSelectedLabel(validLabels.map((l) => l._id));
       } catch (err) {
-        console.error("Failed to load mail labels:", err.message);
+        setError(err.message);
       }
     }
 
-    fetchLabels();
-  }, [mail._id]);
+    if (mail) {
+      fetchLabels();
+    }
+  }, [mail]);
 
   return (
     <div className="mail-details">
       <div className="mail-details-actions">
+        {error && (
+          <div className="error-message">Error loading labels: {error}</div>
+        )}
         <div className="mail-details-icons">
           <span
             onClick={() => {
@@ -128,7 +135,7 @@ function MailDetails({
               onClick={async () => {
                 if (!isSpamScreen || !disabledActions) {
                   const labels = await getSelectedLabelsOfMail(mail._id);
-                  setSelectedLabel(labels.map((l) => l.id));
+                  setSelectedLabel(labels.map((l) => l._id));
                   setShowDropdown((prev) => !prev);
                 }
               }}
@@ -142,16 +149,16 @@ function MailDetails({
                 selected={selectedLabel}
                 onSelect={(label, isChecked) => {
                   if (isChecked) {
-                    onAssignLabel(mail._id, label.id, setMessages);
-                    if (!selectedLabel.includes(label.id)) {
-                      setSelectedLabel([...selectedLabel, label.id]);
+                    onAssignLabel(mail._id, label._id, setMessages);
+                    if (!selectedLabel.includes(label._id)) {
+                      setSelectedLabel([...selectedLabel, label._id]);
                     }
                   } else {
-                    removeMailFromLabel(mail._id, label.id, setMessages);
+                    removeMailFromLabel(mail._id, label._id, setMessages);
                     setSelectedLabel(
-                      selectedLabel.filter((id) => id !== label.id)
+                      selectedLabel.filter((id) => id !== label._id.toString())
                     );
-                    if (isLabelScreen) {
+                    if (isLabelScreen && labelName === label.name) {
                       navigate("/main/labels/" + labelName);
                     }
                   }

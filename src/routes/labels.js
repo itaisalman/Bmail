@@ -15,4 +15,6 @@ router
   .get(controller.getMailLabels)
   .delete(controller.removeMailFromLabel);
 
+router.route("/:mail_id/assign-label").patch(controller.assignMailToLabel);
+
 module.exports = router;
