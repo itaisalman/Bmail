@@ -10,4 +10,9 @@
     <color name="blue_link">#0033CC</color>
     <color name="orange">#FF6F00</color>
     <color name="hint_gray">#8A8A8A</color>
+    <color name="send_button_blue">#0057D9</color>
+    <color name="input_bg_light_blue">#D9E6FF</color>
+    <color name="input_stroke_blue">#4A7BDC</color>
+    <color name="hint_text_blue_gray">#3A4A6D</color>
+    <color name="text_dark">#1A1A1A</color>
 </resources>

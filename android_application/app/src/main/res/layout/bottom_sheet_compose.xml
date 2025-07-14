@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/compose_card_margin"
+    android:padding="@dimen/compose_card_padding"
+    android:backgroundTint="@color/white"
+    app:cardCornerRadius="@dimen/compose_card_radius"
+    app:cardElevation="@dimen/compose_card_elevation">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/close_button"
+                android:layout_width="@dimen/close_button_size"
+                android:layout_height="@dimen/close_button_size"
+                android:layout_gravity="end"
+                android:padding="@dimen/close_button_padding"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:contentDescription="@string/close_button_desc"
+                app:tint="@color/send_button_blue" />
+        </FrameLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/input_spacing_top"
+            android:hint="@string/hint_to"
+            app:boxBackgroundMode="filled"
+            app:boxCornerRadiusTopStart="@dimen/input_corner_radius"
+            app:boxCornerRadiusTopEnd="@dimen/input_corner_radius"
+            app:boxCornerRadiusBottomStart="@dimen/input_corner_radius"
+            app:boxCornerRadiusBottomEnd="@dimen/input_corner_radius"
+            app:boxBackgroundColor="@color/input_bg_light_blue"
+            app:hintTextColor="@color/hint_text_blue_gray"
+            app:boxStrokeColor="@color/input_stroke_blue"
+            app:boxStrokeWidthFocused="@dimen/input_stroke_width_focused">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/to_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:textColor="@color/text_dark"
+                android:textColorHint="@color/hint_text_blue_gray" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/input_spacing_large"
+            android:hint="@string/hint_subject"
+            app:boxBackgroundMode="filled"
+            app:boxCornerRadiusTopStart="@dimen/input_corner_radius"
+            app:boxCornerRadiusTopEnd="@dimen/input_corner_radius"
+            app:boxCornerRadiusBottomStart="@dimen/input_corner_radius"
+            app:boxCornerRadiusBottomEnd="@dimen/input_corner_radius"
+            app:boxBackgroundColor="@color/input_bg_light_blue"
+            app:hintTextColor="@color/hint_text_blue_gray"
+            app:boxStrokeColor="@color/input_stroke_blue"
+            app:boxStrokeWidthFocused="@dimen/input_stroke_width_focused">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/subject_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textColor="@color/text_dark"
+                android:textColorHint="@color/hint_text_blue_gray" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/input_spacing_large"
+            android:hint="@string/hint_message"
+            app:boxBackgroundMode="filled"
+            app:boxCornerRadiusTopStart="@dimen/input_corner_radius"
+            app:boxCornerRadiusTopEnd="@dimen/input_corner_radius"
+            app:boxCornerRadiusBottomStart="@dimen/input_corner_radius"
+            app:boxCornerRadiusBottomEnd="@dimen/input_corner_radius"
+            app:boxBackgroundColor="@color/input_bg_light_blue"
+            app:hintTextColor="@color/hint_text_blue_gray"
+            app:boxStrokeColor="@color/input_stroke_blue"
+            app:boxStrokeWidthFocused="@dimen/input_stroke_width_focused">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/body_input"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/body_input_height"
+                android:gravity="top"
+                android:minLines="6"
+                android:maxLines="12"
+                android:inputType="textMultiLine"
+                android:textColor="@color/text_dark"
+                android:textColorHint="@color/hint_text_blue_gray" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/send_button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/send_button_height"
+            android:layout_marginTop="@dimen/send_button_margin_top"
+            android:text="@string/send"
+            android:textAllCaps="false"
+            android:textSize="@dimen/send_button_text_size"
+            android:textColor="@color/white"
+            app:cornerRadius="@dimen/send_button_radius"
+            app:backgroundTint="@color/send_button_blue" />
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

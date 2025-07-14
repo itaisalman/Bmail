@@ -17,10 +17,24 @@
     <dimen name="logo_max_width">200dp</dimen>
     <dimen name="logo_max_height">200dp</dimen>
     <dimen name="error_text_size">12sp</dimen>
-    <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="compose_card_margin">16dp</dimen>
+    <dimen name="compose_card_padding">20dp</dimen>
+    <dimen name="compose_card_radius">24dp</dimen>
+    <dimen name="compose_card_elevation">12dp</dimen>
+    <dimen name="close_button_size">48dp</dimen>
+    <dimen name="close_button_padding">12dp</dimen>
+    <dimen name="input_spacing_top">12dp</dimen>
+    <dimen name="input_spacing_large">16dp</dimen>
+    <dimen name="input_corner_radius">20dp</dimen>
+    <dimen name="input_stroke_width_focused">3dp</dimen>
+    <dimen name="body_input_height">180dp</dimen>
+    <dimen name="send_button_height">56dp</dimen>
+    <dimen name="send_button_margin_top">32dp</dimen>
+    <dimen name="send_button_text_size">18sp</dimen>
+    <dimen name="send_button_radius">28dp</dimen>
 </resources>

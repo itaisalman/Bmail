@@ -29,13 +29,9 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarHome.toolbar);
-        binding.appBarHome.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null)
-                        .setAnchorView(R.id.fab).show();
-            }
+        binding.appBarHome.fab.setOnClickListener(view -> {
+            ComposeBottomSheet bottomSheet = new ComposeBottomSheet();
+            bottomSheet.show(getSupportFragmentManager(), bottomSheet.getTag());
         });
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
