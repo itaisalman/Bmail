@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="screen_padding">24dp</dimen>
+    <dimen name="margin_default">16dp</dimen>
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_top_title">4dp</dimen>
+    <dimen name="margin_top_input">12dp</dimen>
+    <dimen name="margin_top_checkbox">4dp</dimen>
+    <dimen name="margin_top_error">4dp</dimen>
+    <dimen name="margin_top_button">16dp</dimen>
+    <dimen name="margin_top_register">12dp</dimen>
+    <dimen name="margin_bottom_register">16dp</dimen>
+    <dimen name="input_min_height">48dp</dimen>
+    <dimen name="input_padding_vertical">12dp</dimen>
+    <dimen name="input_max_width">488dp</dimen>
+    <dimen name="logo_max_width">300dp</dimen>
+    <dimen name="logo_max_height">400dp</dimen>
+    <dimen name="login_title_text_size">34sp</dimen>
+    <dimen name="input_text_size">16sp</dimen>
+</resources>
