@@ -1,6 +1,10 @@
 <resources>
-    <string name="app_name">android_application</string>
+    <string name="app_name">Bmail App</string>
     <string name="logo_desc">Bmail logo</string>
+    <string name="app_welcome_message">Welcome to Bmail!</string>
+    <string name="app_subtitle">Secure, smart and easy-to-use email</string>
+    <string name="app_description">Show everyone how to do it better.</string>
+    <string name="sign_up_button">Sign Up</string>
     <string name="login">Login</string>
     <string name="username_hint">Username</string>
     <string name="password_hint">Password</string>
@@ -11,3 +15,4 @@
     <string name="login_failed">Login failed</string>
     <string name="server_error_with_message">Server error: %1$s</string>
 </resources>
+
