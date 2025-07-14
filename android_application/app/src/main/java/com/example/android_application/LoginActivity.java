@@ -82,7 +82,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 int responseCode = conn.getResponseCode();
 
-                // ✅ Read the response body (whether success or error)
+                // Read the response body
                 InputStream is = (responseCode == 200) ? conn.getInputStream() : conn.getErrorStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(is));
                 StringBuilder response = new StringBuilder();
@@ -94,13 +94,13 @@ public class LoginActivity extends AppCompatActivity {
 
                 String responseBody = response.toString();
 
-                // ✅ Parse token if status is OK
+                // Parse token if status is OK
                 if (responseCode == 200) {
                     try {
                         JSONObject json = new JSONObject(responseBody);
                         String token = json.getString("token");
 
-                        // ✅ Print token to Logcat
+                        // Print token to Logcat
                         Log.d("JWT", "Token: " + token);
 
                         runOnUiThread(() -> {
@@ -110,8 +110,8 @@ public class LoginActivity extends AppCompatActivity {
                                     .putString("jwt", token)
                                     .apply();
 
-                            // For now - Navigate to main screen if login was successful
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            // Navigate to home screen if login was successful
+                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                             startActivity(intent);
                             finish();
                         });
