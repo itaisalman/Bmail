@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="85dp"
         android:text="@string/signupTitle"
-        android:textSize="25sp"
+        android:textSize="24sp"
         android:textStyle="bold"
         android:textColor="@color/blue_title"
         app:layout_constraintEnd_toEndOf="parent"
