@@ -8,7 +8,7 @@
 .sidebar {
   width: 20%;
   min-width: 200px;
-  max-width: 300px; 
+  max-width: 300px;
   flex-shrink: 0;
 }
 
@@ -35,4 +35,11 @@ body.dark {
   background-color: var(--bg-color);
   color: var(--text-color);
   min-height: 100vh;
+}
+
+.error-message {
+  color: #d32f2f;
+  font-size: 0.85rem;
+  margin-top: 0.2rem;
+  margin-left: 0.3rem;
 }

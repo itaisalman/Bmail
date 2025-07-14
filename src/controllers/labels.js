@@ -72,8 +72,7 @@ exports.getAllUserLabels = async (req, res) => {
     const userLabels = await labelService.getAllUserLabelIds(user_id);
     res.status(200).json(userLabels);
   } catch (err) {
-    console.error("Error in getAllLabels:", err);
-    res.status(500).json({ error: "Server error while getting all labels" });
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -91,8 +90,7 @@ exports.getLabelById = async (req, res) => {
 
     res.status(200).json(label);
   } catch (err) {
-    console.error("Error in get getLabelById:", err);
-    res.status(500).json({ error: "Server error while getting label by Id" });
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -110,8 +108,8 @@ exports.createLabel = async (req, res) => {
       return res.status(nameError.status).json({ error: nameError.message });
     }
 
-    const user = await userService.getUserById(user_id);
-    if (isDuplicateLabelName(user.labels, name))
+    const userLabels = await labelService.getAllUserLabelIds(user_id);
+    if (isDuplicateLabelName(userLabels, name))
       return res.status(409).json({
         error:
           "The label name you selected already exists. Try a different name",
@@ -120,8 +118,7 @@ exports.createLabel = async (req, res) => {
     const label = await labelService.createLabel(user_id, name);
     res.status(201).json(label);
   } catch (err) {
-    console.error("Error in createLabel:", err);
-    res.status(500).json({ error: "Server error while creating label" });
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -139,8 +136,8 @@ exports.updateLabel = async (req, res) => {
 
     const { name } = req.body;
 
-    const user = await userService.getUserById(user_id);
-    if (isDuplicateLabelName(user.labels, name, label_id))
+    const userLabels = await labelService.getAllUserLabelIds(user_id);
+    if (isDuplicateLabelName(userLabels, name, label_id))
       return res.status(409).json({
         error:
           "The label name you selected already exists. Try a different name",
@@ -154,8 +151,7 @@ exports.updateLabel = async (req, res) => {
 
     res.status(200).json(updated_label);
   } catch (err) {
-    console.error("Error in updateLabel:", err);
-    res.status(500).json({ error: "Server error while updating label" });
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -165,30 +161,27 @@ exports.deleteLabel = async (req, res) => {
     if (user_id === null) {
       return res.status(400).json({ error: "Missing/Invalid user ID" });
     }
-
-    const { label_id } = req.params;
+    const label_id = req.params.id;
     if (!checkIfValid(label_id) || !label_id) {
       return res.status(400).json({ error: "Missing/Invalid label ID" });
     }
 
-    const result = await labelService.deleteLabel(label_id);
+    const result = await labelService.deleteLabel(user_id, label_id);
     if (!result.deletedCount) {
       return res.status(404).json({ error: "Label not found" });
     }
-
     res.status(204).send();
   } catch (err) {
-    console.error("Error in get deleteLabel:", err);
-    res.status(500).json({ error: "Server error while deleting label" });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.assignMailToLabel = async (req, res) => {
   try {
     const label_id = req.body.label_id;
-    const mail_id = req.body.mail_id;
+    const mail_id = req.params.mail_id;
 
-    if (!checkIfValid(label_id) || !checkIfValid(mail_id)) {
+    if (!label_id || !mail_id) {
       return res.status(400).json({ error: "Invalid label/mail ID" });
     }
 
@@ -200,10 +193,7 @@ exports.assignMailToLabel = async (req, res) => {
 
     res.status(204).send();
   } catch (err) {
-    console.error("Error in assignLabelToMail:", err);
-    res
-      .status(500)
-      .json({ error: "Server error while assigning label to mail" });
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -216,14 +206,9 @@ exports.getMailLabels = async (req, res) => {
 
     const labels = await labelService.getMailLabels(mail_id);
 
-    if (labels.length === 0) {
-      return res.status(404).json({ error: "No labels found for this mail" });
-    }
-
     res.status(200).json(labels);
   } catch (err) {
-    console.error("Error in getMailLabels:", err);
-    res.status(500).json({ error: "Server error while getting mail labels" });
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -243,9 +228,6 @@ exports.removeMailFromLabel = async (req, res) => {
 
     res.status(204).send();
   } catch (err) {
-    console.error("Error in removeMailFromLabel:", err);
-    res
-      .status(500)
-      .json({ error: "Server error while removing mail from label" });
+    res.status(500).json({ error: err.message });
   }
 };

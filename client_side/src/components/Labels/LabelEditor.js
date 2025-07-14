@@ -7,7 +7,6 @@ function LabelEditor({
   onNewLabelCreated,
   onLabelUpdated,
   labelToEdit,
-  labels = [],
 }) {
   // Makes labelToEdit a boolean – if there is an edit label it will be set to true
   const isEdit = !!labelToEdit;
@@ -36,15 +35,15 @@ function LabelEditor({
     try {
       if (isEdit) {
         try {
-          await updateLabel(labelToEdit.id, trimmedName);
-          onLabelUpdated({ id: labelToEdit.id, name: trimmedName });
+          await updateLabel(labelToEdit, trimmedName);
+          onLabelUpdated({ _id: labelToEdit._id, name: trimmedName });
         } catch (error) {
           setError(error.message || "Failed to update label");
           return;
         }
       } else {
-        const newLabel = await createLabel(trimmedName);
-        onNewLabelCreated(newLabel);
+        await createLabel(trimmedName);
+        onNewLabelCreated();
       }
       onClose();
     } catch (err) {

@@ -55,9 +55,9 @@ function LabelView() {
     fetchAssignLabel();
   }, [fetchAssignLabel]);
   // After removing a label – removes the email from the list
-  const handleLabelToggle = async (id) => {
-    await toggleLabel(id);
-    setMessages((prev) => prev.filter((mail) => mail._id !== id));
+  const handleLabelToggle = async (_id) => {
+    await toggleLabel(_id);
+    setMessages((prev) => prev.filter((mail) => mail._id !== _id));
   };
   return (
     <div className="inboxScreen">

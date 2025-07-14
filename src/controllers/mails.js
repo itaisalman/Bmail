@@ -93,6 +93,7 @@ exports.getFiftyMails = async ({ headers, query }, res) => {
   const page = parseInt(query.page) || 1;
 
   const user_mails = await mailService.getFiftyMails(user_id, label, page);
+
   if (!user_mails) return res.status(404).json({ error: "No mails found" });
 
   res.json({

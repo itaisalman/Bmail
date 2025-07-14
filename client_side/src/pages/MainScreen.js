@@ -16,7 +16,8 @@ function MainScreen() {
   const [showLabels, setShowLabels] = useState(false);
   // All user labels
   const [labels, setLabels] = useState([]);
-
+  const [error, setError] = useState("");
+  const [labelsVersion, setLabelsVersion] = useState("");
   // Label selected for editing
   const [labelToEdit, setLabelToEdit] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -77,7 +78,7 @@ function MainScreen() {
   const handleLabelUpdated = (updatedLabel) => {
     setLabels((prev) =>
       prev.map((label) =>
-        label.id === updatedLabel.id
+        label._id === updatedLabel._id
           ? { ...label, name: updatedLabel.name }
           : label
       )
@@ -98,7 +99,7 @@ function MainScreen() {
     })
       .then((res) => res.json())
       .then((data) => setLabels(data));
-  }, []);
+  }, [labelsVersion]);
 
   const deleteMail = async (id) => {
     const token = sessionStorage.getItem("jwt");
@@ -163,7 +164,7 @@ function MainScreen() {
 
   const onAssignLabel = async (mailId, labelId, setMessages) => {
     try {
-      assignLabelToMail(mailId, labelId);
+      await assignLabelToMail(mailId, labelId);
       setMessages((prev) =>
         prev.map((mail) =>
           mail._id === mailId
@@ -172,16 +173,16 @@ function MainScreen() {
         )
       );
     } catch (err) {
-      console.error("Failed to assign label:", err.message);
+      setError("Failed to assign label: " + err.message);
     }
   };
 
-  const removeMailFromLabel = (mailId, labelId, setMessages) => {
+  const removeMailFromLabel = async (mailId, labelId, setMessages) => {
     try {
-      removeLabelFromMail(mailId, labelId);
+      await removeLabelFromMail(mailId, labelId);
       setMessages((prev) => prev.filter((mail) => mail._id !== mailId));
     } catch (err) {
-      console.error("Failed to assign label:", err.message);
+      setError("Failed to assign label: " + err.message);
     }
   };
 
@@ -202,6 +203,7 @@ function MainScreen() {
       />
       <main className="main-content">
         <Topbar />
+        {error && <p className="error-message">{error}</p>}
         <Outlet
           context={{
             starredMails,
@@ -230,9 +232,7 @@ function MainScreen() {
             setShowLabels(false);
             setLabelToEdit(null);
           }}
-          onNewLabelCreated={(newLabel) =>
-            setLabels((prevLabels) => [...prevLabels, newLabel])
-          }
+          onNewLabelCreated={() => setLabelsVersion((v) => v + 1)}
           labelToEdit={labelToEdit}
           onLabelUpdated={handleLabelUpdated}
         />
@@ -241,8 +241,8 @@ function MainScreen() {
       {showDeleteConfirm && (
         <LabelDeleteConfirm
           label={labelToDelete}
-          onSuccess={(deletedId) => {
-            setLabels((prev) => prev.filter((label) => label.id !== deletedId));
+          onSuccess={() => {
+            setLabelsVersion((v) => v + 1);
             setShowDeleteConfirm(false);
             setLabelToDelete(null);
           }}
