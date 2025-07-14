@@ -28,6 +28,7 @@ function MailDetails({
 }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedLabel, setSelectedLabel] = useState([]);
+  const [error, setError] = useState("");
   // Check if the screen is spam to present restorefrom spam button
   const location = useLocation();
   const isLabelScreen = location.pathname.startsWith("/main/labels/");
@@ -55,7 +56,7 @@ function MailDetails({
         const validLabels = labels.filter((l) => l && l._id);
         setSelectedLabel(validLabels.map((l) => l._id));
       } catch (err) {
-        console.error("Failed to load mail labels:", err.message);
+        setError(err.message);
       }
     }
 
@@ -67,6 +68,9 @@ function MailDetails({
   return (
     <div className="mail-details">
       <div className="mail-details-actions">
+        {error && (
+          <div className="error-message">Error loading labels: {error}</div>
+        )}
         <div className="mail-details-icons">
           <span
             onClick={() => {

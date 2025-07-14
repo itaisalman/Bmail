@@ -16,7 +16,7 @@ function MainScreen() {
   const [showLabels, setShowLabels] = useState(false);
   // All user labels
   const [labels, setLabels] = useState([]);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [error, setError] = useState("");
   const [labelsVersion, setLabelsVersion] = useState("");
   // Label selected for editing
   const [labelToEdit, setLabelToEdit] = useState(null);
@@ -164,7 +164,7 @@ function MainScreen() {
 
   const onAssignLabel = async (mailId, labelId, setMessages) => {
     try {
-      assignLabelToMail(mailId, labelId);
+      await assignLabelToMail(mailId, labelId);
       setMessages((prev) =>
         prev.map((mail) =>
           mail._id === mailId
@@ -173,16 +173,16 @@ function MainScreen() {
         )
       );
     } catch (err) {
-      setErrorMessage("Failed to assign label: " + err.message);
+      setError("Failed to assign label: " + err.message);
     }
   };
 
-  const removeMailFromLabel = (mailId, labelId, setMessages) => {
+  const removeMailFromLabel = async (mailId, labelId, setMessages) => {
     try {
-      removeLabelFromMail(mailId, labelId);
+      await removeLabelFromMail(mailId, labelId);
       setMessages((prev) => prev.filter((mail) => mail._id !== mailId));
     } catch (err) {
-      setErrorMessage("Failed to assign label: " + err.message);
+      setError("Failed to assign label: " + err.message);
     }
   };
 
@@ -203,7 +203,7 @@ function MainScreen() {
       />
       <main className="main-content">
         <Topbar />
-        {errorMessage && <p className="error-message">{errorMessage}</p>}
+        {error && <p className="error-message">{error}</p>}
         <Outlet
           context={{
             starredMails,
