@@ -6,4 +6,17 @@
     <string name="password_hint">Password</string>
     <string name="show_password">Show</string>
     <string name="register_prompt">Don’t have an account? Register</string>
+    <string name="signupTitle">Create a new account</string>
+    <string name="firstName">First name</string>
+    <string name="lastName">Last name</string>
+    <string name="birthDate">Birth date</string>
+    <string name="genderLabel">Gender</string>
+    <string name="radio_female">Female</string>
+    <string name="radio_male">Male</string>
+    <string name="radio_other">Other</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="confirmPassword">Confirm password</string>
+    <string name="uploadProfileImage">Upload profile image</string>
+    <string name="signupBtn">Sign up</string>
 </resources>
