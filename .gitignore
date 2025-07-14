@@ -1,3 +1,33 @@
+# === Node / client_side ===
 node_modules/
 .vscode/
 data/
+
+# === Android Studio / Android app ===
+android_application/.idea/
+android_application/*.iml
+android_application/.gradle/
+android_application/local.properties
+android_application/*.log
+
+android_application/build/
+android_application/app/build/
+
+# Ignore all generated build outputs anywhere
+**/build/
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore common Android files
+*.apk
+*.ap_
+*.dex
+*.class
+*.jar
+*.keystore
+*.jks
+
+# Ignore logs and temp files
+*.log
