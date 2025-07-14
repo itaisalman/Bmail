@@ -61,12 +61,7 @@ function cleanupMailReferences(user, mail_id) {
 
 const cleanupMailFromLabel = async (user_id, mail_id) => {
   const user = await userService.getLabelsUserById(user_id);
-
   for (const label of user.labels) {
-    label.mails = (label.mails || []).filter(
-      (mail) => mail.toString() !== mail_id
-    );
-
     await labelService.removeMailFromLabel(label._id, mail_id);
   }
   await user.save();
