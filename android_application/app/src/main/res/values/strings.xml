@@ -6,4 +6,8 @@
     <string name="password_hint">Password</string>
     <string name="show_password">Show</string>
     <string name="register_prompt">Don’t have an account? Register</string>
+    <string name="username_required">Username is required</string>
+    <string name="password_required">Password is required</string>
+    <string name="login_failed">Login failed</string>
+    <string name="server_error_with_message">Server error: %1$s</string>
 </resources>

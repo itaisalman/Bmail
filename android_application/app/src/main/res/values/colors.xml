@@ -5,4 +5,5 @@
     <color name="blue_title">#022a60</color>
     <color name="blue_primary">#0057D9</color>
     <color name="blue_link">#0033CC</color>
+    <color name="hint_gray">#8A8A8A</color>
 </resources>
