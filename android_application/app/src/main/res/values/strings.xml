@@ -27,5 +27,10 @@
     <string name="password_required">Password is required</string>
     <string name="login_failed">Login failed</string>
     <string name="server_error_with_message">Server error: %1$s</string>
+    <string name="error_fill_all_fields">Please fill in all fields</string>
+    <string name="error_password_match">The passwords do not match</string>
+    <string name="error_username_exists">Username already exists</string>
+    <string name="error_registration_failed">Registration failed</string>
+
 </resources>
 

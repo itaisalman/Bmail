@@ -32,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
 
         TextView registerText = findViewById(R.id.register_text);
         registerText.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
             startActivity(intent);
         });
 
