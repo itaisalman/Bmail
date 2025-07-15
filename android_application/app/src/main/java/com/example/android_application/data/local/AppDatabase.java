@@ -12,7 +12,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract DraftDao draftDao();
 
     private static volatile AppDatabase INSTANCE;
-
+    // Get singleton database instance
     public static AppDatabase getDatabase(Context context) {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
