@@ -1,4 +1,4 @@
-package com.example.android_application;
+package com.example.android_application.ui.home;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -8,7 +8,7 @@ import android.widget.ImageButton;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
-
+import com.example.android_application.R;
 import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
