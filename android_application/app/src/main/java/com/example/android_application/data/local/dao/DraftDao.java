@@ -16,6 +16,6 @@ public interface DraftDao {
     @Delete
     void delete(Draft draft);
 
-    @Query("SELECT * FROM drafts ORDER BY id DESC")
+    @Query("SELECT * FROM drafts ORDER BY last_modified DESC")
     LiveData<List<Draft>> getAllDrafts();
 }
