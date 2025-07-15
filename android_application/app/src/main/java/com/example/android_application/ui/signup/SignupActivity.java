@@ -28,8 +28,6 @@ public class SignupActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> imagePickerLauncher;
     private ImageView imagePreview;
     private Uri imageUri;
-    private String imagePath = null;
-
 
     private SignupViewModel viewModel;
 
