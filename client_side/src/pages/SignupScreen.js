@@ -40,10 +40,11 @@ function SignupScreen() {
     // Prevent page refresh
     e.preventDefault();
 
-    // Construct a date of birth string in dd/mm/yyyy format
-    const birth_date = `${birthDay.padStart(2, "0")}/${
-      monthMap[birthMonth]
-    }/${birthYear}`;
+    // Construct a date of birth string in MM/DD/YYYY format
+    const birth_date = `${monthMap[birthMonth]}/${birthDay.padStart(
+      2,
+      "0"
+    )}/${birthYear}`;
 
     // Pre-check required fields in the form
     const newErrors = {};
