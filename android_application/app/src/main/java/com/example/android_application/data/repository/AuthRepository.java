@@ -2,9 +2,20 @@ package com.example.android_application.data.repository;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.util.Log;
 
+
 import org.json.JSONObject;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -71,4 +82,119 @@ public class AuthRepository {
             }
         });
     }
+
+    public void signup(String firstName, String lastName, String username, String password,
+                       String birthDate, String gender, Uri imageUri,
+                       Context context,
+                       Consumer<String> onSuccess, Consumer<String> onError) {
+
+        OkHttpClient client = new OkHttpClient();
+
+        MultipartBody.Builder multipartBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                .addFormDataPart("first_name", firstName)
+                .addFormDataPart("last_name", lastName)
+                .addFormDataPart("username", username)
+                .addFormDataPart("password", password)
+                .addFormDataPart("birth_date", birthDate)
+                .addFormDataPart("gender", gender);
+
+        if (imageUri != null) {
+            try {
+                InputStream inputStream = context.getContentResolver().openInputStream(imageUri);
+                byte[] imageBytes = getBytesFromInputStream(inputStream);
+                inputStream.close();
+
+                multipartBuilder.addFormDataPart(
+                        "image", "profile.jpg",
+                        RequestBody.create(imageBytes, MediaType.parse("image/jpeg"))
+                );
+
+            } catch (IOException e) {
+                onError.accept("Failed to read image: " + e.getMessage());
+                return;
+            }
+        }
+
+        RequestBody requestBody = multipartBuilder.build();
+
+        Request request = new Request.Builder()
+                .url("http://10.0.2.2:3000/api/users")
+                .post(requestBody)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                onError.accept("Error: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.code() == 201) {
+                    onSuccess.accept("success");
+                } else if (response.code() == 409) {
+                    onError.accept("username_exists");
+                } else {
+                    onError.accept("Signup failed: " + response.body().string());
+                }
+            }
+        });
+    }
+
+    private byte[] getBytesFromInputStream(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int nRead;
+        byte[] data = new byte[4096];
+        while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, nRead);
+        }
+        return buffer.toByteArray();
+    }
+
+//    public void signup(String firstName, String lastName, String username, String password,
+//                       String birthDate, String gender, String imagePath,
+//                       Consumer<String> onSuccess, Consumer<String> onError) {
+//
+//        OkHttpClient client = new OkHttpClient();
+//
+//        MultipartBody.Builder multipartBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM)
+//                .addFormDataPart("first_name", firstName)
+//                .addFormDataPart("last_name", lastName)
+//                .addFormDataPart("username", username)
+//                .addFormDataPart("password", password)
+//                .addFormDataPart("birth_date", birthDate)
+//                .addFormDataPart("gender", gender);
+//
+//        if (imagePath != null && !imagePath.isEmpty()) {
+//            File file = new File(imagePath);
+//            multipartBuilder.addFormDataPart("image", file.getName(),
+//                    RequestBody.create(file, MediaType.parse("image/jpeg")));
+//        }
+//
+//        RequestBody requestBody = multipartBuilder.build();
+//
+//        Request request = new Request.Builder()
+//                .url("http://10.0.2.2:3000/api/users")
+//                .post(requestBody)
+//                .build();
+//
+//        client.newCall(request).enqueue(new Callback() {
+//            @Override
+//            public void onFailure(Call call, IOException e) {
+//                onError.accept("Error: " + e.getMessage());
+//            }
+//
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//                if (response.code() == 201) {
+//                    onSuccess.accept("success");
+//                } else if (response.code() == 409) {
+//                    onError.accept("username_exists");
+//                } else {
+//                    onError.accept("Signup failed: " + response.body().string());
+//                }
+//            }
+//        });
+//    }
+
 }

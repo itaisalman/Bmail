@@ -43,5 +43,7 @@
     <string name="error_password_match">The passwords do not match</string>
     <string name="error_username_exists">Username already exists</string>
     <string name="error_registration_failed">Registration failed</string>
+    <string name="profile_image_description">Profile image preview</string>
+
 </resources>
 

@@ -12,7 +12,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.android_application.R;
-import com.example.android_application.SignupActivity;
+import com.example.android_application.ui.signup.SignupActivity;
 import com.example.android_application.ui.login.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {

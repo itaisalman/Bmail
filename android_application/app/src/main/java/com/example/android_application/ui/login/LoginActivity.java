@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.android_application.R;
 import com.example.android_application.ui.home.HomeActivity;
+import com.example.android_application.ui.signup.SignupActivity;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText usernameEditText, passwordEditText;
@@ -42,7 +43,8 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         registerText.setOnClickListener(v -> {
-            Toast.makeText(this, "Registration not implemented yet", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
+            startActivity(intent);
         });
 
         loginButton.setOnClickListener(v -> {
