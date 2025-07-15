@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.Menu;
 import android.widget.ImageButton;
 
+import com.example.android_application.ui.bottom_sheet.ComposeBottomSheet;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.example.android_application.R;
@@ -44,9 +45,10 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarHome.toolbar);
-        binding.appBarHome.fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .setAnchorView(R.id.fab).show());
+        binding.appBarHome.fab.setOnClickListener(view -> {
+            ComposeBottomSheet composeSheet = new ComposeBottomSheet();
+            composeSheet.show(getSupportFragmentManager(), "compose_bottom_sheet");
+        });
 
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;

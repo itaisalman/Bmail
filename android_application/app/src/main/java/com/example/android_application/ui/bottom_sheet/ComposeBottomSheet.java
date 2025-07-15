@@ -1,22 +1,22 @@
-package com.example.android_application;
+package com.example.android_application.ui.bottom_sheet;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
+import android.view.*;
+import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.example.android_application.R;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class ComposeBottomSheet extends BottomSheetDialogFragment {
+
+    private ComposeViewModel viewModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -31,28 +31,47 @@ public class ComposeBottomSheet extends BottomSheetDialogFragment {
         Button sendButton = view.findViewById(R.id.send_button);
         ImageButton closeButton = view.findViewById(R.id.close_button);
 
-        if (closeButton != null) {
-            closeButton.setOnClickListener(v -> dismiss());
-        }
+        viewModel = new ViewModelProvider(this,
+                new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication()))
+                .get(ComposeViewModel.class);
 
-        if (sendButton != null) {
-            sendButton.setOnClickListener(v -> {
-                String to = toInput.getText().toString();
-                String subject = subjectInput.getText().toString();
-                String body = bodyInput.getText().toString();
+        closeButton.setOnClickListener(v -> {
+            viewModel.saveDraft(
+                    toInput.getText().toString(),
+                    subjectInput.getText().toString(),
+                    bodyInput.getText().toString()
+            );
+            dismiss();
+        });
 
-                // TODO: Implement send logic here
+        sendButton.setOnClickListener(v -> {
+            viewModel.sendMail(
+                    toInput.getText().toString(),
+                    subjectInput.getText().toString(),
+                    bodyInput.getText().toString()
+            );
+        });
 
+        observeViewModel();
+    }
+
+    private void observeViewModel() {
+        viewModel.mailSent.observe(getViewLifecycleOwner(), success -> {
+            if (success != null && success) {
                 dismiss();
-            });
-        }
+            }
+        });
+
+        viewModel.error.observe(getViewLifecycleOwner(), error -> {
+            if (error != null) {
+                Toast.makeText(requireContext(), "Error: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
-        // Only adjust behavior for landscape
         if (requireContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             BottomSheetDialog dialog = (BottomSheetDialog) getDialog();
             if (dialog != null) {
@@ -60,7 +79,6 @@ public class ComposeBottomSheet extends BottomSheetDialogFragment {
                 if (bottomSheet != null) {
                     bottomSheet.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
                     bottomSheet.requestLayout();
-
                     BottomSheetBehavior<View> behavior = BottomSheetBehavior.from(bottomSheet);
                     behavior.setSkipCollapsed(true);
                     behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
@@ -69,3 +87,4 @@ public class ComposeBottomSheet extends BottomSheetDialogFragment {
         }
     }
 }
+
