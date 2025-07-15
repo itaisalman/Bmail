@@ -10,7 +10,7 @@ function isValidName(name) {
 // Validate date format
 function isValidBirthDate(dateString) {
   // Checks correct format
-  const m = moment(dateString, "DD/MM/YYYY", true);
+  const m = moment(dateString, "MM/DD/YYYY", true);
   if (!m.isValid()) {
     return false;
   }
@@ -100,7 +100,7 @@ exports.createUser = async (req, res) => {
   const { first_name, last_name, birth_date, gender, username, password } =
     req.body;
 
-  // // Extract the uploaded file from the request
+  // Extract the uploaded file from the request
   const imageFile = req.file;
 
   // Check all needed arguments were given (image is permission)
