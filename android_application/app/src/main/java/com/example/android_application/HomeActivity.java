@@ -1,12 +1,15 @@
 package com.example.android_application;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Menu;
+import android.widget.ImageButton;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -19,28 +22,46 @@ import com.example.android_application.databinding.ActivityHomeBinding;
 public class HomeActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
-    private ActivityHomeBinding binding;
+    private ImageButton themeToggleDrawerHeader;
+
+    private static final String ICON_STATE_KEY = "iconState";
+    private boolean isDarkModeIconVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
 
-        binding = ActivityHomeBinding.inflate(getLayoutInflater());
+        if (savedInstanceState != null) {
+            isDarkModeIconVisible = savedInstanceState.getBoolean(ICON_STATE_KEY, false);
+        } else {
+            int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+            isDarkModeIconVisible = (currentNightMode == Configuration.UI_MODE_NIGHT_NO);
+        }
+
+        ActivityHomeBinding binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarHome.toolbar);
-        binding.appBarHome.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null)
-                        .setAnchorView(R.id.fab).show();
-            }
-        });
+        binding.appBarHome.fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null)
+                .setAnchorView(R.id.fab).show());
+
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
+        View headerView = navigationView.getHeaderView(0);
+        if (headerView != null) {
+            themeToggleDrawerHeader = headerView.findViewById(R.id.themeToggleDrawerHeader);
+            updateThemeToggleButtonIcon();
+
+            themeToggleDrawerHeader.setOnClickListener(v -> {
+                isDarkModeIconVisible = !isDarkModeIconVisible;
+                updateThemeToggleButtonIcon();
+            });
+        }
+
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
                 .setOpenableLayout(drawer)
@@ -51,8 +72,23 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(ICON_STATE_KEY, isDarkModeIconVisible);
+    }
+
+    private void updateThemeToggleButtonIcon() {
+        if (themeToggleDrawerHeader != null) {
+            if (isDarkModeIconVisible) {
+                themeToggleDrawerHeader.setImageResource(R.drawable.ic_dark_mode);
+            } else {
+                themeToggleDrawerHeader.setImageResource(R.drawable.ic_light_mode);
+            }
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.home, menu);
         return true;
     }
