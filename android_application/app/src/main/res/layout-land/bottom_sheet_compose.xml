@@ -2,56 +2,87 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_margin="@dimen/compose_card_margin"
-    android:padding="@dimen/compose_card_padding"
     android:backgroundTint="@color/white"
     app:cardCornerRadius="@dimen/compose_card_radius"
     app:cardElevation="@dimen/compose_card_elevation">
 
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:padding="@dimen/compose_card_padding">
 
-        <FrameLayout
+        <!-- Top bar: centered title with close button on right -->
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
 
+            <!-- Invisible spacer on left, equal width to close button -->
+            <View
+                android:id="@+id/left_spacer"
+                android:layout_width="@dimen/close_button_size"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:visibility="invisible" />
+
+            <!-- Title text centered between left spacer and close button -->
+            <TextView
+                android:id="@+id/compose_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/compose_title"
+                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                android:textColor="@color/text_dark"
+                android:textAlignment="center"
+                app:layout_constraintStart_toEndOf="@id/left_spacer"
+                app:layout_constraintEnd_toStartOf="@id/close_button"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <!-- Close button aligned to end -->
             <ImageButton
                 android:id="@+id/close_button"
                 android:layout_width="@dimen/close_button_size"
                 android:layout_height="@dimen/close_button_size"
-                android:layout_gravity="end"
-                android:layout_marginBottom="@dimen/input_spacing_top"
-                android:padding="@dimen/close_button_padding"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@android:drawable/ic_menu_close_clear_cancel"
                 android:contentDescription="@string/close_button_desc"
-                app:tint="@color/send_button_blue" />
-        </FrameLayout>
+                android:padding="@dimen/close_button_padding"
+                app:tint="@color/send_button_blue"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Main two-column content -->
+        <!-- Main horizontal body with To/Subject on left, Body on right -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="horizontal"
+            android:weightSum="3"
             android:divider="?android:attr/dividerHorizontal"
             android:showDividers="middle"
-            android:dividerPadding="@dimen/compose_card_padding"
-            android:baselineAligned="false"
-            android:gravity="top">
+            android:dividerPadding="@dimen/compose_card_padding">
 
+            <!-- Left side: To and Subject -->
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingEnd="@dimen/input_spacing_large">
 
+                <!-- TO Field -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/input_spacing_top"
                     android:hint="@string/hint_to"
                     app:boxBackgroundMode="filled"
                     app:boxCornerRadiusTopStart="@dimen/input_corner_radius"
@@ -67,11 +98,18 @@
                         android:id="@+id/to_input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
+                        android:textSize="16sp"
+                        android:lineHeight="20sp"
+                        android:includeFontPadding="false"
                         android:inputType="textEmailAddress"
                         android:textColor="@color/text_dark"
                         android:textColorHint="@color/hint_text_blue_gray" />
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <!-- SUBJECT Field -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -91,53 +129,54 @@
                         android:id="@+id/subject_input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
+                        android:textSize="16sp"
+                        android:lineHeight="20sp"
+                        android:includeFontPadding="false"
                         android:inputType="text"
                         android:textColor="@color/text_dark"
                         android:textColorHint="@color/hint_text_blue_gray" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
-            <LinearLayout
+
+            <!-- Right side: Body expands -->
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="@dimen/input_spacing_large"
-                android:orientation="vertical">
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:hint="@string/hint_message"
+                app:boxBackgroundMode="filled"
+                app:boxCornerRadiusTopStart="@dimen/input_corner_radius"
+                app:boxCornerRadiusTopEnd="@dimen/input_corner_radius"
+                app:boxCornerRadiusBottomStart="@dimen/input_corner_radius"
+                app:boxCornerRadiusBottomEnd="@dimen/input_corner_radius"
+                app:boxBackgroundColor="@color/input_bg_light_blue"
+                app:hintTextColor="@color/hint_text_blue_gray"
+                app:boxStrokeColor="@color/input_stroke_blue"
+                app:boxStrokeWidthFocused="@dimen/input_stroke_width_focused">
 
-                <com.google.android.material.textfield.TextInputLayout
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/body_input"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/input_spacing_large"
-                    android:hint="@string/hint_message"
-                    app:boxBackgroundMode="filled"
-                    app:boxCornerRadiusTopStart="@dimen/input_corner_radius"
-                    app:boxCornerRadiusTopEnd="@dimen/input_corner_radius"
-                    app:boxCornerRadiusBottomStart="@dimen/input_corner_radius"
-                    app:boxCornerRadiusBottomEnd="@dimen/input_corner_radius"
-                    app:boxBackgroundColor="@color/input_bg_light_blue"
-                    app:hintTextColor="@color/hint_text_blue_gray"
-                    app:boxStrokeColor="@color/input_stroke_blue"
-                    app:boxStrokeWidthFocused="@dimen/input_stroke_width_focused">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/body_input"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/body_input_height"
-                        android:gravity="top"
-                        android:minLines="6"
-                        android:maxLines="12"
-                        android:inputType="textMultiLine"
-                        android:textColor="@color/text_dark"
-                        android:textColorHint="@color/hint_text_blue_gray" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
+                    android:layout_height="match_parent"
+                    android:gravity="top"
+                    android:inputType="textMultiLine"
+                    android:textColor="@color/text_dark"
+                    android:textColorHint="@color/hint_text_blue_gray"
+                    android:minLines="6" />
+            </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
+        <!-- Send button pinned to bottom -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/send_button"
             android:layout_width="match_parent"
             android:layout_height="@dimen/send_button_height"
             android:layout_marginTop="@dimen/send_button_margin_top"
+            android:layout_marginBottom="@dimen/send_button_margin_bottom"
             android:text="@string/send"
             android:textAllCaps="false"
             android:textSize="@dimen/send_button_text_size"
