@@ -1,7 +1,7 @@
 # === Node / client_side ===
 node_modules/
 .vscode/
-data/
+/data/ 
 
 # === Android Studio / Android app ===
 android_application/.idea/
