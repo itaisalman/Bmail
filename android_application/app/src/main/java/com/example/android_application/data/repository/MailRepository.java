@@ -3,10 +3,13 @@ package com.example.android_application.data.repository;
 import com.example.android_application.data.api.MailApiService;
 import com.example.android_application.data.api.MailRequest;
 import com.example.android_application.data.local.entity.Draft;
+import com.example.android_application.data.local.entity.Mail;
 
 import org.json.JSONObject;
 
 import androidx.annotation.NonNull;
+
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -22,6 +25,11 @@ public class MailRepository {
     public interface RepositoryCallback {
         void onSuccess();
         void onError(String errorMessage);
+    }
+
+    public interface SearchCallback {
+        void onSuccess(List<Mail> mails);
+        void onFailure(String errorMessage);
     }
 
     public MailRepository() {
@@ -101,6 +109,25 @@ public class MailRepository {
             @Override
             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                 callback.onError("Save draft error: " + t.getMessage());
+            }
+        });
+    }
+
+    public void searchMails(String token, String query, SearchCallback callback) {
+        Call<List<Mail>> call = api.searchMails("Bearer " + token, query);
+        call.enqueue(new Callback<List<Mail>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<Mail>> call, @NonNull Response<List<Mail>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onFailure("Search failed with code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<Mail>> call, @NonNull Throwable t) {
+                callback.onFailure("Search error: " + t.getMessage());
             }
         });
     }
