@@ -3,7 +3,6 @@ package com.example.android_application.ui.login;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
@@ -21,25 +20,17 @@ public class LoginViewModel extends ViewModel {
         this.authRepository = new AuthRepository(context);
     }
 
-    public LiveData<String> getErrorMessage() {
-        return errorMessage;
-    }
-
-    public void setError(String message) {
-        errorMessage.setValue(message);
-    }
-
     public void login(String username, String password,
                       Consumer<String> onSuccess,
                       Consumer<String> onError) {
         authRepository.login(username, password,
                 token -> {
-                    errorMessage.postValue(null); // clear any previous error
+                    errorMessage.postValue(null);
                     onSuccess.accept(token);
                 },
                 error -> {
-                    errorMessage.postValue(error); // save error message
-                    onError.accept(error);         // keep current behavior
+                    errorMessage.postValue(error);
+                    onError.accept(error);
                 });
     }
 
