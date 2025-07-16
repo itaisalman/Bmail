@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".SignupActivity">
+    tools:context=".ui.signup.SignupActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -26,9 +26,9 @@
         android:id="@+id/signupTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="85dp"
+        android:layout_marginTop="75dp"
         android:text="@string/signupTitle"
-        android:textSize="24sp"
+        android:textSize="25sp"
         android:textStyle="bold"
         android:textColor="@color/blue_title"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,12 +38,12 @@
 
     <EditText
         android:id="@+id/firstName"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="8dp"
+        android:layout_width="130dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="30dp"
         android:padding="12dp"
-        android:textSize="16sp"
+        android:textSize="15sp"
         android:hint="@string/firstName"
         android:inputType="textPersonName"
         android:autofillHints="givenName"
@@ -56,11 +56,11 @@
 
     <EditText
         android:id="@+id/lastName"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="8dp"
+        android:layout_width="130dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="40dp"
         android:padding="12dp"
-        android:textSize="16sp"
+        android:textSize="15sp"
         android:hint="@string/lastName"
         android:inputType="textPersonName"
         android:autofillHints="givenName"
@@ -74,9 +74,9 @@
         android:id="@+id/birthDateTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="170dp"
+        android:layout_marginTop="165dp"
         android:text="@string/birthDate"
-        android:textSize="18sp"
+        android:textSize="17sp"
         android:textColor="@color/blue_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -85,7 +85,7 @@
     <DatePicker
         android:id="@+id/birthDateSpinner"
         android:layout_width="wrap_content"
-        android:layout_height="140dp"
+        android:layout_height="90dp"
         android:layout_marginTop="25dp"
         android:calendarViewShown="false"
         android:datePickerMode="spinner"
@@ -99,8 +99,8 @@
         android:layout_height="wrap_content"
         android:text="@string/genderLabel"
         android:textColor="@color/blue_title"
-        android:layout_marginTop="140dp"
-        android:textSize="18sp"
+        android:layout_marginTop="85dp"
+        android:textSize="17sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/birthDateTitle" />
@@ -108,7 +108,7 @@
     <RadioGroup
         android:id="@+id/genderGroup"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:orientation="horizontal"
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@id/genderLabel"
@@ -136,54 +136,77 @@
             android:buttonTint="@color/orange"/>
     </RadioGroup>
 
-    <EditText
-        android:id="@+id/username"
-        android:layout_width="270dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="50dp"
-        android:hint="@string/username"
-        android:textColorHint="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/genderGroup"
-        android:autofillHints="username"
-        android:inputType="textPersonName"/>
+        <EditText
+            android:id="@+id/username"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:hint="@string/username"
+            android:textSize="15sp"
+            android:textColorHint="@color/black"
+            android:inputType="textPersonName"
+            android:autofillHints="username"
+            app:layout_constraintTop_toBottomOf="@id/genderGroup"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="270dp"
-        android:layout_height="50dp"
-        android:hint="@string/password"
-        android:inputType="textPassword"
-        android:autofillHints="password"
-        android:textColorHint="@color/black"
-        app:layout_constraintTop_toBottomOf="@id/username"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:hint="@string/password"
+            android:textSize="15sp"
+            android:textColorHint="@color/black"
+            android:inputType="textPassword"
+            android:autofillHints="password"
+            app:layout_constraintTop_toBottomOf="@id/username"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <EditText
-        android:id="@+id/confirmPassword"
-        android:layout_width="270dp"
-        android:layout_height="50dp"
-        android:hint="@string/confirmPassword"
-        android:inputType="textPassword"
-        android:autofillHints="password"
-        android:textColorHint="@color/black"
-        android:padding="12dp"
-        app:layout_constraintTop_toBottomOf="@id/password"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <EditText
+            android:id="@+id/confirmPassword"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:hint="@string/confirmPassword"
+            android:textSize="15sp"
+            android:textColorHint="@color/black"
+            android:inputType="textPassword"
+            android:autofillHints="password"
+            app:layout_constraintTop_toBottomOf="@id/password"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <Button
+
+        <CheckBox
+            android:id="@+id/show_password_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="@string/show_password"
+            android:layout_marginTop="-3dp"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="@id/confirmPassword"
+            app:layout_constraintTop_toBottomOf="@id/confirmPassword" />
+
+        <Button
         android:id="@+id/uploadProfileImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/blue_title"
         android:text="@string/uploadProfileImage"
+        android:layout_marginTop="33dp"
         app:layout_constraintTop_toBottomOf="@id/confirmPassword"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
+         />
+
+
+        <ImageView
+            android:id="@+id/profileImageView"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:contentDescription="@string/profile_image_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/uploadProfileImage"
+            app:layout_constraintTop_toBottomOf="@id/show_password_checkbox" />
 
         <Button
             android:id="@+id/signupBtn"
@@ -196,6 +219,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/uploadProfileImage" />
+
+        <TextView
+            android:id="@+id/error_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@android:color/holo_red_dark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/signupBtn" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
