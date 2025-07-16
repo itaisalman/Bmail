@@ -1,4 +1,4 @@
-package com.example.android_application.ui.slideshow;
+package com.example.android_application.ui.spam;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,22 +10,22 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.android_application.databinding.FragmentSlideshowBinding;
+import com.example.android_application.databinding.FragmentSpamBinding;
 
-public class SlideshowFragment extends Fragment {
+public class SpamFragment extends Fragment {
 
-    private FragmentSlideshowBinding binding;
+    private FragmentSpamBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        SlideshowViewModel slideshowViewModel =
-                new ViewModelProvider(this).get(SlideshowViewModel.class);
+        SpamViewModel spamViewModel =
+                new ViewModelProvider(this).get(SpamViewModel.class);
 
-        binding = FragmentSlideshowBinding.inflate(inflater, container, false);
+        binding = FragmentSpamBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textSlideshow;
-        slideshowViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        final TextView textView = binding.textSpam;
+        spamViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 

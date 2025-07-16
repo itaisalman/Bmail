@@ -1,16 +1,16 @@
-package com.example.android_application.ui.home;
+package com.example.android_application.ui.spam;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class HomeViewModel extends ViewModel {
+public class SpamViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
 
-    public HomeViewModel() {
+    public SpamViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is home fragment");
+        mText.setValue("This is spam fragment");
     }
 
     public LiveData<String> getText() {
