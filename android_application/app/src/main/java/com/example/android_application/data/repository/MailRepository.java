@@ -37,6 +37,7 @@ public class MailRepository {
         api = retrofit.create(MailApiService.class);
     }
 
+    // Sends a mail to the server asynchronously
     public void sendMail(String token, Draft draft, RepositoryCallback callback) {
         MailRequest mailRequest = new MailRequest(
                 draft.getTo(),
@@ -73,6 +74,7 @@ public class MailRepository {
         });
     }
 
+    // Saves a draft mail to the server asynchronously
     public void saveDraft(String token, Draft draft, RepositoryCallback callback) {
         MailRequest mailRequest = new MailRequest(
                 draft.getTo(),
@@ -109,6 +111,7 @@ public class MailRepository {
         });
     }
 
+    // Searches mails on the server asynchronously using the query string
     public void searchMails(String token, String query, SearchCallback callback) {
         Call<List<Mail>> call = api.searchMails("Bearer " + token, query);
         call.enqueue(new Callback<>() {

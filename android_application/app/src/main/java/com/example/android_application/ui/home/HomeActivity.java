@@ -32,13 +32,14 @@ public class HomeActivity extends AppCompatActivity {
     private static final String ICON_STATE_KEY = "iconState";
     private boolean isDarkModeIconVisible = false;
 
-    // ViewModel for search
+    // ViewModel for managing search and related data
     private HomeViewModel homeViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Restore dark mode toggle state or detect current mode
         if (savedInstanceState != null) {
             isDarkModeIconVisible = savedInstanceState.getBoolean(ICON_STATE_KEY, false);
         } else {
@@ -49,7 +50,7 @@ public class HomeActivity extends AppCompatActivity {
         ActivityHomeBinding binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Init ViewModel
+        // Initialize ViewModel
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         setSupportActionBar(findViewById(R.id.toolbar));
         binding.appBarHome.fab.setOnClickListener(view -> {
@@ -60,6 +61,7 @@ public class HomeActivity extends AppCompatActivity {
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
 
+        // Setup theme toggle button in navigation drawer header
         View headerView = navigationView.getHeaderView(0);
         if (headerView != null) {
             themeToggleDrawerHeader = headerView.findViewById(R.id.themeToggleDrawerHeader);
@@ -84,9 +86,11 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        // Save the dark mode toggle state
         outState.putBoolean(ICON_STATE_KEY, isDarkModeIconVisible);
     }
 
+    // Update the theme toggle icon based on the current mode
     private void updateThemeToggleButtonIcon() {
         if (themeToggleDrawerHeader != null) {
             if (isDarkModeIconVisible) {
@@ -107,6 +111,7 @@ public class HomeActivity extends AppCompatActivity {
         if (searchView != null) {
             searchView.setMaxWidth(Integer.MAX_VALUE);
 
+            // Listen for search submit and text change to trigger search via ViewModel
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {

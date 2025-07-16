@@ -9,12 +9,15 @@ import java.util.List;
 
 public class HomeViewModel extends ViewModel {
 
-    // Optional: your original placeholder text
+    // Placeholder text for UI (optional)
     private final MutableLiveData<String> mText = new MutableLiveData<>();
 
-    // New: for search results and errors
+    // LiveData holding search results
     private final MutableLiveData<List<Mail>> searchResults = new MutableLiveData<>();
+
+    // LiveData holding error messages from search
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
+
 
     private final MailRepository repository = new MailRepository();
 
@@ -34,6 +37,7 @@ public class HomeViewModel extends ViewModel {
         return errorMessage;
     }
 
+    // Triggers mail search via repository and updates LiveData accordingly
     public void searchMails(String token, String query) {
         repository.searchMails(token, query, new MailRepository.SearchCallback() {
             @Override

@@ -31,7 +31,7 @@ public class Mail {
 
     @SerializedName("date")
     @ColumnInfo(name = "date")
-    private String date; // Store as ISO string, parse as needed
+    private String date;
 
     public Mail() {}
 
