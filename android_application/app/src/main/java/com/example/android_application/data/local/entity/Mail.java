@@ -1,5 +1,6 @@
 package com.example.android_application.data.local.entity;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
@@ -83,5 +84,18 @@ public class Mail {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Mail{" +
+                "id='" + id + '\'' +
+                ", senderId='" + senderId + '\'' +
+                ", receiverId='" + receiverId + '\'' +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", date='" + date + '\'' +
+                '}';
     }
 }

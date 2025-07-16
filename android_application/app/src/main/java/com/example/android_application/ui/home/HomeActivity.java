@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.Menu;
 import android.widget.ImageButton;
 import androidx.appcompat.widget.SearchView;
-
 import com.example.android_application.ui.bottom_sheet.ComposeBottomSheet;
 import com.example.android_application.ui.login.LoginActivity;
 import com.google.android.material.navigation.NavigationView;
@@ -39,7 +38,6 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Restore dark mode toggle state or detect current mode
         if (savedInstanceState != null) {
             isDarkModeIconVisible = savedInstanceState.getBoolean(ICON_STATE_KEY, false);
         } else {
@@ -61,7 +59,6 @@ public class HomeActivity extends AppCompatActivity {
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
 
-        // Setup theme toggle button in navigation drawer header
         View headerView = navigationView.getHeaderView(0);
         if (headerView != null) {
             themeToggleDrawerHeader = headerView.findViewById(R.id.themeToggleDrawerHeader);
@@ -86,11 +83,9 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        // Save the dark mode toggle state
         outState.putBoolean(ICON_STATE_KEY, isDarkModeIconVisible);
     }
 
-    // Update the theme toggle icon based on the current mode
     private void updateThemeToggleButtonIcon() {
         if (themeToggleDrawerHeader != null) {
             if (isDarkModeIconVisible) {
@@ -111,7 +106,6 @@ public class HomeActivity extends AppCompatActivity {
         if (searchView != null) {
             searchView.setMaxWidth(Integer.MAX_VALUE);
 
-            // Listen for search submit and text change to trigger search via ViewModel
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
@@ -120,6 +114,10 @@ public class HomeActivity extends AppCompatActivity {
 
                     if (token != null && !query.trim().isEmpty()) {
                         homeViewModel.searchMails(token, query.trim());
+
+                        // Navigate to SearchResultsFragment
+                        NavController navController = Navigation.findNavController(HomeActivity.this, R.id.nav_host_fragment_content_home);
+                        navController.navigate(R.id.action_nav_home_to_searchResultsFragment);
                     }
 
                     searchView.clearFocus();

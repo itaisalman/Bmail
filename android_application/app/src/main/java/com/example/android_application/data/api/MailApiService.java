@@ -1,6 +1,6 @@
 package com.example.android_application.data.api;
 
-import com.example.android_application.data.local.entity.Mail;
+import com.example.android_application.data.local.entity.MailWrapper;
 import java.util.List;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -24,8 +24,9 @@ public interface MailApiService {
             @Body MailRequest mailRequest
     );
 
+    // Changed return type to List<MailWrapper> since server returns JSON array at root
     @GET("/api/mails/search/{query}")
-    Call<List<Mail>> searchMails(
+    Call<List<MailWrapper>> searchMails(
             @Header("authorization") String authHeader,
             @Path("query") String query
     );
