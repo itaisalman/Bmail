@@ -55,5 +55,7 @@
     <string name="starred">Starred</string>
     <string name="inbox">Inbox</string>
     <string name="spam">Spam</string>
+    <string name="search">Search</string>
+    <string name="logout">Logout</string>
 </resources>
 

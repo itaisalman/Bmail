@@ -3,6 +3,7 @@
     <style name="Base.Theme.Android_application" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/blue_title</item>
     </style>
 
     <style name="Theme.Android_application" parent="Base.Theme.Android_application" />
