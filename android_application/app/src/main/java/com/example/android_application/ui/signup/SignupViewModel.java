@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -15,9 +17,19 @@ public class SignupViewModel extends ViewModel {
     private final AuthRepository authRepository;
     private final Context context;
 
+    private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
+
     public SignupViewModel(Context context) {
         this.context = context.getApplicationContext();
         this.authRepository = new AuthRepository(this.context);
+    }
+
+    public LiveData<String> getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setError(String message) {
+        errorMessage.setValue(message);
     }
 
     public void signup(String firstName, String lastName, String username, String password,

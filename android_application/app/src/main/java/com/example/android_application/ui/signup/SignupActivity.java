@@ -44,7 +44,11 @@ public class SignupActivity extends AppCompatActivity {
         });
 
         viewModel = new ViewModelProvider(this, new SignupViewModel.Factory(this)).get(SignupViewModel.class);
-
+        viewModel.getErrorMessage().observe(this, msg -> {
+            if (msg != null) {
+                errorTextView.setText(msg);
+            }
+        });
         firstName = findViewById(R.id.firstName);
         lastName = findViewById(R.id.lastName);
         birthDate = findViewById(R.id.birthDateSpinner);
@@ -110,12 +114,12 @@ public class SignupActivity extends AppCompatActivity {
         }
 
         if (fName.isEmpty() || lName.isEmpty() || uname.isEmpty() || pass.isEmpty() || confirmPassStr.isEmpty() || selectedGender.isEmpty()) {
-            errorTextView.setText(getString(R.string.error_fill_all_fields));
+            viewModel.setError(getString(R.string.error_fill_all_fields));
             return;
         }
 
         if (!pass.equals(confirmPassStr)) {
-            errorTextView.setText(getString(R.string.error_password_match));
+            viewModel.setError(getString(R.string.error_password_match));
             return;
         }
 
@@ -133,9 +137,9 @@ public class SignupActivity extends AppCompatActivity {
                 }),
                 errorMsg -> runOnUiThread(() -> {
                     if ("username_exists".equals(errorMsg)) {
-                        errorTextView.setText(getString(R.string.error_username_exists));
+                        viewModel.setError(getString(R.string.error_username_exists));
                     } else {
-                        errorTextView.setText(errorMsg);
+                        viewModel.setError(errorMsg);
                     }
                 })
         );
