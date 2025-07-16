@@ -2,7 +2,6 @@ package com.example.android_application.data.api;
 
 import com.example.android_application.data.local.entity.Mail;
 import java.util.List;
-
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -25,7 +24,6 @@ public interface MailApiService {
             @Body MailRequest mailRequest
     );
 
-    // ADD THIS:
     @GET("/api/mails/search/{query}")
     Call<List<Mail>> searchMails(
             @Header("authorization") String authHeader,

@@ -3,7 +3,6 @@ package com.example.android_application.data.local.entity;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
-
 import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "mails")

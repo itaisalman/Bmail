@@ -4,13 +4,9 @@ import com.example.android_application.data.api.MailApiService;
 import com.example.android_application.data.api.MailRequest;
 import com.example.android_application.data.local.entity.Draft;
 import com.example.android_application.data.local.entity.Mail;
-
 import org.json.JSONObject;
-
 import androidx.annotation.NonNull;
-
 import java.util.List;
-
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -115,7 +111,7 @@ public class MailRepository {
 
     public void searchMails(String token, String query, SearchCallback callback) {
         Call<List<Mail>> call = api.searchMails("Bearer " + token, query);
-        call.enqueue(new Callback<List<Mail>>() {
+        call.enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<List<Mail>> call, @NonNull Response<List<Mail>> response) {
                 if (response.isSuccessful() && response.body() != null) {

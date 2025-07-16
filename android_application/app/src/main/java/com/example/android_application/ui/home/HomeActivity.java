@@ -21,6 +21,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.android_application.databinding.ActivityHomeBinding;
 
@@ -28,14 +29,14 @@ public class HomeActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ImageButton themeToggleDrawerHeader;
-
     private static final String ICON_STATE_KEY = "iconState";
     private boolean isDarkModeIconVisible = false;
 
+    // ViewModel for search
+    private HomeViewModel homeViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState != null) {
@@ -48,6 +49,8 @@ public class HomeActivity extends AppCompatActivity {
         ActivityHomeBinding binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Init ViewModel
+        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         setSupportActionBar(findViewById(R.id.toolbar));
         binding.appBarHome.fab.setOnClickListener(view -> {
             ComposeBottomSheet composeSheet = new ComposeBottomSheet();
@@ -72,11 +75,11 @@ public class HomeActivity extends AppCompatActivity {
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
                 .setOpenableLayout(drawer)
                 .build();
+
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_home);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
     }
-
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
@@ -100,9 +103,38 @@ public class HomeActivity extends AppCompatActivity {
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) searchItem.getActionView();
-        // Make sure it takes up the entire width
-        assert searchView != null;
-        searchView.setMaxWidth(Integer.MAX_VALUE);
+
+        if (searchView != null) {
+            searchView.setMaxWidth(Integer.MAX_VALUE);
+
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
+                    String token = prefs.getString("jwt", null);
+
+                    if (token != null && !query.trim().isEmpty()) {
+                        homeViewModel.searchMails(token, query.trim());
+                    }
+
+                    searchView.clearFocus();
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
+                    String token = prefs.getString("jwt", null);
+
+                    if (token != null && !newText.trim().isEmpty()) {
+                        homeViewModel.searchMails(token, newText.trim());
+                    }
+                    return true;
+                }
+            });
+
+        }
+
         return true;
     }
 
@@ -111,7 +143,6 @@ public class HomeActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_search) {
-            // Search
             return true;
         } else if (id == R.id.action_logout) {
             SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
