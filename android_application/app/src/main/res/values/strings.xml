@@ -38,6 +38,11 @@
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="toggle_theme">Toggle Theme</string>
+    <string name="error_fill_all_fields">Please fill in all fields</string>
+    <string name="error_password_match">The passwords do not match</string>
+    <string name="error_username_exists">Username already exists</string>
+    <string name="error_registration_failed">Registration failed</string>
+    <string name="profile_image_description">Profile image preview</string>
     <string name="hint_to">To</string>
     <string name="hint_subject">Subject</string>
     <string name="hint_message">Message</string>
