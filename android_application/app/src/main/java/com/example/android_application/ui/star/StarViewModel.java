@@ -10,7 +10,7 @@ public class StarViewModel extends ViewModel {
 
     public StarViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is gallery fragment");
+        mText.setValue("This is starred fragment");
     }
 
     public LiveData<String> getText() {

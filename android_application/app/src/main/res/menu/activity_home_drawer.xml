@@ -5,27 +5,27 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/inbox"
+            android:id="@+id/nav_inbox"
             android:icon="@drawable/ic_mail"
             android:title="@string/inbox" />
         <item
-            android:id="@+id/starred"
+            android:id="@+id/nav_star"
             android:icon="@drawable/ic_star"
             android:title="@string/starred" />
         <item
-            android:id="@+id/important"
+            android:id="@+id/nav_important"
             android:icon="@drawable/ic_important"
             android:title="@string/important" />
         <item
-            android:id="@+id/sent"
+            android:id="@+id/nav_sent"
             android:icon="@drawable/ic_sent"
             android:title="@string/sent" />
         <item
-            android:id="@+id/draft"
+            android:id="@+id/nav_draft"
             android:icon="@drawable/ic_draft"
             android:title="@string/draft" />
         <item
-            android:id="@+id/spam"
+            android:id="@+id/nav_spam"
             android:icon="@drawable/ic_spam"
             android:title="@string/spam" />
     </group>
