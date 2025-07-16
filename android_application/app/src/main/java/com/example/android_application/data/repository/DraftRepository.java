@@ -4,8 +4,8 @@ import android.app.Application;
 import androidx.lifecycle.LiveData;
 
 import com.example.android_application.data.local.AppDatabase;
-import com.example.android_application.data.local.entity.Draft;
 import com.example.android_application.data.local.dao.DraftDao;
+import com.example.android_application.data.local.entity.Draft;
 
 import java.util.List;
 import java.util.concurrent.Executors;

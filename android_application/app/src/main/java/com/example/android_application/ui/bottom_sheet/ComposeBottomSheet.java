@@ -3,16 +3,12 @@ package com.example.android_application.ui.bottom_sheet;
 import android.app.Dialog;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.*;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.example.android_application.R;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -49,13 +45,9 @@ public class ComposeBottomSheet extends BottomSheetDialogFragment {
             dismiss();
         });
 
-        sendButton.setOnClickListener(v -> {
-            viewModel.sendMail(
-                    toInput.getText().toString(),
-                    subjectInput.getText().toString(),
-                    bodyInput.getText().toString()
-            );
-        });
+        sendButton.setOnClickListener(v ->
+                viewModel.sendMail(toInput.getText().toString(), subjectInput.getText().toString(), bodyInput.getText().toString())
+        );
 
         observeViewModel();
     }
@@ -69,7 +61,7 @@ public class ComposeBottomSheet extends BottomSheetDialogFragment {
 
         viewModel.error.observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
-                Toast.makeText(requireContext(), "Error: " + error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
             }
         });
     }
