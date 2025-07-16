@@ -1,12 +1,17 @@
 package com.example.android_application.ui.home;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 import android.widget.ImageButton;
+import androidx.appcompat.widget.SearchView;
 
 import com.example.android_application.ui.bottom_sheet.ComposeBottomSheet;
+import com.example.android_application.ui.login.LoginActivity;
 import com.google.android.material.navigation.NavigationView;
 import com.example.android_application.R;
 import androidx.annotation.NonNull;
@@ -43,7 +48,7 @@ public class HomeActivity extends AppCompatActivity {
         ActivityHomeBinding binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        setSupportActionBar(binding.appBarHome.toolbar);
+        setSupportActionBar(findViewById(R.id.toolbar));
         binding.appBarHome.fab.setOnClickListener(view -> {
             ComposeBottomSheet composeSheet = new ComposeBottomSheet();
             composeSheet.show(getSupportFragmentManager(), "compose_bottom_sheet");
@@ -72,6 +77,7 @@ public class HomeActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
     }
 
+
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -91,7 +97,33 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.home, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        // Make sure it takes up the entire width
+        assert searchView != null;
+        searchView.setMaxWidth(Integer.MAX_VALUE);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_search) {
+            // Search
+            return true;
+        } else if (id == R.id.action_logout) {
+            SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+            prefs.edit().clear().apply();
+
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
