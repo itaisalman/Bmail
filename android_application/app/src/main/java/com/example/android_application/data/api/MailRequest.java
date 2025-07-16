@@ -5,13 +5,13 @@ public class MailRequest {
     private final String title;
     private final String content;
 
+    // Define the payload that will be passed to the nodeJS server
     public MailRequest(String receiver, String title, String content) {
         this.receiver = receiver;
         this.title = title;
         this.content = content;
     }
 
-    // Getters (optional if using Retrofit & Gson)
     public String getReceiver() {
         return receiver;
     }

@@ -11,6 +11,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.android_application.R;
 import com.example.android_application.ui.home.HomeActivity;
 
+import java.util.Objects;
+
 public class LoginActivity extends AppCompatActivity {
     private EditText usernameEditText, passwordEditText;
     private TextView errorTextView;
@@ -32,6 +34,7 @@ public class LoginActivity extends AppCompatActivity {
                 this, new LoginViewModel.Factory(getApplicationContext())
         ).get(LoginViewModel.class);
 
+        // Show/hide password
         showPasswordCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
@@ -41,12 +44,13 @@ public class LoginActivity extends AppCompatActivity {
             passwordEditText.setSelection(passwordEditText.getText().length());
         });
 
-        registerText.setOnClickListener(v -> {
-            Toast.makeText(this, "Registration not implemented yet", Toast.LENGTH_SHORT).show();
-        });
+        // Observe error message LiveData from ViewModel
+        loginViewModel.getErrorMessage().observe(this, msg -> errorTextView.setText(Objects.requireNonNullElse(msg, "")));
+
+        registerText.setOnClickListener(v -> Toast.makeText(this, "Registration not implemented yet", Toast.LENGTH_SHORT).show());
 
         loginButton.setOnClickListener(v -> {
-            errorTextView.setText("");
+            loginViewModel.setError(""); // clear error manually
 
             String username = usernameEditText.getText().toString().trim();
             String password = passwordEditText.getText().toString().trim();
@@ -67,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
                         startActivity(intent);
                         finish();
                     }),
-                    error -> runOnUiThread(() -> errorTextView.setText(error))
+                    error -> runOnUiThread(() -> loginViewModel.setError(error))
             );
         });
     }

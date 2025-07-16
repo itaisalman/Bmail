@@ -3,6 +3,8 @@ package com.example.android_application.ui.login;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -13,14 +15,32 @@ import java.util.function.Consumer;
 public class LoginViewModel extends ViewModel {
     private final AuthRepository authRepository;
 
+    private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
+
     public LoginViewModel(Context context) {
         this.authRepository = new AuthRepository(context);
+    }
+
+    public LiveData<String> getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setError(String message) {
+        errorMessage.setValue(message);
     }
 
     public void login(String username, String password,
                       Consumer<String> onSuccess,
                       Consumer<String> onError) {
-        authRepository.login(username, password, onSuccess, onError);
+        authRepository.login(username, password,
+                token -> {
+                    errorMessage.postValue(null); // clear any previous error
+                    onSuccess.accept(token);
+                },
+                error -> {
+                    errorMessage.postValue(error); // save error message
+                    onError.accept(error);         // keep current behavior
+                });
     }
 
     public static class Factory implements ViewModelProvider.Factory {

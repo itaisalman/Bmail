@@ -14,13 +14,12 @@ public class DraftRepository {
 
     private final DraftDao draftDao;
 
-    // Initialize DAO from the database singleton
     public DraftRepository(Application application) {
         AppDatabase db = AppDatabase.getDatabase(application);
         draftDao = db.draftDao();
     }
 
-    // Insert draft asynchronously
+    // Insert draft
     public void insertDraft(Draft draft) {
         Executors.newSingleThreadExecutor().execute(() -> draftDao.insert(draft));
     }
