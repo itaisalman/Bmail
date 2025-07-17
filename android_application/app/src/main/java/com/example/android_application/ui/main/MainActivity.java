@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        // ✅ Init ViewModel
         MainViewModel mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         Button signupButton = findViewById(R.id.signUpButton);
