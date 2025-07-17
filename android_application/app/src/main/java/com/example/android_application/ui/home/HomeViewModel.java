@@ -47,6 +47,10 @@ public class HomeViewModel extends AndroidViewModel {
         return searchResults;
     }
 
+    public LiveData<String> getErrorMessage() {
+        return error;
+    }
+
     // Triggers mail search via repository and updates LiveData accordingly
     public void searchMails(String token, String query) {
         mailRepository.searchMails(token, query, new MailRepository.SearchCallback() {
@@ -61,4 +65,6 @@ public class HomeViewModel extends AndroidViewModel {
             }
         });
     }
+
+
 }
