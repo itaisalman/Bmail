@@ -3,12 +3,8 @@ package com.example.android_application.data.repository;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.util.Log;
-
-
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -18,7 +14,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -71,7 +66,6 @@ public class AuthRepository {
                     SharedPreferences prefs = context.getSharedPreferences("auth", Context.MODE_PRIVATE);
                     prefs.edit().putString("jwt", token).apply();
 
-                    Log.d("JWT", "Token saved: " + token);
                     onSuccess.accept(token);
                 } else {
                     JSONObject errorJson = new JSONObject(response.toString());

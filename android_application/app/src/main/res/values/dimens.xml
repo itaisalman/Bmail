@@ -19,8 +19,8 @@
     <dimen name="error_text_size">12sp</dimen>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="nav_header_vertical_spacing">8dp</dimen>
-    <dimen name="nav_header_height">176dp</dimen>
+    <dimen name="nav_header_vertical_spacing">20dp</dimen>
+    <dimen name="nav_header_height">210dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="compose_card_margin">16dp</dimen>
     <dimen name="compose_card_padding">20dp</dimen>
@@ -38,4 +38,5 @@
     <dimen name="send_button_text_size">18sp</dimen>
     <dimen name="send_button_radius">28dp</dimen>
     <dimen name="send_button_margin_bottom">16dp</dimen>
+    <dimen name="profile_image_size">100dp</dimen>
 </resources>
