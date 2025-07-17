@@ -12,6 +12,7 @@ import com.example.android_application.data.repository.MailRepository;
 import java.util.List;
 import com.example.android_application.data.repository.UserRepository;
 import org.json.JSONObject;
+import java.util.Collections;
 
 public class HomeViewModel extends AndroidViewModel {
 
@@ -49,6 +50,10 @@ public class HomeViewModel extends AndroidViewModel {
 
     public LiveData<String> getErrorMessage() {
         return error;
+    }
+
+    public void clearSearchResults() {
+        searchResults.postValue(Collections.emptyList());
     }
 
     // Triggers mail search via repository and updates LiveData accordingly

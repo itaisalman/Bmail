@@ -34,6 +34,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private static final String ICON_STATE_KEY = "iconState";
     private boolean isDarkModeIconVisible = false;
+    private boolean hasNavigatedToSearchResults = false;
 
     // ViewModel for managing search and related data
     private HomeViewModel homeViewModel;
@@ -148,8 +149,6 @@ public class HomeActivity extends AppCompatActivity {
             searchView.setMaxWidth(Integer.MAX_VALUE);
 
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                private boolean hasNavigated = false;
-
                 @Override
                 public boolean onQueryTextSubmit(String query) {
                     searchView.clearFocus();
@@ -158,33 +157,64 @@ public class HomeActivity extends AppCompatActivity {
 
                 @Override
                 public boolean onQueryTextChange(String newText) {
-                    SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
-                    String token = prefs.getString("jwt", null);
+                    String token = getSharedPreferences("auth", MODE_PRIVATE).getString("jwt", null);
 
-                    if (token != null && !newText.trim().isEmpty()) {
-                        homeViewModel.searchMails(token, newText.trim());
+                    if (token == null) {
+                        // No token - maybe user logged out; just clear results if needed
+                        homeViewModel.clearSearchResults();
+                        return true;
+                    }
 
-                        // Navigate to SearchResultsFragment only once
-                        NavController navController = Navigation.findNavController(
-                                HomeActivity.this,
-                                R.id.nav_host_fragment_content_home
-                        );
+                    String trimmedText = newText.trim();
+                    if (trimmedText.isEmpty()) {
+                        homeViewModel.clearSearchResults();
+                        return true;
+                    }
 
-                        if (!hasNavigated &&
-                                navController.getCurrentDestination() != null &&
-                                navController.getCurrentDestination().getId() != R.id.searchResultsFragment) {
+                    // Trigger search
+                    homeViewModel.searchMails(token, trimmedText);
 
-                            navController.navigate(R.id.action_global_searchResultsFragment);
-                            hasNavigated = true;
-                        }
+                    // Navigate to search results only once per search session
+                    NavController navController = Navigation.findNavController(
+                            HomeActivity.this,
+                            R.id.nav_host_fragment_content_home
+                    );
+
+                    if (!hasNavigatedToSearchResults &&
+                            navController.getCurrentDestination() != null &&
+                            navController.getCurrentDestination().getId() != R.id.searchResultsFragment) {
+
+                        navController.navigate(R.id.action_global_searchResultsFragment);
+                        hasNavigatedToSearchResults = true;
                     }
 
                     return true;
                 }
             });
+
+            // Reset navigation flag when search is closed/collapsed
+            searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+                @Override
+                public boolean onMenuItemActionExpand(MenuItem item) {
+                    // Search opened - reset navigation flag to allow navigation next time
+                    hasNavigatedToSearchResults = false;
+                    return true;
+                }
+
+                @Override
+                public boolean onMenuItemActionCollapse(MenuItem item) {
+                    // Search closed - clear search results and reset navigation flag
+                    homeViewModel.clearSearchResults();
+                    hasNavigatedToSearchResults = false;
+                    return true;
+                }
+            });
         }
+
         return true;
     }
+
+
 
 
     @Override

@@ -57,5 +57,6 @@
     <string name="spam">Spam</string>
     <string name="search">Search</string>
     <string name="logout">Logout</string>
+    <string name="no_results">no results</string>
 </resources>
 

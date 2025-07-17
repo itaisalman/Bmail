@@ -33,5 +33,15 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/noResultsTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/no_results"
+        android:textAlignment="center"
+        android:visibility="gone"
+        android:padding="16dp"
+        android:textColor="@color/blue_title"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
 

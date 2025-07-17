@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.android_application.R;
 import com.example.android_application.data.local.entity.Mail;
 import com.example.android_application.ui.home.HomeViewModel;
-import com.example.android_application.ui.search.MailAdapter;
 
 import java.util.List;
 
@@ -23,6 +23,7 @@ public class SearchResultsFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
     private MailAdapter adapter;
+    private TextView noResultsTextView;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -30,7 +31,9 @@ public class SearchResultsFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_search_results, container, false);
+
         RecyclerView recyclerView = view.findViewById(R.id.recyclerSearchResults);
+        noResultsTextView = view.findViewById(R.id.noResultsTextView);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
@@ -39,24 +42,27 @@ public class SearchResultsFragment extends Fragment {
 
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
 
-        // Observe search results and update RecyclerView
+        // Observe search results and update UI
         homeViewModel.getSearchResults().observe(getViewLifecycleOwner(), mails -> {
-            if (mails != null && adapter != null) {
+            if (mails != null && !mails.isEmpty()) {
                 adapter.setMailList(mails);
+                recyclerView.setVisibility(View.VISIBLE);
+                noResultsTextView.setVisibility(View.GONE);
+            } else {
+                // Show "No results" text and hide RecyclerView if list is empty or null
+                recyclerView.setVisibility(View.GONE);
+                noResultsTextView.setVisibility(View.VISIBLE);
             }
         });
 
-        // Observe error messages and show Toast
         homeViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null && !error.isEmpty()) {
                 Toast.makeText(requireContext(), "Search error: " + error, Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Optional: setup click listener for mails (if implemented in MailAdapter)
         adapter.setOnItemClickListener(mail -> {
-            // TODO: Navigate to full mail view fragment/activity here
-            // For example: use Navigation component or FragmentManager to open mail detail
+            // TODO: implement mail click handling
             Toast.makeText(requireContext(), "Clicked mail: " + mail.getTitle(), Toast.LENGTH_SHORT).show();
         });
 
