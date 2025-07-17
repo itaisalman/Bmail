@@ -3,17 +3,14 @@ package com.example.android_application.ui.home;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 import com.example.android_application.data.local.entity.Mail;
 import com.example.android_application.data.repository.MailRepository;
 import java.util.List;
-
 import com.example.android_application.data.repository.UserRepository;
-
 import org.json.JSONObject;
 
 public class HomeViewModel extends AndroidViewModel {
@@ -21,14 +18,11 @@ public class HomeViewModel extends AndroidViewModel {
     private final UserRepository repository;
     public final MutableLiveData<JSONObject> user = new MutableLiveData<>();
     public final MutableLiveData<String> error = new MutableLiveData<>();
-    
-    // Placeholder text for UI
-    private final MutableLiveData<String> mText = new MutableLiveData<>();
 
     // LiveData holding search results
     private final MutableLiveData<List<Mail>> searchResults = new MutableLiveData<>();
 
-    private final MailRepository repository = new MailRepository();
+    private final MailRepository mailRepository = new MailRepository();
 
 
     public HomeViewModel(@NonNull Application application) {
@@ -53,21 +47,18 @@ public class HomeViewModel extends AndroidViewModel {
         return searchResults;
     }
 
-    // public LiveData<String> getErrorMessage() {
-    //     return error;
-    // }
-
     // Triggers mail search via repository and updates LiveData accordingly
     public void searchMails(String token, String query) {
-        repository.searchMails(token, query, new MailRepository.SearchCallback() {
+        mailRepository.searchMails(token, query, new MailRepository.SearchCallback() {
             @Override
             public void onSuccess(List<Mail> mails) {
                 searchResults.postValue(mails);
+
             }
 
             @Override
-            public void onFailure(String error) {
-                error.postValue(error);
+            public void onFailure(String errorMsg) {
+                error.postValue(errorMsg);
             }
         });
     }
