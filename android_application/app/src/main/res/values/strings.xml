@@ -57,5 +57,14 @@
     <string name="spam">Spam</string>
     <string name="search">Search</string>
     <string name="logout">Logout</string>
+    <string name="star">Star</string>
+    <string name="delete">Delete</string>
+    <string name="label">Label</string>
+    <string name="date_example">2025–07–16 10:45</string>
+    <string name="subject">Subject</string>
+    <string name="from">From:</string>
+    <string name="sender_example">sender@example.com</string>
+    <string name="content">Content:</string>
+    <string name="content_example">This is the full content of the email</string>
 </resources>
 

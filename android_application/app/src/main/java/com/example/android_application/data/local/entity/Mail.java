@@ -33,7 +33,12 @@ public class Mail {
     @ColumnInfo(name = "date")
     private String date;
 
-    public Mail() {}
+    @SerializedName("senderUsername")
+    @ColumnInfo(name = "sender_username")
+    private String senderUsername;
+
+    public Mail() {
+    }
 
     // Getters and Setters
 
@@ -83,5 +88,13 @@ public class Mail {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getSenderUsername() {
+        return senderUsername;
+    }
+
+    public void setSenderUsername(String senderUsername) {
+        this.senderUsername = senderUsername;
     }
 }

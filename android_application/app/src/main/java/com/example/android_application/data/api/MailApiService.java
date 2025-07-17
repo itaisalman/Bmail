@@ -29,4 +29,9 @@ public interface MailApiService {
             @Header("authorization") String authHeader,
             @Path("query") String query
     );
+    @GET("/api/mails/{id}")
+    Call<Mail> getMailById(
+            @Header("authorization") String authHeader,
+            @Path("id") String mailId
+    );
 }

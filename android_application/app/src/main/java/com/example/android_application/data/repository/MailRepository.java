@@ -4,6 +4,7 @@ import com.example.android_application.data.api.MailApiService;
 import com.example.android_application.data.api.MailRequest;
 import com.example.android_application.data.local.entity.Draft;
 import com.example.android_application.data.local.entity.Mail;
+
 import org.json.JSONObject;
 import androidx.annotation.NonNull;
 import java.util.List;
@@ -127,6 +128,44 @@ public class MailRepository {
             @Override
             public void onFailure(@NonNull Call<List<Mail>> call, @NonNull Throwable t) {
                 callback.onFailure("Search error: " + t.getMessage());
+            }
+        });
+    }
+    public interface MailWithUserCallback {
+        void onSuccess(Mail mailWithUsername);
+        void onError(String errorMessage);
+    }
+
+    public void getMailByIdWithUsername(String token, String mailId, MailWithUserCallback callback) {
+        Call<Mail> mailCall = api.getMailById("Bearer " + token, mailId);
+
+        mailCall.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<Mail> call, @NonNull Response<Mail> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Mail mailData = response.body();
+
+                    // Get username by sender ID
+                    UserRepository userRepository = new UserRepository();
+
+                    userRepository.getUser(token,
+                            json -> {
+                                String username = json.optString("username", "unknown");
+                                mailData.setSenderUsername(username);
+                                callback.onSuccess(mailData);
+                            },
+                            error -> callback.onSuccess(mailData)
+                    );
+
+
+                } else {
+                    callback.onError("Mail not found: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Mail> call, @NonNull Throwable t) {
+                callback.onError("Network error while loading mail: " + t.getMessage());
             }
         });
     }
