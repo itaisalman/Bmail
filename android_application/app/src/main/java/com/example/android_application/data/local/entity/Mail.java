@@ -36,8 +36,6 @@ public class Mail {
 
     public Mail() {}
 
-    // Getters and Setters
-
     public String getId() {
         return id;
     }

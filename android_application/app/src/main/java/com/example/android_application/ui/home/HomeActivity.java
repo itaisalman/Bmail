@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.Menu;
 import android.widget.ImageButton;
 import androidx.appcompat.widget.SearchView;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 import com.example.android_application.ui.bottom_sheet.ComposeBottomSheet;
 import com.example.android_application.ui.login.LoginActivity;
 import com.google.android.material.navigation.NavigationView;
@@ -21,13 +24,14 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-
+import com.bumptech.glide.Glide;
 import com.example.android_application.databinding.ActivityHomeBinding;
 
 public class HomeActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ImageButton themeToggleDrawerHeader;
+
     private static final String ICON_STATE_KEY = "iconState";
     private boolean isDarkModeIconVisible = false;
 
@@ -36,8 +40,11 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
 
+        // Restore icon state
         if (savedInstanceState != null) {
             isDarkModeIconVisible = savedInstanceState.getBoolean(ICON_STATE_KEY, false);
         } else {
@@ -45,12 +52,13 @@ public class HomeActivity extends AppCompatActivity {
             isDarkModeIconVisible = (currentNightMode == Configuration.UI_MODE_NIGHT_NO);
         }
 
+        // View binding
         ActivityHomeBinding binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         // Initialize ViewModel
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-        setSupportActionBar(findViewById(R.id.toolbar));
+        setSupportActionBar(binding.appBarHome.toolbar);
         binding.appBarHome.fab.setOnClickListener(view -> {
             ComposeBottomSheet composeSheet = new ComposeBottomSheet();
             composeSheet.show(getSupportFragmentManager(), "compose_bottom_sheet");
@@ -59,6 +67,9 @@ public class HomeActivity extends AppCompatActivity {
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
 
+        homeViewModel.getUser();
+
+        // Access drawer header
         View headerView = navigationView.getHeaderView(0);
         if (headerView != null) {
             themeToggleDrawerHeader = headerView.findViewById(R.id.themeToggleDrawerHeader);
@@ -68,10 +79,38 @@ public class HomeActivity extends AppCompatActivity {
                 isDarkModeIconVisible = !isDarkModeIconVisible;
                 updateThemeToggleButtonIcon();
             });
+
+            // View user details
+            TextView nameTextView = headerView.findViewById(R.id.nameTextView);
+            TextView usernameTextView = headerView.findViewById(R.id.usernameTextView);
+            ImageView profileImageView = headerView.findViewById(R.id.profileImageView);
+
+            // Observe user details
+            homeViewModel.user.observe(this, userJson -> {
+                String firstName = userJson.optString("first_name", "");
+                String lastName = userJson.optString("last_name", "");
+                String username = userJson.optString("username", "");
+                String profilePath = userJson.optString("image", "");
+                String profileUrl = "http://10.0.2.2:3000/" + profilePath;
+
+                nameTextView.setText(String.format("%s %s", firstName, lastName));
+                usernameTextView.setText(username);
+
+                Glide.with(this).load(profileUrl).circleCrop().into(profileImageView);
+            });
+
+            // Observe errors
+            homeViewModel.error.observe(this, errorMessage -> {
+                if (errorMessage != null) {
+                    Toast.makeText(this, "error: " + errorMessage, Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
+        // NavController settings
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
+                R.id.nav_inbox, R.id.nav_star, R.id.nav_important, R.id.nav_sent,
+                R.id.nav_draft, R.id.nav_spam)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -80,12 +119,14 @@ public class HomeActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
     }
 
+    // Save the dark mode toggle state
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(ICON_STATE_KEY, isDarkModeIconVisible);
     }
 
+    // Update the theme toggle icon based on the current mode
     private void updateThemeToggleButtonIcon() {
         if (themeToggleDrawerHeader != null) {
             if (isDarkModeIconVisible) {
@@ -107,9 +148,10 @@ public class HomeActivity extends AppCompatActivity {
             searchView.setMaxWidth(Integer.MAX_VALUE);
 
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                private boolean hasNavigated = false;
+
                 @Override
                 public boolean onQueryTextSubmit(String query) {
-                    // Do NOT navigate again here — just hide the keyboard
                     searchView.clearFocus();
                     return true;
                 }
@@ -122,18 +164,25 @@ public class HomeActivity extends AppCompatActivity {
                     if (token != null && !newText.trim().isEmpty()) {
                         homeViewModel.searchMails(token, newText.trim());
 
-                        // Navigate only once when typing starts
-                        NavController navController = Navigation.findNavController(HomeActivity.this, R.id.nav_host_fragment_content_home);
-                        if (navController.getCurrentDestination() != null &&
+                        // Navigate to SearchResultsFragment only once
+                        NavController navController = Navigation.findNavController(
+                                HomeActivity.this,
+                                R.id.nav_host_fragment_content_home
+                        );
+
+                        if (!hasNavigated &&
+                                navController.getCurrentDestination() != null &&
                                 navController.getCurrentDestination().getId() != R.id.searchResultsFragment) {
-                            navController.navigate(R.id.action_nav_home_to_searchResultsFragment);
+
+                            navController.navigate(R.id.action_global_searchResultsFragment);
+                            hasNavigated = true;
                         }
                     }
+
                     return true;
                 }
             });
         }
-
         return true;
     }
 
@@ -143,9 +192,10 @@ public class HomeActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_search) {
+            // Search
             return true;
         } else if (id == R.id.action_logout) {
-            SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+            SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
             prefs.edit().clear().apply();
 
             Intent intent = new Intent(this, LoginActivity.class);

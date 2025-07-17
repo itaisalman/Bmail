@@ -5,10 +5,8 @@ import com.example.android_application.data.api.MailRequest;
 import com.example.android_application.data.local.entity.Draft;
 import com.example.android_application.data.local.entity.Mail;
 import com.example.android_application.data.local.entity.MailWrapper;
-
 import org.json.JSONObject;
 import androidx.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import okhttp3.ResponseBody;
@@ -41,6 +39,7 @@ public class MailRepository {
         api = retrofit.create(MailApiService.class);
     }
 
+    // Sends a mail to the server asynchronously
     public void sendMail(String token, Draft draft, RepositoryCallback callback) {
         MailRequest mailRequest = new MailRequest(
                 draft.getTo(),
@@ -77,6 +76,7 @@ public class MailRepository {
         });
     }
 
+    // Saves a draft mail to the server asynchronously
     public void saveDraft(String token, Draft draft, RepositoryCallback callback) {
         MailRequest mailRequest = new MailRequest(
                 draft.getTo(),
