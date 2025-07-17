@@ -109,17 +109,7 @@ public class HomeActivity extends AppCompatActivity {
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
-                    SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
-                    String token = prefs.getString("jwt", null);
-
-                    if (token != null && !query.trim().isEmpty()) {
-                        homeViewModel.searchMails(token, query.trim());
-
-                        // Navigate to SearchResultsFragment
-                        NavController navController = Navigation.findNavController(HomeActivity.this, R.id.nav_host_fragment_content_home);
-                        navController.navigate(R.id.action_nav_home_to_searchResultsFragment);
-                    }
-
+                    // Do NOT navigate again here — just hide the keyboard
                     searchView.clearFocus();
                     return true;
                 }
@@ -131,15 +121,22 @@ public class HomeActivity extends AppCompatActivity {
 
                     if (token != null && !newText.trim().isEmpty()) {
                         homeViewModel.searchMails(token, newText.trim());
+
+                        // Navigate only once when typing starts
+                        NavController navController = Navigation.findNavController(HomeActivity.this, R.id.nav_host_fragment_content_home);
+                        if (navController.getCurrentDestination() != null &&
+                                navController.getCurrentDestination().getId() != R.id.searchResultsFragment) {
+                            navController.navigate(R.id.action_nav_home_to_searchResultsFragment);
+                        }
                     }
                     return true;
                 }
             });
-
         }
 
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
