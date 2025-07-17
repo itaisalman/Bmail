@@ -12,42 +12,33 @@ import androidx.appcompat.widget.SearchView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.android_application.ui.bottom_sheet.ComposeBottomSheet;
 import com.example.android_application.ui.login.LoginActivity;
 import com.google.android.material.navigation.NavigationView;
 import com.example.android_application.R;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
-
+import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
-import com.example.android_application.R;
 import com.example.android_application.databinding.ActivityHomeBinding;
-import com.example.android_application.ui.bottom_sheet.ComposeBottomSheet;
-import com.google.android.material.navigation.NavigationView;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private HomeViewModel viewModel;
-
     private AppBarConfiguration mAppBarConfiguration;
     private ImageButton themeToggleDrawerHeader;
-
     private static final String ICON_STATE_KEY = "iconState";
     private boolean isDarkModeIconVisible = false;
 
+    // ViewModel for managing search and related data
+    private HomeViewModel homeViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
 
         // Restore icon state
@@ -62,10 +53,9 @@ public class HomeActivity extends AppCompatActivity {
         ActivityHomeBinding binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Initialize ViewModel
+        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         setSupportActionBar(binding.appBarHome.toolbar);
-
-        // Floating Action Button
-        setSupportActionBar(findViewById(R.id.toolbar));
         binding.appBarHome.fab.setOnClickListener(view -> {
             ComposeBottomSheet composeSheet = new ComposeBottomSheet();
             composeSheet.show(getSupportFragmentManager(), "compose_bottom_sheet");
@@ -74,9 +64,7 @@ public class HomeActivity extends AppCompatActivity {
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
 
-        // Init ViewModel
-        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-        viewModel.getUser();
+        homeViewModel.getUser();
 
         // Access drawer header
         View headerView = navigationView.getHeaderView(0);
@@ -95,7 +83,7 @@ public class HomeActivity extends AppCompatActivity {
             ImageView profileImageView = headerView.findViewById(R.id.profileImageView);
 
             // Observe user details
-            viewModel.user.observe(this, userJson -> {
+            homeViewModel.user.observe(this, userJson -> {
                 String firstName = userJson.optString("first_name", "");
                 String lastName = userJson.optString("last_name", "");
                 String username = userJson.optString("username", "");
@@ -109,7 +97,7 @@ public class HomeActivity extends AppCompatActivity {
             });
 
             // Observe errors
-            viewModel.error.observe(this, errorMessage -> {
+            homeViewModel.error.observe(this, errorMessage -> {
                 if (errorMessage != null) {
                     Toast.makeText(this, "error: " + errorMessage, Toast.LENGTH_SHORT).show();
                 }
@@ -122,18 +110,20 @@ public class HomeActivity extends AppCompatActivity {
                 R.id.nav_draft, R.id.nav_spam)
                 .setOpenableLayout(drawer)
                 .build();
+
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_home);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
     }
 
-
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        // Save the dark mode toggle state
         outState.putBoolean(ICON_STATE_KEY, isDarkModeIconVisible);
     }
 
+    // Update the theme toggle icon based on the current mode
     private void updateThemeToggleButtonIcon() {
         if (themeToggleDrawerHeader != null) {
             if (isDarkModeIconVisible) {
@@ -150,9 +140,39 @@ public class HomeActivity extends AppCompatActivity {
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) searchItem.getActionView();
-        // Make sure it takes up the entire width
-        assert searchView != null;
-        searchView.setMaxWidth(Integer.MAX_VALUE);
+
+        if (searchView != null) {
+            searchView.setMaxWidth(Integer.MAX_VALUE);
+
+            // Listen for search submit and text change to trigger search via ViewModel
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
+                    String token = prefs.getString("jwt", null);
+
+                    if (token != null && !query.trim().isEmpty()) {
+                        homeViewModel.searchMails(token, query.trim());
+                    }
+
+                    searchView.clearFocus();
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
+                    String token = prefs.getString("jwt", null);
+
+                    if (token != null && !newText.trim().isEmpty()) {
+                        homeViewModel.searchMails(token, newText.trim());
+                    }
+                    return true;
+                }
+            });
+
+        }
+
         return true;
     }
 
@@ -161,10 +181,9 @@ public class HomeActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_search) {
-            // Search
             return true;
         } else if (id == R.id.action_logout) {
-            SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+            SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
             prefs.edit().clear().apply();
 
             Intent intent = new Intent(this, LoginActivity.class);

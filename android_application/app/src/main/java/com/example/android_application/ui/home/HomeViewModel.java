@@ -7,6 +7,10 @@ import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+import com.example.android_application.data.local.entity.Mail;
+import com.example.android_application.data.repository.MailRepository;
+import java.util.List;
 
 import com.example.android_application.data.repository.UserRepository;
 
@@ -17,6 +21,14 @@ public class HomeViewModel extends AndroidViewModel {
     private final UserRepository repository;
     public final MutableLiveData<JSONObject> user = new MutableLiveData<>();
     public final MutableLiveData<String> error = new MutableLiveData<>();
+    
+    // Placeholder text for UI
+    private final MutableLiveData<String> mText = new MutableLiveData<>();
+
+    // LiveData holding search results
+    private final MutableLiveData<List<Mail>> searchResults = new MutableLiveData<>();
+
+    private final MailRepository repository = new MailRepository();
 
 
     public HomeViewModel(@NonNull Application application) {
@@ -35,5 +47,28 @@ public class HomeViewModel extends AndroidViewModel {
     private String getTokenFromStorage() {
         SharedPreferences prefs = getApplication().getSharedPreferences("auth", Context.MODE_PRIVATE);
         return prefs.getString("jwt", "");
+    }
+
+    public LiveData<List<Mail>> getSearchResults() {
+        return searchResults;
+    }
+
+    // public LiveData<String> getErrorMessage() {
+    //     return error;
+    // }
+
+    // Triggers mail search via repository and updates LiveData accordingly
+    public void searchMails(String token, String query) {
+        repository.searchMails(token, query, new MailRepository.SearchCallback() {
+            @Override
+            public void onSuccess(List<Mail> mails) {
+                searchResults.postValue(mails);
+            }
+
+            @Override
+            public void onFailure(String error) {
+                error.postValue(error);
+            }
+        });
     }
 }

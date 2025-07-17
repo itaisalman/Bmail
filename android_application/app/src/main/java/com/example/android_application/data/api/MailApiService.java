@@ -1,10 +1,14 @@
 package com.example.android_application.data.api;
 
+import com.example.android_application.data.local.entity.Mail;
+import java.util.List;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public interface MailApiService {
 
@@ -18,5 +22,11 @@ public interface MailApiService {
     Call<ResponseBody> saveDraft(
             @Header("authorization") String authHeader,
             @Body MailRequest mailRequest
+    );
+
+    @GET("/api/mails/search/{query}")
+    Call<List<Mail>> searchMails(
+            @Header("authorization") String authHeader,
+            @Path("query") String query
     );
 }

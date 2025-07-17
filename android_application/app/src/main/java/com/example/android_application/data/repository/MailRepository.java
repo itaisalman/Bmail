@@ -3,11 +3,10 @@ package com.example.android_application.data.repository;
 import com.example.android_application.data.api.MailApiService;
 import com.example.android_application.data.api.MailRequest;
 import com.example.android_application.data.local.entity.Draft;
-
+import com.example.android_application.data.local.entity.Mail;
 import org.json.JSONObject;
-
 import androidx.annotation.NonNull;
-
+import java.util.List;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -24,6 +23,11 @@ public class MailRepository {
         void onError(String errorMessage);
     }
 
+    public interface SearchCallback {
+        void onSuccess(List<Mail> mails);
+        void onFailure(String errorMessage);
+    }
+
     public MailRepository() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://10.0.2.2:3000/")
@@ -33,6 +37,7 @@ public class MailRepository {
         api = retrofit.create(MailApiService.class);
     }
 
+    // Sends a mail to the server asynchronously
     public void sendMail(String token, Draft draft, RepositoryCallback callback) {
         MailRequest mailRequest = new MailRequest(
                 draft.getTo(),
@@ -69,6 +74,7 @@ public class MailRepository {
         });
     }
 
+    // Saves a draft mail to the server asynchronously
     public void saveDraft(String token, Draft draft, RepositoryCallback callback) {
         MailRequest mailRequest = new MailRequest(
                 draft.getTo(),
@@ -101,6 +107,26 @@ public class MailRepository {
             @Override
             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                 callback.onError("Save draft error: " + t.getMessage());
+            }
+        });
+    }
+
+    // Searches mails on the server asynchronously using the query string
+    public void searchMails(String token, String query, SearchCallback callback) {
+        Call<List<Mail>> call = api.searchMails("Bearer " + token, query);
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<List<Mail>> call, @NonNull Response<List<Mail>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onFailure("Search failed with code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<Mail>> call, @NonNull Throwable t) {
+                callback.onFailure("Search error: " + t.getMessage());
             }
         });
     }
