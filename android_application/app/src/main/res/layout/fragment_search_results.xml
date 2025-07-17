@@ -25,7 +25,7 @@
         android:id="@+id/textEmptySearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No search results found"
+        android:text="@string/no_search_results_found"
         android:textSize="16sp"
         android:textColor="#999999"
         android:visibility="gone"
@@ -38,10 +38,14 @@
         android:id="@+id/noResultsTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/no_results"
+        android:text="@string/no_search_results_found"
         android:textAlignment="center"
         android:visibility="gone"
         android:padding="16dp"
-        android:textColor="@color/blue_title"/>
+        android:textColor="@color/blue_title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,6 +1,7 @@
 package com.example.android_application.ui.search;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ public class SearchResultsFragment extends Fragment {
     private HomeViewModel homeViewModel;
     private MailAdapter adapter;
     private TextView noResultsTextView;
+    private RecyclerView recyclerView;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -32,27 +34,38 @@ public class SearchResultsFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_search_results, container, false);
 
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerSearchResults);
+        initViews(view);
+        setupRecyclerView();
+        setupViewModelObservers();
+
+        return view;
+    }
+
+    private void initViews(View view) {
+        recyclerView = view.findViewById(R.id.recyclerSearchResults);
         noResultsTextView = view.findViewById(R.id.noResultsTextView);
+    }
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-
+    private void setupRecyclerView() {
         adapter = new MailAdapter();
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setAdapter(adapter);
 
+        adapter.setOnItemClickListener(mail ->
+                Toast.makeText(requireContext(), "Clicked mail: " + mail.getTitle(), Toast.LENGTH_SHORT).show()
+        );
+    }
+
+    private void setupViewModelObservers() {
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
 
-        // Observe search results and update UI
         homeViewModel.getSearchResults().observe(getViewLifecycleOwner(), mails -> {
-            if (mails != null && !mails.isEmpty()) {
-                adapter.setMailList(mails);
-                recyclerView.setVisibility(View.VISIBLE);
-                noResultsTextView.setVisibility(View.GONE);
+            if (mails == null) {
+                Log.d("SearchResultsFragment", "Search results: null");
             } else {
-                // Show "No results" text and hide RecyclerView if list is empty or null
-                recyclerView.setVisibility(View.GONE);
-                noResultsTextView.setVisibility(View.VISIBLE);
+                Log.d("SearchResultsFragment", "Search results size: " + mails.size());
             }
+            handleSearchResults(mails);
         });
 
         homeViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
@@ -60,12 +73,18 @@ public class SearchResultsFragment extends Fragment {
                 Toast.makeText(requireContext(), "Search error: " + error, Toast.LENGTH_SHORT).show();
             }
         });
+    }
 
-        adapter.setOnItemClickListener(mail -> {
-            // TODO: implement mail click handling
-            Toast.makeText(requireContext(), "Clicked mail: " + mail.getTitle(), Toast.LENGTH_SHORT).show();
-        });
 
-        return view;
+    private void handleSearchResults(List<Mail> mails) {
+        if (mails != null && !mails.isEmpty()) {
+            adapter.setMailList(mails);
+            recyclerView.setVisibility(View.VISIBLE);
+            noResultsTextView.setVisibility(View.GONE);
+        } else {
+            Log.d("Here", "got here");
+            recyclerView.setVisibility(View.GONE);
+            noResultsTextView.setVisibility(View.VISIBLE);
+        }
     }
 }

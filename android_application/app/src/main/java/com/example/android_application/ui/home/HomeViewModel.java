@@ -23,6 +23,8 @@ public class HomeViewModel extends AndroidViewModel {
     // LiveData holding search results
     private final MutableLiveData<List<Mail>> searchResults = new MutableLiveData<>();
 
+    private final MutableLiveData<String> currentSearchQuery = new MutableLiveData<>();
+
     private final MailRepository mailRepository = new MailRepository();
 
 
@@ -53,11 +55,20 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public void clearSearchResults() {
-        searchResults.postValue(Collections.emptyList());
+        searchResults.setValue(Collections.emptyList()); // or null
+        currentSearchQuery.setValue(""); // clear query
     }
 
+    public LiveData<String> getCurrentSearchQuery() {
+        return currentSearchQuery;
+    }
+
+    public void setCurrentSearchQuery(String query) {
+        currentSearchQuery.setValue(query);
+    }
     // Triggers mail search via repository and updates LiveData accordingly
     public void searchMails(String token, String query) {
+        setCurrentSearchQuery(query);
         mailRepository.searchMails(token, query, new MailRepository.SearchCallback() {
             @Override
             public void onSuccess(List<Mail> mails) {
