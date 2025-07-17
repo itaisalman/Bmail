@@ -1,19 +1,17 @@
 package com.example.android_application.ui.search;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.example.android_application.R;
 import com.example.android_application.data.local.entity.Mail;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,6 +19,7 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MailViewHolder
 
     private List<Mail> mailList = new ArrayList<>();
     private OnItemClickListener listener;
+    private Context context;
 
     public interface OnItemClickListener {
         void onItemClick(Mail mail);
@@ -47,16 +46,22 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MailViewHolder
     public void onBindViewHolder(@NonNull MailViewHolder holder, int position) {
         Mail mail = mailList.get(position);
 
-        // Safe text with fallbacks
-        holder.sender.setText(mail.getSenderId() != null ? mail.getSenderId() : "(Unknown Sender)");
-        holder.title.setText(mail.getTitle() != null ? mail.getTitle() : "(No Subject)");
-
-        // Snippet: limit to 50 chars + ellipsis
-        String content = mail.getContent() != null ? mail.getContent() : "";
-        String snippet = content.length() > 50 ? content.substring(0, 50) + "..." : content;
-        holder.snippet.setText(snippet);
-
-        // Format date assuming ISO 8601 or fallback
+        Context context = holder.itemView.getContext();
+        // Setting the properties that will get rendered on the screen.
+        String sender = mail.getSenderAddress();
+        holder.sender.setText(
+                (sender != null && !sender.trim().isEmpty()) ? sender : context.getString(R.string.unknown_sender)
+        );
+        String title = mail.getTitle();
+        holder.title.setText(
+                (title != null && !title.trim().isEmpty()) ? title : context.getString(R.string.no_subject)
+        );
+        String content = mail.getContent();
+        if (content == null || content.trim().isEmpty()) {
+            holder.snippet.setText(R.string.no_content_message);
+        } else {
+            holder.snippet.setText(content.trim());
+        }
         holder.date.setText(formatDate(mail.getDate()));
 
         // Set click listener to forward the clicked mail
@@ -84,7 +89,7 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MailViewHolder
         }
     }
 
-    // Helper method to format ISO 8601 date to "MMM dd"
+    // Helper method to format date to "MMM dd"
     private String formatDate(String rawDate) {
         if (rawDate == null || rawDate.isEmpty()) return "";
         try {
@@ -93,7 +98,7 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MailViewHolder
             SimpleDateFormat displayFormat = new SimpleDateFormat("MMM dd", Locale.getDefault());
             return date != null ? displayFormat.format(date) : rawDate;
         } catch (Exception e) {
-            return rawDate; // fallback raw string on parse fail
+            return rawDate;
         }
     }
 }

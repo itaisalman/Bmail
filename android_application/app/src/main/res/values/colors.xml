@@ -15,4 +15,7 @@
     <color name="input_stroke_blue">#4A7BDC</color>
     <color name="hint_text_blue_gray">#3A4A6D</color>
     <color name="text_dark">#1A1A1A</color>
+    <color name="mail_date">#888888</color>
+    <color name="mail_title">#222222</color>
+    <color name="mail_snippet">#555555</color>
 </resources>
