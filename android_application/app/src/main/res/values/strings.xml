@@ -57,5 +57,7 @@
     <string name="spam">Spam</string>
     <string name="search">Search</string>
     <string name="logout">Logout</string>
+    <string name="labels">Labels</string>
+    <string name="add_label">Add Label</string>
 </resources>
 

@@ -4,15 +4,24 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.Menu;
+import android.widget.EditText;
 import android.widget.ImageButton;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.android_application.data.local.entity.Label;
 import com.example.android_application.ui.bottom_sheet.ComposeBottomSheet;
+import com.example.android_application.ui.label.LabelViewModel;
 import com.example.android_application.ui.login.LoginActivity;
 import com.google.android.material.navigation.NavigationView;
 import com.example.android_application.R;
@@ -36,6 +45,9 @@ public class HomeActivity extends AppCompatActivity {
 
     // ViewModel for managing search and related data
     private HomeViewModel homeViewModel;
+
+    private LabelViewModel labelViewModel;
+    private LinearLayout labelsContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +126,41 @@ public class HomeActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_home);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
+        String token = prefs.getString("jwt", null);
+
+        LabelViewModel.Factory factory = new LabelViewModel.Factory();
+        labelViewModel = new ViewModelProvider(this, factory).get(LabelViewModel.class);
+        try {
+            Menu menu = navigationView.getMenu();
+            SubMenu labelsSubMenu = menu.addSubMenu("");
+
+            labelViewModel.getLabels(token).observe(this, labels -> {
+                labelsSubMenu.clear();
+
+                if (labels != null) {
+                    for (Label label : labels) {
+                        labelsSubMenu.add(label.getName()).setOnMenuItemClickListener(item -> {
+                            Toast.makeText(this, "Clicked: " + label.getName(), Toast.LENGTH_SHORT).show();
+                            return true;
+                        });
+                    }
+                }
+
+                navigationView.setNavigationItemSelectedListener(item -> {
+                    int id = item.getItemId();
+                    if (id == R.id.nav_add_label) {
+                        showAddLabelDialog(labelsContainer, labelViewModel, token);
+                        return true;
+                    }
+                    return false;
+                });
+            });
+
+        } catch (Exception e) {
+            Log.e("HomeActivity", "Error in label section: " + e.getMessage(), e);
+        }
     }
 
     @Override
@@ -200,5 +247,82 @@ public class HomeActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_home);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+    private void addLabelToUI(String labelName, LinearLayout container) {
+        TextView labelView = new TextView(this);
+        labelView.setText(labelName);
+        labelView.setPadding(0, 8, 0, 8);
+        labelView.setTextSize(14);
+        labelView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_label, 0, 0, 0);
+        labelView.setCompoundDrawablePadding(16);
+
+        labelView.setOnClickListener(v -> {
+            Toast.makeText(this, "Clicked label: " + labelName, Toast.LENGTH_SHORT).show();
+        });
+
+        container.addView(labelView);
+    }
+
+    private void showAddLabelDialog(LinearLayout labelsContainer, LabelViewModel labelViewModel, String token) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Add Label");
+
+        final EditText input = new EditText(this);
+        input.setHint("Label name");
+        builder.setView(input);
+
+        builder.setPositiveButton("Add", (dialog, which) -> {
+            String labelName = input.getText().toString().trim();
+            if (!labelName.isEmpty()) {
+                labelViewModel.createLabel(token, labelName).observe(this, label -> {
+                    if (label != null) {
+                        addLabelToUI(label.getName(), labelsContainer);
+                    } else {
+                        Toast.makeText(this, "Failed to create label", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        builder.show();
+    }
+
+    private int findMenuItemIndex(Menu menu, MenuItem target) {
+        for (int i = 0; i < menu.size(); i++) {
+            if (menu.getItem(i).getItemId() == target.getItemId()) {
+                return i;
+            }
+        }
+        return menu.size();
+    }
+
+    private void removeOldLabelItems(Menu menu, int fromIndex) {
+        while (menu.size() > fromIndex) {
+            menu.removeItem(menu.getItem(fromIndex).getItemId());
+        }
+    }
+
+    private void showAddLabelDialog(LabelViewModel labelViewModel, String token) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Add Label");
+
+        final EditText input = new EditText(this);
+        input.setHint("Label name");
+        builder.setView(input);
+
+        builder.setPositiveButton("Add", (dialog, which) -> {
+            String labelName = input.getText().toString().trim();
+            if (!labelName.isEmpty()) {
+                labelViewModel.createLabel(token, labelName).observe(this, label -> {
+                    if (label == null) {
+                        Toast.makeText(this, "Failed to create label", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        builder.show();
     }
 }
