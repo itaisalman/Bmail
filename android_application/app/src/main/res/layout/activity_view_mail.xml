@@ -1,10 +1,7 @@
-<HorizontalScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:scrollbars="horizontal">
+
 <ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:fillViewport="true"
@@ -109,7 +106,14 @@
             android:textStyle="bold"
             android:gravity="center"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp"
+            android:singleLine="false"
+            android:ellipsize="none"
+            android:lineSpacingExtra="4dp"
+            android:hyphenationFrequency="none"
+            android:scrollHorizontally="false"
+            android:breakStrategy="high_quality"
+            />
 
         <TextView
             android:id="@+id/fromLabel"
@@ -162,4 +166,3 @@
 
         </LinearLayout>
     </ScrollView>
-</HorizontalScrollView>

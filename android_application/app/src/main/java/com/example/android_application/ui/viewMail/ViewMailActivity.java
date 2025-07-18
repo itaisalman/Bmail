@@ -2,12 +2,10 @@ package com.example.android_application.ui.viewMail;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.*;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.android_application.R;
 import com.example.android_application.data.local.entity.Mail;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -23,7 +21,7 @@ import java.util.TimeZone;
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_view_mail);
 
-            // Finding display elements
+            // Retrieve the display elements
             TextView subjectTextView = findViewById(R.id.subjectTextView);
             TextView fromTextView = findViewById(R.id.fromEmail);
             TextView dateTextView = findViewById(R.id.dateTextView);
@@ -32,7 +30,7 @@ import java.util.TimeZone;
             ImageButton starButton = findViewById(R.id.starButton);
             ImageButton importantButton = findViewById(R.id.importantButton);
 
-
+            // Listens for the screen to close
             closeButton.setOnClickListener(v -> finish());
 
             // Receiving the sent email
@@ -48,6 +46,7 @@ import java.util.TimeZone;
                 return;
             }
 
+            // Change title according to the box
             if ("sent".equals(mailBox)) {
                 fromLabel.setText(getString(R.string.to));
                 fromTextView.setText(mail.getReceiverAddress());
@@ -68,6 +67,7 @@ import java.util.TimeZone;
                 Date parsedDate = parser.parse(mail.getDate());
 
                 if (parsedDate != null) {
+                    // Convert the date to a readable format in the local display
                     SimpleDateFormat displayFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
                     displayFormat.setTimeZone(TimeZone.getTimeZone("Asia/Jerusalem"));
                     dateTextView.setText(displayFormat.format(parsedDate));
@@ -78,13 +78,15 @@ import java.util.TimeZone;
                 dateTextView.setText(mail.getDate());
             }
 
-            // Handling Favorite and Important buttons (using mail.getId() as a key)
-            String mailId = mail.getId(); // ← was missing for you
+            // Handling Favorite and Important buttons
+            String mailId = mail.getId();
 
+            // Using SharedPreferences to save locally if the email is starred/important
             SharedPreferences prefs = getSharedPreferences("MailPrefs", MODE_PRIVATE);
             isStarred = prefs.getBoolean("isStarred_" + mailId, false);
             isImportant = prefs.getBoolean("isImportant_" + mailId, false);
 
+            // Update the icons according to the saved state
             starButton.setImageResource(isStarred ? R.drawable.ic_star : R.drawable.ic_star_view_mail);
             importantButton.setImageResource(isImportant ? R.drawable.ic_important : R.drawable.ic_important_view_mail);
 
@@ -103,6 +105,7 @@ import java.util.TimeZone;
         }
 
     @Override
+    // Save the star and important state before screen rotation
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean("isStarred", isStarred);
