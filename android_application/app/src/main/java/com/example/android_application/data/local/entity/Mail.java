@@ -3,10 +3,10 @@ package com.example.android_application.data.local.entity;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
+import java.io.Serializable;
 import com.google.gson.annotations.SerializedName;
-
 @Entity(tableName = "mails")
-public class Mail {
+public class Mail implements Serializable {
 
     @PrimaryKey
     @SerializedName("_id")
@@ -17,9 +17,33 @@ public class Mail {
     @ColumnInfo(name = "sender_id")
     private String senderId;
 
+    @SerializedName("sender_address")
+    @ColumnInfo(name = "sender_address")
+    private String senderAddress;
+
+    @SerializedName("sender_first_name")
+    @ColumnInfo(name = "sender_first_name")
+    private String senderFirstName;
+
+    @SerializedName("sender_last_name")
+    @ColumnInfo(name = "sender_last_name")
+    private String senderLastName;
+
     @SerializedName("receiver_id")
     @ColumnInfo(name = "receiver_id")
     private String receiverId;
+
+    @SerializedName("receiver_address")
+    @ColumnInfo(name = "receiver_address")
+    private String receiverAddress;
+
+    @SerializedName("receiver_first_name")
+    @ColumnInfo(name = "receiver_first_name")
+    private String receiverFirstName;
+
+    @SerializedName("receiver_last_name")
+    @ColumnInfo(name = "receiver_last_name")
+    private String receiverLastName;
 
     @SerializedName("title")
     @ColumnInfo(name = "title")
@@ -33,55 +57,43 @@ public class Mail {
     @ColumnInfo(name = "date")
     private String date;
 
+    // Constructor, getters, setters below...
+
     public Mail() {}
 
-    // Getters and Setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public String getId() {
-        return id;
-    }
+    public String getSenderId() { return senderId; }
+    public void setSenderId(String senderId) { this.senderId = senderId; }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    public String getSenderAddress() { return senderAddress; }
+    public void setSenderAddress(String senderAddress) { this.senderAddress = senderAddress; }
 
-    public String getSenderId() {
-        return senderId;
-    }
+    public String getSenderFirstName() { return senderFirstName; }
+    public void setSenderFirstName(String senderFirstName) { this.senderFirstName = senderFirstName; }
 
-    public void setSenderId(String senderId) {
-        this.senderId = senderId;
-    }
+    public String getSenderLastName() { return senderLastName; }
+    public void setSenderLastName(String senderLastName) { this.senderLastName = senderLastName; }
 
-    public String getReceiverId() {
-        return receiverId;
-    }
+    public String getReceiverId() { return receiverId; }
+    public void setReceiverId(String receiverId) { this.receiverId = receiverId; }
 
-    public void setReceiverId(String receiverId) {
-        this.receiverId = receiverId;
-    }
+    public String getReceiverAddress() { return receiverAddress; }
+    public void setReceiverAddress(String receiverAddress) { this.receiverAddress = receiverAddress; }
 
-    public String getTitle() {
-        return title != null ? title : "";
-    }
+    public String getReceiverFirstName() { return receiverFirstName; }
+    public void setReceiverFirstName(String receiverFirstName) { this.receiverFirstName = receiverFirstName; }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public String getReceiverLastName() { return receiverLastName; }
+    public void setReceiverLastName(String receiverLastName) { this.receiverLastName = receiverLastName; }
 
-    public String getContent() {
-        return content != null ? content : "";
-    }
+    public String getTitle() { return title != null ? title : ""; }
+    public void setTitle(String title) { this.title = title; }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+    public String getContent() { return content != null ? content : ""; }
+    public void setContent(String content) { this.content = content; }
 
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
+    public String getDate() { return date; }
+    public void setDate(String date) { this.date = date; }
 }

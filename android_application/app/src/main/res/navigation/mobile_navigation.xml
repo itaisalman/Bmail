@@ -4,40 +4,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/nav_inbox">
-
+    <action
+        android:id="@+id/action_global_searchResultsFragment"
+        app:destination="@id/searchResultsFragment" />
+    <fragment
+        android:id="@+id/searchResultsFragment"
+        android:name="com.example.android_application.ui.search.SearchResultsFragment"
+        android:label="Search Results"
+        tools:layout="@layout/fragment_search_results" />
     <fragment
         android:id="@+id/nav_inbox"
         android:name="com.example.android_application.ui.inbox.InboxFragment"
         android:label="@string/inbox"
         tools:layout="@layout/fragment_inbox" />
-
     <fragment
         android:id="@+id/nav_star"
         android:name="com.example.android_application.ui.star.StarFragment"
         android:label="@string/starred"
         tools:layout="@layout/fragment_star" />
-
     <fragment
         android:id="@+id/nav_important"
         android:name="com.example.android_application.ui.important.ImportantFragment"
         android:label="@string/important"
         tools:layout="@layout/fragment_important" />
-
     <fragment
         android:id="@+id/nav_sent"
         android:name="com.example.android_application.ui.sent.SentFragment"
         android:label="@string/sent"
         tools:layout="@layout/fragment_sent" />
-
     <fragment
         android:id="@+id/nav_draft"
         android:name="com.example.android_application.ui.draft.DraftFragment"
         android:label="@string/draft"
         tools:layout="@layout/fragment_draft" />
-
     <fragment
         android:id="@+id/nav_spam"
         android:name="com.example.android_application.ui.spam.SpamFragment"
         android:label="@string/spam"
         tools:layout="@layout/fragment_spam" />
+
 </navigation>
