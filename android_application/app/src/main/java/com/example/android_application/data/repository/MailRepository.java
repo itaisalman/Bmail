@@ -4,7 +4,6 @@ import com.example.android_application.data.api.MailApiService;
 import com.example.android_application.data.api.MailRequest;
 import com.example.android_application.data.local.entity.Draft;
 import com.example.android_application.data.local.entity.Mail;
-
 import com.example.android_application.data.local.entity.MailWrapper;
 import org.json.JSONObject;
 import androidx.annotation.NonNull;

@@ -1,6 +1,5 @@
 package com.example.android_application.data.api;
 
-import com.example.android_application.data.local.entity.Mail;
 import com.example.android_application.data.local.entity.MailWrapper;
 import java.util.List;
 import okhttp3.ResponseBody;
