@@ -139,8 +139,4 @@ public class MailRepository {
             }
         });
     }
-    public void getMailById(String token, String mailId, Callback<Mail> callback) {
-        Call<Mail> call = api.getMailById("Bearer " + token, mailId);
-        call.enqueue(callback);
-    }
 }

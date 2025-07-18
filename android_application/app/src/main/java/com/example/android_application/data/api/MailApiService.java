@@ -1,5 +1,6 @@
 package com.example.android_application.data.api;
 
+import com.example.android_application.data.local.entity.Mail;
 import com.example.android_application.data.local.entity.MailWrapper;
 import java.util.List;
 import okhttp3.ResponseBody;
@@ -29,10 +30,5 @@ public interface MailApiService {
     Call<List<MailWrapper>> searchMails(
             @Header("authorization") String authHeader,
             @Path("query") String query
-    );
-    @GET("/api/mails/{id}")
-    Call<Mail> getMailById(
-            @Header("authorization") String authHeader,
-            @Path("id") String mailId
     );
 }

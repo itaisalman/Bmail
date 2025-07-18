@@ -17,23 +17,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageButton
-                android:id="@+id/closeButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_close"
-                android:contentDescription="@string/close_button_desc" />
-        </RelativeLayout>
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -48,6 +31,7 @@
                 android:layout_height="48dp"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/star"
+                android:layout_marginTop="15dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_star_view_mail" />
 
@@ -57,6 +41,7 @@
                 android:layout_height="48dp"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/important"
+                android:layout_marginTop="15dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_important_view_mail" />
 
@@ -66,6 +51,7 @@
                 android:layout_height="48dp"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/delete"
+                android:layout_marginTop="15dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_trash" />
 
@@ -75,6 +61,7 @@
                 android:layout_height="48dp"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/spam"
+                android:layout_marginTop="15dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_spam" />
 
@@ -84,8 +71,23 @@
                 android:layout_height="48dp"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/label"
+                android:layout_marginTop="15dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_label_view_mail" />
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/closeButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/close_button_desc"
+                android:gravity="end"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_close" />
         </LinearLayout>
 
         <TextView

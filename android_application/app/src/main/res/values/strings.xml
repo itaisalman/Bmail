@@ -70,5 +70,6 @@
     <string name="sender_example">sender@example.com</string>
     <string name="content">Content:</string>
     <string name="content_example">This is the full content of the email</string>
+    <string name="to">To:</string>
 </resources>
 
