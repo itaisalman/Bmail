@@ -32,7 +32,7 @@
             android:id="@+id/nav_labels_anchor"
             android:icon="@drawable/ic_label"
             android:title="@string/labels"
-            android:enabled="false"/>
+            />
 
         <item
             android:id="@+id/nav_add_label"

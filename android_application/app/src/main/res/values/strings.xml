@@ -73,5 +73,8 @@
     <string name="to">To:</string>
     <string name="labels">Labels</string>
     <string name="add_label">Add Label</string>
+    <string name="label_name">Add Label name</string>
+    <string name="error_empty_name">Missing/Invalid Label Name</string>
+    <string name="error_duplicate_name">The label name you selected already exists. Try a different name</string>
 </resources>
 
