@@ -5,8 +5,10 @@ import com.example.android_application.data.api.MailRequest;
 import com.example.android_application.data.local.entity.Draft;
 import com.example.android_application.data.local.entity.Mail;
 
+import com.example.android_application.data.local.entity.MailWrapper;
 import org.json.JSONObject;
 import androidx.annotation.NonNull;
+import java.util.ArrayList;
 import java.util.List;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -112,21 +114,27 @@ public class MailRepository {
         });
     }
 
-    // Searches mails on the server asynchronously using the query string
+    // Updated to handle List<MailWrapper> from server directly
     public void searchMails(String token, String query, SearchCallback callback) {
-        Call<List<Mail>> call = api.searchMails("Bearer " + token, query);
+        Call<List<MailWrapper>> call = api.searchMails("Bearer " + token, query);
         call.enqueue(new Callback<>() {
             @Override
-            public void onResponse(@NonNull Call<List<Mail>> call, @NonNull Response<List<Mail>> response) {
+            public void onResponse(@NonNull Call<List<MailWrapper>> call, @NonNull Response<List<MailWrapper>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    callback.onSuccess(response.body());
+                    List<Mail> mails = new ArrayList<>();
+                    for (MailWrapper wrapper : response.body()) {
+                        if (wrapper.getMail() != null) {
+                            mails.add(wrapper.getMail());
+                        }
+                    }
+                    callback.onSuccess(mails);
                 } else {
                     callback.onFailure("Search failed with code: " + response.code());
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<Mail>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<List<MailWrapper>> call, @NonNull Throwable t) {
                 callback.onFailure("Search error: " + t.getMessage());
             }
         });
