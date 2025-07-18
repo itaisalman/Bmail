@@ -1,5 +1,6 @@
 package com.example.android_application.ui.search;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.android_application.R;
 import com.example.android_application.data.local.entity.Mail;
 import com.example.android_application.ui.home.HomeViewModel;
+import com.example.android_application.ui.viewMail.ViewMailActivity;
 
 import java.util.List;
 
@@ -51,22 +53,17 @@ public class SearchResultsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setAdapter(adapter);
 
-        adapter.setOnItemClickListener(mail ->
-                Toast.makeText(requireContext(), "Clicked mail: " + mail.getTitle(), Toast.LENGTH_SHORT).show()
-        );
+        adapter.setOnItemClickListener(mail -> {
+            Intent intent = new Intent(requireContext(), ViewMailActivity.class);
+            intent.putExtra("mail", mail);
+            startActivity(intent);
+        });
     }
 
     private void setupViewModelObservers() {
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
 
-        homeViewModel.getSearchResults().observe(getViewLifecycleOwner(), mails -> {
-            if (mails == null) {
-                Log.d("SearchResultsFragment", "Search results: null");
-            } else {
-                Log.d("SearchResultsFragment", "Search results size: " + mails.size());
-            }
-            handleSearchResults(mails);
-        });
+        homeViewModel.getSearchResults().observe(getViewLifecycleOwner(), this::handleSearchResults);
 
         homeViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null && !error.isEmpty()) {
