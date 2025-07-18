@@ -57,13 +57,13 @@ import java.util.TimeZone;
             starButton.setOnClickListener(v -> {
                 isStarred = !isStarred;
                 starButton.setImageResource(isStarred ? R.drawable.ic_star : R.drawable.ic_star_view_mail);
-                prefs.edit().putBoolean("isStarred_" + mailId, isStarred).apply();  // שמירה
+                prefs.edit().putBoolean("isStarred_" + mailId, isStarred).apply();
             });
 
             importantButton.setOnClickListener(v -> {
                 isImportant = !isImportant;
                 importantButton.setImageResource(isImportant ? R.drawable.ic_important : R.drawable.ic_important_view_mail);
-                prefs.edit().putBoolean("isImportant_" + mailId, isImportant).apply();  // שמירה
+                prefs.edit().putBoolean("isImportant_" + mailId, isImportant).apply();
             });
 
 
@@ -71,7 +71,7 @@ import java.util.TimeZone;
         viewModel.getMail().observe(this, mail -> {
             if (mail != null) {
                 subjectTextView.setText(mail.getTitle());
-                fromTextView.setText(mail.getSenderUsername());
+                fromTextView.setText(mail.getSenderAddress());
 
                 try {
                     SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());

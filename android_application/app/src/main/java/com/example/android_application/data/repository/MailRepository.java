@@ -131,42 +131,8 @@ public class MailRepository {
             }
         });
     }
-    public interface MailWithUserCallback {
-        void onSuccess(Mail mailWithUsername);
-        void onError(String errorMessage);
-    }
-
-    public void getMailByIdWithUsername(String token, String mailId, MailWithUserCallback callback) {
-        Call<Mail> mailCall = api.getMailById("Bearer " + token, mailId);
-
-        mailCall.enqueue(new Callback<>() {
-            @Override
-            public void onResponse(@NonNull Call<Mail> call, @NonNull Response<Mail> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    Mail mailData = response.body();
-
-                    // Get username by sender ID
-                    UserRepository userRepository = new UserRepository();
-
-                    userRepository.getUser(token,
-                            json -> {
-                                String username = json.optString("username", "unknown");
-                                mailData.setSenderUsername(username);
-                                callback.onSuccess(mailData);
-                            },
-                            error -> callback.onSuccess(mailData)
-                    );
-
-
-                } else {
-                    callback.onError("Mail not found: " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<Mail> call, @NonNull Throwable t) {
-                callback.onError("Network error while loading mail: " + t.getMessage());
-            }
-        });
+    public void getMailById(String token, String mailId, Callback<Mail> callback) {
+        Call<Mail> call = api.getMailById("Bearer " + token, mailId);
+        call.enqueue(callback);
     }
 }
