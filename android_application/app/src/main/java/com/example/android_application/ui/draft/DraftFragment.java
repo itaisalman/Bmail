@@ -1,6 +1,7 @@
 package com.example.android_application.ui.draft;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,50 +10,86 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.example.android_application.R;
+import com.example.android_application.data.local.entity.Draft;
 
-import com.example.android_application.databinding.FragmentDraftBinding;
+import java.util.ArrayList;
 
-/**
- * A Fragment representing the "Draft" screen in the application.
- */
 public class DraftFragment extends Fragment {
 
-    // ViewBinding object for accessing views in fragment_draft.xml
-    private FragmentDraftBinding binding;
+    private DraftViewModel draftViewModel;
+    private DraftAdapter draftAdapter;
+    private RecyclerView recyclerView;
+    private TextView noResultsTextView;
 
-    /**
-     * Called to have the fragment instantiate its user interface view.
-     *
-     * @param inflater           LayoutInflater to inflate views in the fragment
-     * @param container          Parent view that the fragment's UI should be attached to
-     * @param savedInstanceState Previous state, if available
-     * @return The root view of the fragment's layout
-     */
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        // Create ViewModel instance tied to this Fragment's lifecycle
-        DraftViewModel draftViewModel =
-                new ViewModelProvider(this).get(DraftViewModel.class);
+    private boolean isLoading = false;
+    private boolean isLastPage = false;
 
-        // Inflate the layout using ViewBinding
-        binding = FragmentDraftBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-
-        // Access the TextView from the binding
-        final TextView textView = binding.textDraft;
-
-        // Observe the LiveData from the ViewModel and update the TextView when it changes
-        draftViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-        return root;
-    }
-
-    /**
-     * Called when the view hierarchy associated with the fragment is being removed.
-     * Good place to null out the binding to avoid memory leaks.
-     */
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        View root = inflater.inflate(R.layout.fragment_search_results, container, false);
+
+        recyclerView = root.findViewById(R.id.recyclerSearchResults);
+        noResultsTextView = root.findViewById(R.id.noResultsTextView);
+
+        draftViewModel = new ViewModelProvider(this).get(DraftViewModel.class);
+
+        draftAdapter = new DraftAdapter(new ArrayList<>(), new DraftAdapter.OnDraftClickListener() {
+            @Override
+            public void onClick(Draft draft) {
+                // TODO: Open ComposeBottomSheet with this draft
+            }
+
+            @Override
+            public void onDelete(Draft draft) {
+                // Leave empty for now or handle delete if you want later
+            }
+        });
+
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(draftAdapter);
+
+        draftViewModel.getAllDrafts().observe(getViewLifecycleOwner(), drafts -> {
+            Log.d("DraftFragment", "Observed drafts: " + drafts.size());
+            for (Draft d : drafts) {
+                Log.d("DraftFragment", "Draft title: " + d.getSubject());
+            }
+            draftAdapter.setDraftList(drafts);
+            noResultsTextView.setVisibility(drafts.isEmpty() ? View.VISIBLE : View.GONE);
+            isLoading = false;
+        });
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if (dy <= 0) return;
+
+                int visibleItemCount = layoutManager.getChildCount();
+                int totalItemCount = layoutManager.getItemCount();
+                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+                if (!isLoading && !isLastPage) {
+                    if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                            && firstVisibleItemPosition >= 0) {
+                        isLoading = true;
+                        draftViewModel.loadNextPage();
+                    }
+                }
+            }
+        });
+
+        isLoading = true;
+        draftViewModel.loadNextPage();
+
+        draftViewModel.getIsLastPage().observe(getViewLifecycleOwner(), lastPage -> isLastPage = lastPage);
+
+        return root;
     }
 }

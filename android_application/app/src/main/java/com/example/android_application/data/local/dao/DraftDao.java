@@ -15,6 +15,8 @@ public interface DraftDao {
 
     @Delete
     void delete(Draft draft);
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertDrafts(List<Draft> drafts);
 
     @Query("SELECT * FROM drafts ORDER BY last_modified DESC")
     LiveData<List<Draft>> getAllDrafts();

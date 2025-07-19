@@ -3,9 +3,10 @@ package com.example.android_application.data.local.entity;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
+import java.io.Serializable;
 import com.google.gson.annotations.SerializedName;
 @Entity(tableName = "mails")
-public class Mail {
+public class Mail implements Serializable{
 
     @PrimaryKey
     @SerializedName("_id")

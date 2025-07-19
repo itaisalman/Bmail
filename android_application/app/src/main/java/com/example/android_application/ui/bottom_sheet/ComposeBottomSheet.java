@@ -97,8 +97,6 @@ public class ComposeBottomSheet extends BottomSheetDialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-
-        // Expand the bottom sheet fully on start and skip collapsed state
         BottomSheetDialog dialog = (BottomSheetDialog) getDialog();
         if (dialog != null) {
             View bottomSheet = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);

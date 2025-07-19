@@ -6,6 +6,8 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
+
+import com.example.android_application.data.local.AppDatabase;
 import com.example.android_application.data.local.entity.Draft;
 import com.example.android_application.data.repository.MailRepository;
 
