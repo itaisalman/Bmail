@@ -61,6 +61,10 @@ public class MailRepository {
         return mailDao.getReceivedMailsLive(receiverAddress);
     }
 
+    public LiveData<List<Mail>> getSentMailsLive(String senderAddress) {
+        return mailDao.getSentMailsLive(senderAddress);
+    }
+
     public void insertMails(List<Mail> mails) {
         new Thread(() -> mailDao.insert(mails)).start();
     }

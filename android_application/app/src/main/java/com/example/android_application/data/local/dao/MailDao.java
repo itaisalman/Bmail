@@ -1,7 +1,6 @@
 package com.example.android_application.data.local.dao;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -19,8 +18,8 @@ public interface MailDao {
     @Query("SELECT * FROM mails")
     List<Mail> index();
 
-    @Query("SELECT * FROM mails WHERE sender_address = :sender_address")
-    List<Mail> getSent(String sender_address);
+    @Query("SELECT * FROM mails WHERE sender_address = :sender_address ORDER BY date DESC")
+    LiveData<List<Mail>> getSentMailsLive(String sender_address);
 
     @Query("SELECT * FROM mails WHERE receiver_address = :receiverAddress ORDER BY date DESC")
     LiveData<List<Mail>> getReceivedMailsLive(String receiverAddress);
