@@ -15,6 +15,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -77,6 +79,7 @@ public class MailRepository {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
+                    refreshAllMailboxes(token);
                     callback.onSuccess();
                 } else {
                     try (ResponseBody errorBody = response.errorBody()) {
@@ -152,9 +155,10 @@ public class MailRepository {
         });
     }
 
-
-
-
-
-
+    private void refreshAllMailboxes(String token) {
+        String[] labels = {"Inbox", "Sent", "Spam"};
+        for (String label : labels) {
+            getMailsByLabel(token, label, 1, null);
+        }
+    }
 }
