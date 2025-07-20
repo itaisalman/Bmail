@@ -16,7 +16,7 @@
         android:layout_marginEnd="8dp"
         android:src="@drawable/ic_label"
         android:contentDescription="@string/label"
-        app:tint="@color/mail_title"
+        app:tint="@color/mail_date"
         />
 
     <TextView
@@ -28,6 +28,7 @@
         android:textSize="16sp"
         android:maxLines="1"
         android:ellipsize="end"
+        android:textColor="@color/black"
         />
 
     <ImageButton
