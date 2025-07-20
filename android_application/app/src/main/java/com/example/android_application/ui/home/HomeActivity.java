@@ -94,6 +94,12 @@ public class HomeActivity extends AppCompatActivity {
                 String profilePath = userJson.optString("image", "");
                 String profileUrl = "http://10.0.2.2:3000/" + profilePath;
 
+                // Save userID in SharedPreferences in order to extract only it's values from local DB.
+                String userId = userJson.optString("_id", null);
+                getSharedPreferences("MyPrefs", MODE_PRIVATE)
+                        .edit()
+                        .putString("userID", userId)
+                        .apply();
                 nameTextView.setText(String.format("%s %s", firstName, lastName));
                 usernameTextView.setText(username);
 

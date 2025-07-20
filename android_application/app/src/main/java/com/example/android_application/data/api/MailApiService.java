@@ -1,5 +1,6 @@
 package com.example.android_application.data.api;
 
+import com.example.android_application.data.local.entity.DraftWrapper;
 import com.example.android_application.data.local.entity.MailWrapper;
 import java.util.List;
 import okhttp3.ResponseBody;
@@ -9,6 +10,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface MailApiService {
 
@@ -29,5 +31,12 @@ public interface MailApiService {
     Call<List<MailWrapper>> searchMails(
             @Header("authorization") String authHeader,
             @Path("query") String query
+    );
+
+    @GET("/api/mails")
+    Call<DraftWrapper> getDrafts(
+            @Header("authorization") String bearerToken,
+            @Header("label") String label,  // pass "Draft" here
+            @Query("page") int page
     );
 }
