@@ -23,8 +23,8 @@ public class InboxViewModel extends MailListViewModel {
     public InboxViewModel(@NonNull Application application, String currentUserEmail) {
         super(application);
         mailRepository = new MailRepository(application.getApplicationContext());
-        inboxMails = mailRepository.getReceivedMailsLive(currentUserEmail);
         getMails("Inbox");
+        inboxMails = mailRepository.getReceivedMailsLive(currentUserEmail);
     }
 
     @Override
@@ -45,14 +45,11 @@ public class InboxViewModel extends MailListViewModel {
     public void getMails(String label) {
         mailRepository.getMailsByLabel(getTokenFromStorage(), label, new MailRepository.MailListCallback() {
             @Override
-            public void onSuccess(List<Mail> mails, int totalCount) {
-                // Insert or update mails in local DB asynchronously
-                mailRepository.insertMails(mails);
-            }
+            public void onSuccess(List<Mail> mails, int totalCount) {}
 
             @Override
             public void onFailure(String errorMessage) {
-                // Handle error, e.g. show message
+                // Handle error
                 error.postValue(errorMessage);
             }
         });

@@ -25,7 +25,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MailRepository {
 
     private final MailApiService api;
-    private final Context context;
     private final MailDao mailDao;
     private final AppDatabase db;
 
@@ -51,7 +50,6 @@ public class MailRepository {
                 .build();
 
         api = retrofit.create(MailApiService.class);
-        this.context = context.getApplicationContext();
         db = AppDatabase.getDatabase(context);
         mailDao = db.mailDao();
     }

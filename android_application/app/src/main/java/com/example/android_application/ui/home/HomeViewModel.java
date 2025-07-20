@@ -32,7 +32,6 @@ public class HomeViewModel extends AndroidViewModel {
         super(application);
         this.mailRepository = new MailRepository(application.getApplicationContext());
         this.repository = new UserRepository();
-        this.mailRepository = new MailRepository(application.getApplicationContext());
     }
 
     public void getUser() {
