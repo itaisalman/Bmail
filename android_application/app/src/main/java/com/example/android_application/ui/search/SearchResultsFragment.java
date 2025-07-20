@@ -2,19 +2,16 @@ package com.example.android_application.ui.search;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.android_application.R;
 import com.example.android_application.data.local.entity.Mail;
 import com.example.android_application.ui.home.HomeViewModel;
@@ -29,6 +26,7 @@ public class SearchResultsFragment extends Fragment {
     private TextView noResultsTextView;
     private RecyclerView recyclerView;
 
+    // Inflate layout and initialize UI components and observers.
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
@@ -43,11 +41,13 @@ public class SearchResultsFragment extends Fragment {
         return view;
     }
 
+    // Initialize references to views inside the fragment layout.
     private void initViews(View view) {
         recyclerView = view.findViewById(R.id.recyclerSearchResults);
         noResultsTextView = view.findViewById(R.id.noResultsTextView);
     }
 
+    // Setup RecyclerView with adapter and click listener.
     private void setupRecyclerView() {
         adapter = new MailAdapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -60,9 +60,9 @@ public class SearchResultsFragment extends Fragment {
         });
     }
 
+    // Initialize ViewModel and observe LiveData to update UI.
     private void setupViewModelObservers() {
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
-
         homeViewModel.getSearchResults().observe(getViewLifecycleOwner(), this::handleSearchResults);
 
         homeViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
@@ -72,14 +72,13 @@ public class SearchResultsFragment extends Fragment {
         });
     }
 
-
+    // Show mails or display "no results" message based on data availability.
     private void handleSearchResults(List<Mail> mails) {
         if (mails != null && !mails.isEmpty()) {
             adapter.setMailList(mails);
             recyclerView.setVisibility(View.VISIBLE);
             noResultsTextView.setVisibility(View.GONE);
         } else {
-            Log.d("Here", "got here");
             recyclerView.setVisibility(View.GONE);
             noResultsTextView.setVisibility(View.VISIBLE);
         }
