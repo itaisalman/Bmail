@@ -37,6 +37,12 @@ public class ComposeBottomSheet extends BottomSheetDialogFragment {
                 new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication()))
                 .get(ComposeViewModel.class);
 
+        // Pre-fill the fields if arguments are passed (for editing a draft)
+        if (getArguments() != null) {
+            toInput.setText(getArguments().getString("to", ""));
+            subjectInput.setText(getArguments().getString("subject", ""));
+            bodyInput.setText(getArguments().getString("body", ""));
+        }
 
         viewModel.draftSaved.observe(getViewLifecycleOwner(), saved -> {
             if (saved != null && saved) {
@@ -47,6 +53,7 @@ public class ComposeBottomSheet extends BottomSheetDialogFragment {
                 viewModel.draftSaved.setValue(false);
             }
         });
+
         // Save draft and dismiss when close (X) is pressed
         closeButton.setOnClickListener(v -> {
             viewModel.saveDraft(
@@ -64,6 +71,7 @@ public class ComposeBottomSheet extends BottomSheetDialogFragment {
         // Observe LiveData for success or error
         observeViewModel();
     }
+
 
     private void observeViewModel() {
         // Dismiss bottom sheet when mail is sent successfully

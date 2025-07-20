@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.android_application.R;
 import com.example.android_application.data.local.entity.Draft;
+import com.example.android_application.ui.bottom_sheet.ComposeBottomSheet;
 import com.example.android_application.ui.bottom_sheet.ComposeViewModel;
 
 import java.util.ArrayList;
@@ -47,7 +48,13 @@ public class DraftFragment extends Fragment {
         draftAdapter = new DraftAdapter(new ArrayList<>(), new DraftAdapter.OnDraftClickListener() {
             @Override
             public void onClick(Draft draft) {
-                // TODO: Open ComposeBottomSheet with this draft
+                ComposeBottomSheet bottomSheet = new ComposeBottomSheet();
+                Bundle args = new Bundle();
+                args.putString("to", draft.getTo());
+                args.putString("subject", draft.getSubject());
+                args.putString("body", draft.getBody());
+                bottomSheet.setArguments(args);
+                bottomSheet.show(getParentFragmentManager(), "ComposeBottomSheet");
             }
 
             @Override
