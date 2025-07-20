@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 import com.example.android_application.data.local.entity.Label;
 import com.example.android_application.data.local.dao.LabelDao;
 
-@Database(entities = {Draft.class, Label.class}, version = 4) // Incremented version due to schema change
+@Database(entities = {Draft.class, Label.class}, version = 5) // Incremented version due to schema change
 public abstract class AppDatabase extends RoomDatabase {
     public abstract DraftDao draftDao();
 
@@ -47,13 +47,6 @@ public abstract class AppDatabase extends RoomDatabase {
             database.execSQL("ALTER TABLE drafts ADD COLUMN last_modified INTEGER NOT NULL DEFAULT 0");
         }
     };
-    static final Migration MIGRATION_4_5 = new Migration(4, 5) {
-        @Override
-        public void migrate(@NonNull SupportSQLiteDatabase database) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS `labels` (`_id` TEXT NOT NULL, `name` TEXT, PRIMARY KEY(`_id`))");
-        }
-    };
-
 
     static final Migration MIGRATION_2_3 = new Migration(2, 3) {
         @Override
@@ -79,6 +72,13 @@ public abstract class AppDatabase extends RoomDatabase {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE drafts ADD COLUMN user_id TEXT");
+        }
+    };
+
+    static final Migration MIGRATION_4_5 = new Migration(4, 5) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS `labels` (`_id` TEXT NOT NULL, `name` TEXT, PRIMARY KEY(`_id`))");
         }
     };
 }
