@@ -63,10 +63,6 @@ public class SearchResultsFragment extends Fragment {
     // Initialize ViewModel and observe LiveData to update UI.
     private void setupViewModelObservers() {
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
-
-        // homeViewModel.getSearchResults().observe(getViewLifecycleOwner(), mails -> {
-        //     handleSearchResults(mails);
-        // });
         homeViewModel.getSearchResults().observe(getViewLifecycleOwner(), this::handleSearchResults);
 
         homeViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
