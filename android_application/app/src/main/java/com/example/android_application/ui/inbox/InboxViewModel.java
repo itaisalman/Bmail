@@ -23,7 +23,7 @@ public class InboxViewModel extends MailListViewModel {
     public InboxViewModel(@NonNull Application application, String currentUserEmail) {
         super(application);
         mailRepository = new MailRepository(application.getApplicationContext());
-        getMails("Inbox");
+        getMails("Inbox", currentPage);
         inboxMails = mailRepository.getReceivedMailsLive(currentUserEmail);
     }
 
@@ -42,8 +42,8 @@ public class InboxViewModel extends MailListViewModel {
     }
 
     @Override
-    public void getMails(String label) {
-        mailRepository.getMailsByLabel(getTokenFromStorage(), label, new MailRepository.MailListCallback() {
+    public void getMails(String label, int page) {
+        mailRepository.getMailsByLabel(getTokenFromStorage(), label, page, new MailRepository.MailListCallback() {
             @Override
             public void onSuccess(List<Mail> mails, int totalCount) {}
 

@@ -35,4 +35,15 @@ public class InboxFragment extends MailListFragment {
             }
         });
     }
+
+   @Override
+    protected String getLabel() {
+        return "Inbox";
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mailListViewModel.initMails(getLabel());
+    }
 }

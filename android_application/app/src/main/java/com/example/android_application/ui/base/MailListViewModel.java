@@ -17,10 +17,64 @@ public abstract class MailListViewModel extends AndroidViewModel {
     public final MutableLiveData<String> error = new MutableLiveData<>();
     protected int numMails;
 
+    protected int currentPage = 1;
+    protected boolean isLoading = false;
+    protected boolean isLastPage = false;
+    protected final MutableLiveData<Boolean> isLastPageLiveData = new MutableLiveData<>(false);
+
+
     public MailListViewModel(@NonNull Application application) {
         super(application);
         mailRepository = new MailRepository(application.getApplicationContext());
         numMails = 0;
+    }
+
+    public LiveData<Boolean> getIsLastPageLiveData() {
+        return isLastPageLiveData;
+    }
+
+    public void initMails(String label) {
+        currentPage = 1;
+        isLastPage = false;
+        loadPage(label, currentPage);
+    }
+
+    public void loadNextPage(String label) {
+        if (isLoading || isLastPage) return;
+        loadPage(label, currentPage);
+    }
+
+    private void loadPage(String label, int page) {
+        isLoading = true;
+        mailRepository.getMailsByLabel(getTokenFromStorage(), label, page, new MailRepository.MailListCallback() {
+            @Override
+            public void onSuccess(List<Mail> mails, int count) {
+                if (page == 1) {
+                    mailList.postValue(mails);
+                } else {
+                    List<Mail> current = mailList.getValue();
+                    if (current != null) {
+                        current.addAll(mails);
+                        mailList.postValue(current);
+                    }
+                }
+
+                currentPage++;
+                numMails = count;
+                if (mails.size() < 50) {
+                    isLastPage = true;
+                    isLastPageLiveData.postValue(true);
+                }
+
+                isLoading = false;
+            }
+
+            @Override
+            public void onFailure(String errorMsg) {
+                error.postValue(errorMsg);
+                isLoading = false;
+            }
+        });
     }
 
     // Retrieve JWT token from SharedPreferences for authorization
@@ -29,8 +83,8 @@ public abstract class MailListViewModel extends AndroidViewModel {
         return prefs.getString("jwt", "");
     }
 
-    public void getMails(String label) {
-        mailRepository.getMailsByLabel(getTokenFromStorage(), label, new MailRepository.MailListCallback() {
+    public void getMails(String label, int page) {
+        mailRepository.getMailsByLabel(getTokenFromStorage(), label, page, new MailRepository.MailListCallback() {
             @Override
             public void onSuccess(List<Mail> mails, int count) {
                 mailList.postValue(mails);

@@ -127,9 +127,9 @@ public class MailRepository {
         });
     }
 
-    public void getMailsByLabel(String token, String label, MailListCallback callback) {
+    public void getMailsByLabel(String token, String label,int page, MailListCallback callback) {
         MutableLiveData<MailPageResponse> responseLiveData = new MutableLiveData<>();
-        Call<MailPageResponse> call = api.getMails("Bearer " + token, label, 1);
+        Call<MailPageResponse> call = api.getMails("Bearer " + token, label, page);
         call.enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<MailPageResponse> call, @NonNull Response<MailPageResponse> response) {

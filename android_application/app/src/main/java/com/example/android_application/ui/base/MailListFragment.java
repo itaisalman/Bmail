@@ -34,6 +34,26 @@ public class MailListFragment extends Fragment {
 
         initViews(view);
         setupRecyclerView();
+
+        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if (dy <= 0) return;
+
+                int visibleItemCount = layoutManager.getChildCount();
+                int totalItemCount = layoutManager.getItemCount();
+                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+                if (!mailListViewModel.isLoading && !mailListViewModel.isLastPage) {
+                    if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                            && firstVisibleItemPosition >= 0) {
+                        mailListViewModel.loadNextPage(getLabel());
+                    }
+                }
+            }
+        });
+
         setupViewModel();
 
         return view;
@@ -77,5 +97,9 @@ public class MailListFragment extends Fragment {
             recyclerView.setVisibility(View.GONE);
             noResultsTextView.setVisibility(View.VISIBLE);
         }
+    }
+
+    protected String getLabel() {
+        return "Inbox"; // default, override in InboxFragment etc.
     }
 }
