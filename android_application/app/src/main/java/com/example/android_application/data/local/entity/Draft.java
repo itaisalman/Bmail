@@ -28,11 +28,15 @@ public class Draft {
     @ColumnInfo(name = "last_modified")
     private long lastModified;
 
-    public Draft(String to, String subject, String body) {
+    // Track owner of the draft.
+    @ColumnInfo(name = "user_id")
+    private String userId;
+
+    public Draft(String to, String subject, String body, String userId) {
         this.to = to;
         this.subject = subject;
         this.body = body;
-        this.lastModified = System.currentTimeMillis();
+        this.userId = userId;
     }
 
     // Getters and setters
@@ -50,4 +54,7 @@ public class Draft {
 
     public long getLastModified() { return lastModified; }
     public void setLastModified(long lastModified) { this.lastModified = lastModified; }
+
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 }

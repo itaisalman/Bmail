@@ -6,31 +6,39 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.android_application.R;
 import com.example.android_application.data.local.entity.Draft;
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class DraftAdapter extends RecyclerView.Adapter<DraftAdapter.DraftViewHolder> {
 
+    // Listener interface for item click and delete actions.
     public interface OnDraftClickListener {
         void onClick(Draft draft);
         void onDelete(Draft draft);
     }
 
-    private List<Draft> draftList;
+    private List<Draft> draftList = new ArrayList<>();
     private final OnDraftClickListener listener;
 
     public DraftAdapter(List<Draft> draftList, OnDraftClickListener listener) {
-        this.draftList = draftList;
+        if (draftList != null) {
+            this.draftList = draftList;
+        }
         this.listener = listener;
     }
 
+    // Efficiently update the list using DiffUtil for minimal UI changes.
     public void setDraftList(List<Draft> newList) {
-        this.draftList = newList;
-        notifyDataSetChanged();
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffCallback(this.draftList, newList));
+        this.draftList.clear();
+        if (newList != null) {
+            this.draftList.addAll(newList);
+        }
+        diffResult.dispatchUpdatesTo(this);
     }
 
     @NonNull
@@ -52,6 +60,7 @@ public class DraftAdapter extends RecyclerView.Adapter<DraftAdapter.DraftViewHol
         holder.snippet.setText(draft.getBody() != null ? draft.getBody() : "No Content");
         holder.date.setText("");
 
+        // Set up click listener to notify listener when item is clicked
         holder.itemView.setOnClickListener(v -> listener.onClick(draft));
 //        holder.deleteBtn.setOnClickListener(v -> listener.onDelete(draft));
     }
@@ -71,7 +80,50 @@ public class DraftAdapter extends RecyclerView.Adapter<DraftAdapter.DraftViewHol
             title = itemView.findViewById(R.id.mail_title);
             snippet = itemView.findViewById(R.id.mail_snippet);
             date = itemView.findViewById(R.id.mail_date);
-//            deleteBtn = itemView.findViewById(R.id.mail_delete_button); // Add this to your XML
+//            deleteBtn = itemView.findViewById(R.id.mail_delete_button); // Uncomment if used
+        }
+    }
+
+    // DiffUtil calculates minimal updates between old and new draft lists
+    private static class DiffCallback extends DiffUtil.Callback {
+
+        private final List<Draft> oldList;
+        private final List<Draft> newList;
+
+        public DiffCallback(List<Draft> oldList, List<Draft> newList) {
+            this.oldList = oldList != null ? oldList : new ArrayList<>();
+            this.newList = newList != null ? newList : new ArrayList<>();
+        }
+
+        @Override
+        public int getOldListSize() {
+            return oldList.size();
+        }
+
+        @Override
+        public int getNewListSize() {
+            return newList.size();
+        }
+
+        @Override
+        public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+            Draft oldDraft = oldList.get(oldItemPosition);
+            Draft newDraft = newList.get(newItemPosition);
+
+            if (oldDraft.getId() != null && newDraft.getId() != null) {
+                return oldDraft.getId().equals(newDraft.getId());
+            } else {
+                return oldDraft.getTo().equals(newDraft.getTo())
+                        && oldDraft.getSubject().equals(newDraft.getSubject())
+                        && oldDraft.getBody().equals(newDraft.getBody());
+            }
+        }
+
+        @Override
+        public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+            Draft oldDraft = oldList.get(oldItemPosition);
+            Draft newDraft = newList.get(newItemPosition);
+            return oldDraft.equals(newDraft);
         }
     }
 }

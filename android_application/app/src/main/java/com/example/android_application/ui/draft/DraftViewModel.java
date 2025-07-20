@@ -1,21 +1,18 @@
 package com.example.android_application.ui.draft;
 
 import android.app.Application;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
 import com.example.android_application.data.local.entity.Draft;
 import com.example.android_application.data.repository.DraftRepository;
-
 import java.util.List;
 
 public class DraftViewModel extends AndroidViewModel {
 
     private final DraftRepository draftRepository;
-    private final LiveData<List<Draft>> allDrafts;
+    private LiveData<List<Draft>> allDrafts;
 
     private int currentPage = 1;
     private boolean isLastPage = false;
@@ -29,16 +26,18 @@ public class DraftViewModel extends AndroidViewModel {
     public DraftViewModel(@NonNull Application application) {
         super(application);
         draftRepository = new DraftRepository(application);
-        allDrafts = draftRepository.getAllDrafts();
+    }
+
+    // Load drafts from local DB for given user.
+    public void loadDraftsForUser(String userId) {
+        allDrafts = draftRepository.getAllDrafts(userId);
     }
 
     public LiveData<List<Draft>> getAllDrafts() {
         return allDrafts;
     }
 
-    /**
-     * Load next page of drafts if not already loading or at last page.
-     */
+    // Fetches the next page from server if not already loading or last page.
     public void loadNextPage() {
         if (isLoading || isLastPage) return;
 
@@ -57,18 +56,25 @@ public class DraftViewModel extends AndroidViewModel {
 
             @Override
             public void onError(String error) {
-                // You can log or handle errors here
                 isLoading = false;
             }
         });
     }
 
-    /**
-     * Reset paging and reload from first page.
-     */
-    public void resetPaging() {
-        currentPage = 1;
-        isLastPage = false;
-        loadNextPage();
+    // Fetch first page and reset pagination state.
+    public void fetchDraftsFromServer() {
+        draftRepository.getAllDraftsFromServer(1, new DraftRepository.ApiCallback() {
+            @Override
+            public void onSuccess(int fetchedCount) {
+                currentPage = 2;
+                isLastPage = fetchedCount < DraftRepository.PAGE_SIZE;
+                isLastPageLiveData.postValue(isLastPage);
+            }
+
+            @Override
+            public void onError(String error) {
+                // Optional: expose error LiveData or log
+            }
+        });
     }
 }

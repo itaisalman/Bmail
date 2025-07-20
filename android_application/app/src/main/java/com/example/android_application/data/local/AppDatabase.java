@@ -9,11 +9,10 @@ import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.example.android_application.data.local.dao.DraftDao;
 import com.example.android_application.data.local.entity.Draft;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Draft.class}, version = 3)
+@Database(entities = {Draft.class}, version = 4)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract DraftDao draftDao();
 
@@ -26,13 +25,15 @@ public abstract class AppDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "draft_database")
-                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                            .fallbackToDestructiveMigration() // optional: for dev convenience
                             .build();
                 }
             }
         }
         return INSTANCE;
     }
+
     public static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(4);
 
@@ -42,6 +43,7 @@ public abstract class AppDatabase extends RoomDatabase {
             database.execSQL("ALTER TABLE drafts ADD COLUMN last_modified INTEGER NOT NULL DEFAULT 0");
         }
     };
+
     static final Migration MIGRATION_2_3 = new Migration(2, 3) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
@@ -62,4 +64,10 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    static final Migration MIGRATION_3_4 = new Migration(3, 4) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE drafts ADD COLUMN user_id TEXT");
+        }
+    };
 }

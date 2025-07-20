@@ -33,10 +33,20 @@ public class ComposeBottomSheet extends BottomSheetDialogFragment {
         ImageButton closeButton = view.findViewById(R.id.close_button);
 
         // Initialize ViewModel with application context
-        viewModel = new ViewModelProvider(this,
+        viewModel = new ViewModelProvider(requireActivity(),
                 new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication()))
                 .get(ComposeViewModel.class);
 
+
+        viewModel.draftSaved.observe(getViewLifecycleOwner(), saved -> {
+            if (saved != null && saved) {
+                // notify DraftFragment to refresh
+                viewModel.setNewDraftCreated(true);
+                // close the ComposeBottomSheet only after save succeeds
+                dismiss();
+                viewModel.draftSaved.setValue(false);
+            }
+        });
         // Save draft and dismiss when close (X) is pressed
         closeButton.setOnClickListener(v -> {
             viewModel.saveDraft(
@@ -44,7 +54,6 @@ public class ComposeBottomSheet extends BottomSheetDialogFragment {
                     subjectInput.getText().toString(),
                     bodyInput.getText().toString()
             );
-            dismiss();
         });
 
         // Send mail when send button is pressed
@@ -61,6 +70,7 @@ public class ComposeBottomSheet extends BottomSheetDialogFragment {
         viewModel.mailSent.observe(getViewLifecycleOwner(), success -> {
             if (success != null && success) {
                 dismiss();
+                viewModel.mailSent.setValue(false);
             }
         });
 
