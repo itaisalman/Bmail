@@ -107,9 +107,10 @@ public class HomeActivity extends AppCompatActivity {
             });
 
             // Handle possible errors
-            homeViewModel.error.observe(this, errorMessage ->
-                    Toast.makeText(this, "error: " + errorMessage, Toast.LENGTH_SHORT).show()
-            );
+            homeViewModel.error.observe(this, errorMessage -> {
+                Toast.makeText(this, "error: " + errorMessage, Toast.LENGTH_SHORT).show();
+                homeViewModel.clearErrorMessage();
+            });
         }
 
         // Configure navigation drawer destinations

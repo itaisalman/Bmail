@@ -68,6 +68,7 @@ public class DraftFragment extends Fragment {
         draftViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null && !error.isEmpty()) {
                 Toast.makeText(requireContext(), "Failed to delete draft: " + error, Toast.LENGTH_LONG).show();
+                draftViewModel.clearErrorMessage();
             }
         });
 

@@ -27,6 +27,9 @@ public class ComposeViewModel extends AndroidViewModel {
     // Notify whether a draft has been clicked.
     private final MutableLiveData<Boolean> isDraftClicked = new MutableLiveData<>();
 
+    public void clearErrorMessage() {
+        error.postValue(null);
+    }
     public LiveData<Boolean> getNewDraftCreated() {
         return newDraftCreated;
     }
@@ -110,6 +113,7 @@ public class ComposeViewModel extends AndroidViewModel {
 
             @Override
             public void onError(String errorMessage) {
+                setIsDraftClicked(false);
                 error.postValue(errorMessage);
             }
         });

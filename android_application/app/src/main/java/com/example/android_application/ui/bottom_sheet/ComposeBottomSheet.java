@@ -61,9 +61,6 @@ public class ComposeBottomSheet extends BottomSheetDialogFragment {
             String to = toInput.getText().toString();
             String subject = subjectInput.getText().toString();
             String body = bodyInput.getText().toString();
-
-
-
             if (isEditing) {
                 // We're editing an existing draft.
                 String draftId = getArguments().getString("id");
@@ -72,15 +69,12 @@ public class ComposeBottomSheet extends BottomSheetDialogFragment {
                 // We're saving a new draft.
                 viewModel.saveDraft(to, subject, body);
             }
-
-            dismiss();
         });
 
         // Send mail when send button is pressed.
         // If isDraftClicked is true, then send the mail and also delete and draft.
         sendButton.setOnClickListener(v -> {
             String draftId = null;
-
             if (isEditing) {
                 if (getArguments() != null) {
                     draftId = getArguments().getString("id");
@@ -112,6 +106,7 @@ public class ComposeBottomSheet extends BottomSheetDialogFragment {
         viewModel.error.observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
                 Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+                viewModel.clearErrorMessage();
             }
         });
     }

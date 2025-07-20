@@ -28,6 +28,10 @@ public class DraftViewModel extends AndroidViewModel {
         return errorMessage;
     }
 
+    public void clearErrorMessage() {
+        errorMessage.postValue(null);
+    }
+
     public LiveData<Boolean> getIsLastPage() {
         return isLastPageLiveData;
     }
