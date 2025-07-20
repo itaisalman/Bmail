@@ -6,7 +6,7 @@ import androidx.room.ColumnInfo;
 import java.io.Serializable;
 import com.google.gson.annotations.SerializedName;
 @Entity(tableName = "mails")
-public class Mail implements Serializable{
+public class Mail implements Serializable {
 
     @PrimaryKey
     @SerializedName("_id")

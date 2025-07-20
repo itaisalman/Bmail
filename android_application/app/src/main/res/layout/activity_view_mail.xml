@@ -1,0 +1,168 @@
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:paddingStart="37dp"
+    android:paddingEnd="35dp"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:gravity="start"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <ImageButton
+                android:id="@+id/starButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/star"
+                android:layout_marginTop="15dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_star_view_mail" />
+
+            <ImageButton
+                android:id="@+id/importantButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/important"
+                android:layout_marginTop="15dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_important_view_mail" />
+
+            <ImageButton
+                android:id="@+id/deleteButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/delete"
+                android:layout_marginTop="15dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_trash" />
+
+            <ImageButton
+                android:id="@+id/spamButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/spam"
+                android:layout_marginTop="15dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_spam" />
+
+            <ImageButton
+                android:id="@+id/labelButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/label"
+                android:layout_marginTop="15dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_label_view_mail" />
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/closeButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/close_button_desc"
+                android:gravity="end"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_close" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/dateTextView"
+            android:text="@string/date_example"
+            android:textSize="20sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:id="@+id/subjectTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/subject"
+            android:textColor="@color/blue_title"
+            android:textSize="34sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:singleLine="false"
+            android:ellipsize="none"
+            android:lineSpacingExtra="4dp"
+            android:hyphenationFrequency="none"
+            android:scrollHorizontally="false"
+            android:breakStrategy="high_quality"
+            />
+
+        <TextView
+            android:id="@+id/fromLabel"
+            android:text="@string/from"
+            android:textStyle="bold"
+            android:textColor="@color/blue_title"
+            android:textSize="23sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp" />
+
+
+        <TextView
+            android:id="@+id/fromEmail"
+            android:text="@string/sender_example"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:textSize="22sp"
+            android:background="@drawable/rounded_body_background"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"/>
+
+
+        <TextView
+            android:id="@+id/contentLabel"
+            android:text="@string/content"
+            android:textStyle="bold"
+            android:textColor="@color/blue_title"
+            android:textSize="23sp"
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/bodyTextView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/rounded_body_background"
+            android:minLines="10"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="@string/content_example"
+            android:textSize="20sp"
+            android:scrollHorizontally="true"
+            android:singleLine="false"
+        />
+
+        </LinearLayout>
+    </ScrollView>
