@@ -1,6 +1,7 @@
 package com.example.android_application.data.api;
 
 import com.example.android_application.data.local.entity.DraftWrapper;
+import com.example.android_application.data.local.entity.Mail;
 import com.example.android_application.data.local.entity.MailWrapper;
 import java.util.List;
 import okhttp3.ResponseBody;
@@ -39,4 +40,8 @@ public interface MailApiService {
             @Header("label") String label,  // pass "Draft" here
             @Query("page") int page
     );
+
+    @GET("labels/{labelId}/mails")
+    Call<List<Mail>> getMailsByLabel(@Header("Authorization") String token, @Path("labelId") String labelId);
+
 }

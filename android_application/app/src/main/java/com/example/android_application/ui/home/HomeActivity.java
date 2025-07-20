@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.example.android_application.data.local.entity.Label;
 import com.example.android_application.ui.bottom_sheet.ComposeBottomSheet;
 import com.example.android_application.ui.label.LabelDialogHelper;
+import com.example.android_application.ui.label.LabelMailsActivity;
 import com.example.android_application.ui.label.LabelViewModel;
 import com.example.android_application.ui.login.LoginActivity;
 import com.google.android.material.navigation.NavigationView;
@@ -283,6 +284,12 @@ public class HomeActivity extends AppCompatActivity {
             ImageButton deleteButton = labelView.findViewById(R.id.deleteLabelButton);
 
             labelNameTextView.setText(label.getName());
+            labelNameTextView.setOnClickListener(v -> {
+                Intent intent = new Intent(this, LabelMailsActivity.class);
+                intent.putExtra("label_id", label.getId());
+                this.startActivity(intent);
+            });
+
 
             if (enableEdit) {
                 editButton.setOnClickListener(v -> LabelDialogHelper.showEditLabelDialog(this, label, labelViewModel, this));

@@ -7,6 +7,9 @@ import com.example.android_application.data.local.entity.Mail;
 import com.example.android_application.data.local.entity.MailWrapper;
 import org.json.JSONObject;
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import java.util.ArrayList;
 import java.util.List;
 import okhttp3.ResponseBody;
@@ -103,4 +106,26 @@ public class MailRepository {
             }
         });
     }
+    public LiveData<List<Mail>> getMailsByLabel(String labelId, String token) {
+        MutableLiveData<List<Mail>> result = new MutableLiveData<>();
+
+        api.getMailsByLabel("Bearer " + token, labelId).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<List<Mail>> call, @NonNull Response<List<Mail>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    result.postValue(response.body());
+                } else {
+                    result.postValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<Mail>> call, @NonNull Throwable t) {
+                result.postValue(null);
+            }
+        });
+
+        return result;
+    }
+    
 }
