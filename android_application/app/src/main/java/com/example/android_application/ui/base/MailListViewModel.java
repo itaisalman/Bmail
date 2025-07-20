@@ -12,13 +12,14 @@ import com.example.android_application.data.repository.MailRepository;
 import java.util.List;
 
 public abstract class MailListViewModel extends AndroidViewModel {
-    private final MailRepository mailRepository = new MailRepository();
+    private final MailRepository mailRepository;
     protected final MutableLiveData<List<Mail>> mailList = new MutableLiveData<>();
     public final MutableLiveData<String> error = new MutableLiveData<>();
     protected int numMails;
 
     public MailListViewModel(@NonNull Application application) {
         super(application);
+        mailRepository = new MailRepository(application.getApplicationContext());
         numMails = 0;
     }
 

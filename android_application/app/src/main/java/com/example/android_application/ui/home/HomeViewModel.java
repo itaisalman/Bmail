@@ -25,11 +25,12 @@ public class HomeViewModel extends AndroidViewModel {
 
     private final MutableLiveData<String> currentSearchQuery = new MutableLiveData<>();
 
-    private final MailRepository mailRepository = new MailRepository();
+    private final MailRepository mailRepository;
 
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
+        this.mailRepository = new MailRepository(application.getApplicationContext());
         this.repository = new UserRepository();
     }
 

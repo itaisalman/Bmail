@@ -1,20 +1,29 @@
 package com.example.android_application.ui.inbox;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.example.android_application.data.local.entity.Mail;
+import com.example.android_application.data.repository.MailRepository;
 import com.example.android_application.ui.base.MailListViewModel;
 import java.util.List;
 
 public class InboxViewModel extends MailListViewModel {
 
-    private final MutableLiveData<List<Mail>> inboxMails = new MutableLiveData<>();
-    private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
+    private LiveData<List<Mail>> inboxMails;
+    private final MailRepository mailRepository;
 
-    public InboxViewModel(@NonNull Application application) {
+    public InboxViewModel(@NonNull Application application, String currentUserEmail) {
         super(application);
+        mailRepository = new MailRepository(application.getApplicationContext());
+        inboxMails = mailRepository.getReceivedMailsLive(currentUserEmail);
         getMails("Inbox");
     }
 
@@ -25,16 +34,53 @@ public class InboxViewModel extends MailListViewModel {
 
     @Override
     public LiveData<String> getErrorMessage() {
-        return errorMessage;
+        return error;
     }
 
     @Override
     protected void onMailsLoaded(List<Mail> mails, int count) {
-        inboxMails.postValue(mails);
     }
 
     @Override
     public void getMails(String label) {
-        super.getMails(label);
+        mailRepository.getMailsByLabel(getTokenFromStorage(), label, new MailRepository.MailListCallback() {
+            @Override
+            public void onSuccess(List<Mail> mails, int totalCount) {
+                // Insert or update mails in local DB asynchronously
+                mailRepository.insertMails(mails);
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                // Handle error, e.g. show message
+                error.postValue(errorMessage);
+            }
+        });
     }
+
+    // Retrieve JWT token from SharedPreferences for authorization
+    private String getTokenFromStorage() {
+        SharedPreferences prefs = getApplication().getSharedPreferences("auth", Context.MODE_PRIVATE);
+        return prefs.getString("jwt", "");
+    }
+
+    public static class Factory implements ViewModelProvider.Factory {
+        private final Application application;
+        private final String currentUserEmail;
+
+        public Factory(Application application, String currentUserEmail) {
+            this.application = application;
+            this.currentUserEmail = currentUserEmail;
+        }
+
+        @NonNull
+        @Override
+        public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+            if (modelClass.isAssignableFrom(InboxViewModel.class)) {
+                return (T) new InboxViewModel(application, currentUserEmail);
+            }
+            throw new IllegalArgumentException("Unknown ViewModel class");
+        }
+    }
+
 }

@@ -19,7 +19,7 @@ public class ComposeViewModel extends AndroidViewModel {
 
     public ComposeViewModel(@NonNull Application application) {
         super(application);
-        this.repository = new MailRepository();
+        this.repository = new MailRepository(application.getApplicationContext());
     }
     // Method to send a mail via repository
     public void sendMail(String to, String subject, String body) {
