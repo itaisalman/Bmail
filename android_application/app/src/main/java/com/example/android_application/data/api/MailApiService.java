@@ -1,7 +1,7 @@
 package com.example.android_application.data.api;
 
-import com.example.android_application.data.local.entity.Mail;
 import com.example.android_application.data.local.entity.MailPageResponse;
+import com.example.android_application.data.local.entity.DraftWrapper;
 import com.example.android_application.data.local.entity.MailWrapper;
 import java.util.List;
 import okhttp3.ResponseBody;
@@ -21,6 +21,13 @@ public interface MailApiService {
             @Body MailRequest mailRequest
     );
 
+    @GET("/api/mails")
+    Call<MailPageResponse> getMails(
+            @Header("authorization") String authHeader,
+            @Header("label") String label,
+            @Query("page") int page
+    );
+
     @POST("/api/mails/draft")
     Call<ResponseBody> saveDraft(
             @Header("authorization") String authHeader,
@@ -34,9 +41,9 @@ public interface MailApiService {
     );
 
     @GET("/api/mails")
-    Call<MailPageResponse> getMails(
-            @Header("authorization") String authHeader,
-            @Header("label") String label,
+    Call<DraftWrapper> getDrafts(
+            @Header("authorization") String bearerToken,
+            @Header("label") String label,  // pass "Draft" here
             @Query("page") int page
     );
 }
