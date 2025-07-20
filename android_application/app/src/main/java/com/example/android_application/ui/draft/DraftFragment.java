@@ -44,12 +44,15 @@ public class DraftFragment extends Fragment {
         draftViewModel = new ViewModelProvider(this).get(DraftViewModel.class);
         // Load drafts for specific user.
         draftViewModel.loadDraftsForUser(userId);
+        ComposeViewModel composeViewModel = new ViewModelProvider(requireActivity()).get(ComposeViewModel.class);
 
         draftAdapter = new DraftAdapter(new ArrayList<>(), new DraftAdapter.OnDraftClickListener() {
             @Override
             public void onClick(Draft draft) {
+                composeViewModel.setIsDraftClicked(true);
                 ComposeBottomSheet bottomSheet = new ComposeBottomSheet();
                 Bundle args = new Bundle();
+                args.putString("id", draft.getId());
                 args.putString("to", draft.getTo());
                 args.putString("subject", draft.getSubject());
                 args.putString("body", draft.getBody());
@@ -94,8 +97,6 @@ public class DraftFragment extends Fragment {
             }
         });
         draftViewModel.getIsLastPage().observe(getViewLifecycleOwner(), lastPage -> isLastPage = lastPage);
-
-        ComposeViewModel composeViewModel = new ViewModelProvider(requireActivity()).get(ComposeViewModel.class);
         composeViewModel.getNewDraftCreated().observe(getViewLifecycleOwner(), created -> {
             if (Boolean.TRUE.equals(created)) {
                 // Reloads the local DB drafts after a new one is added from ComposeBottomSheet.

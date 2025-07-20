@@ -6,8 +6,10 @@ import java.util.List;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -36,7 +38,21 @@ public interface MailApiService {
     @GET("/api/mails")
     Call<DraftWrapper> getDrafts(
             @Header("authorization") String bearerToken,
-            @Header("label") String label,  // pass "Draft" here
+            @Header("label") String label,
             @Query("page") int page
     );
+
+    @PATCH("api/mails/{id}")
+    Call<ResponseBody> updateDraft(
+            @Header("Authorization") String authToken,
+            @Path("id") String draftId,
+            @Body MailRequest request
+    );
+
+    @DELETE("/api/mails/draft/{id}")
+    Call<ResponseBody> deleteDraft(
+            @Header("authorization") String authHeader,
+            @Path("id") String draftId
+    );
+
 }
