@@ -33,7 +33,7 @@ public class DraftFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         // Inflate the shared layout used for search results.
-        View root = inflater.inflate(R.layout.fragment_search_results, container, false);
+        View root = inflater.inflate(R.layout.fragment_mail_list, container, false);
 
         recyclerView = root.findViewById(R.id.recyclerSearchResults);
         noResultsTextView = root.findViewById(R.id.noResultsTextView);

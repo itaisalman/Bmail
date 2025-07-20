@@ -1,5 +1,6 @@
 package com.example.android_application.data.api;
 
+import com.example.android_application.data.local.entity.MailPageResponse;
 import com.example.android_application.data.local.entity.DraftWrapper;
 import com.example.android_application.data.local.entity.MailWrapper;
 import java.util.List;
@@ -20,13 +21,19 @@ public interface MailApiService {
             @Body MailRequest mailRequest
     );
 
+    @GET("/api/mails")
+    Call<MailPageResponse> getMails(
+            @Header("authorization") String authHeader,
+            @Header("label") String label,
+            @Query("page") int page
+    );
+
     @POST("/api/mails/draft")
     Call<ResponseBody> saveDraft(
             @Header("authorization") String authHeader,
             @Body MailRequest mailRequest
     );
 
-    // Changed return type to List<MailWrapper> since server returns JSON array at root
     @GET("/api/mails/search/{query}")
     Call<List<MailWrapper>> searchMails(
             @Header("authorization") String authHeader,

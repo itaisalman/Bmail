@@ -16,7 +16,6 @@ import com.example.android_application.R;
 import com.example.android_application.data.local.entity.Mail;
 import com.example.android_application.ui.home.HomeViewModel;
 import com.example.android_application.ui.viewMail.ViewMailActivity;
-
 import java.util.List;
 
 public class SearchResultsFragment extends Fragment {
@@ -32,7 +31,7 @@ public class SearchResultsFragment extends Fragment {
                              ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_search_results, container, false);
+        View view = inflater.inflate(R.layout.fragment_mail_list, container, false);
 
         initViews(view);
         setupRecyclerView();
