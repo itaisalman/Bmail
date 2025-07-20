@@ -4,9 +4,11 @@ import com.example.android_application.data.api.MailApiService;
 import com.example.android_application.data.api.MailRequest;
 import com.example.android_application.data.local.entity.Draft;
 import com.example.android_application.data.local.entity.Mail;
+import com.example.android_application.data.local.entity.MailPageResponse;
 import com.example.android_application.data.local.entity.MailWrapper;
 import org.json.JSONObject;
 import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
 import java.util.ArrayList;
 import java.util.List;
 import okhttp3.ResponseBody;
@@ -27,6 +29,11 @@ public class MailRepository {
 
     public interface SearchCallback {
         void onSuccess(List<Mail> mails);
+        void onFailure(String errorMessage);
+    }
+
+    public interface MailListCallback {
+        void onSuccess(List<Mail> mails, int totalCount);
         void onFailure(String errorMessage);
     }
 
@@ -138,4 +145,33 @@ public class MailRepository {
             }
         });
     }
+
+    public void getMailsByLabel(String token, String label, MailListCallback callback) {
+        MutableLiveData<MailPageResponse> responseLiveData = new MutableLiveData<>();
+        Call<MailPageResponse> call = api.getMails("Bearer " + token, label, 1);
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<MailPageResponse> call, @NonNull Response<MailPageResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    responseLiveData.postValue(response.body());
+                    if (callback != null) {
+                        callback.onSuccess(response.body().getMails(), response.body().getTotalCount());
+                    }
+                } else {
+                    responseLiveData.postValue(new MailPageResponse());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MailPageResponse> call, @NonNull Throwable t) {
+                responseLiveData.postValue(new MailPageResponse());
+            }
+        });
+    }
+
+
+
+
+
+
 }

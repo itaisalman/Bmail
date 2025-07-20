@@ -1,4 +1,4 @@
-package com.example.android_application.ui.search;
+package com.example.android_application.ui.base;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,14 +14,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.android_application.R;
 import com.example.android_application.data.local.entity.Mail;
-import com.example.android_application.ui.home.HomeViewModel;
+import com.example.android_application.ui.search.MailAdapter;
 import com.example.android_application.ui.viewMail.ViewMailActivity;
 import java.util.List;
 
-public class SearchResultsFragment extends Fragment {
+public class MailListFragment extends Fragment {
 
-    private HomeViewModel homeViewModel;
-    private MailAdapter adapter;
+    protected  MailListViewModel mailListViewModel;
+    private MailAdapter mailAdapter;
     private TextView noResultsTextView;
     private RecyclerView recyclerView;
 
@@ -34,7 +34,7 @@ public class SearchResultsFragment extends Fragment {
 
         initViews(view);
         setupRecyclerView();
-        setupViewModelObservers();
+        setupViewModel();
 
         return view;
     }
@@ -45,33 +45,32 @@ public class SearchResultsFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        adapter = new MailAdapter();
+        mailAdapter = new MailAdapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(mailAdapter);
 
-        adapter.setOnItemClickListener(mail -> {
+        mailAdapter.setOnItemClickListener(mail -> {
             Intent intent = new Intent(requireContext(), ViewMailActivity.class);
             intent.putExtra("mail", mail);
             startActivity(intent);
         });
     }
 
-    private void setupViewModelObservers() {
-        homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+    protected void setupViewModel() {
+        mailListViewModel = new ViewModelProvider(requireActivity()).get(MailListViewModel.class);
 
-        homeViewModel.getSearchResults().observe(getViewLifecycleOwner(), this::handleSearchResults);
+        mailListViewModel.getMailListLiveData().observe(getViewLifecycleOwner(), this::handleMailList);
 
-        homeViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
+        mailListViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null && !error.isEmpty()) {
-                Toast.makeText(requireContext(), "Search error: " + error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Error: " + error, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-
-    private void handleSearchResults(List<Mail> mails) {
+    protected void handleMailList(List<Mail> mails) {
         if (mails != null && !mails.isEmpty()) {
-            adapter.setMailList(mails);
+            mailAdapter.setMailList(mails);
             recyclerView.setVisibility(View.VISIBLE);
             noResultsTextView.setVisibility(View.GONE);
         } else {
