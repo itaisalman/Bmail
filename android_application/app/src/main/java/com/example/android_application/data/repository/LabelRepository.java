@@ -11,8 +11,10 @@ import com.example.android_application.data.api.LabelApiService;
 import com.example.android_application.data.local.dao.LabelDao;
 import com.example.android_application.data.local.AppDatabase;
 import com.example.android_application.data.local.entity.Label;
+import com.example.android_application.data.local.entity.Mail;
 import com.google.gson.Gson;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -170,5 +172,94 @@ public class LabelRepository {
 
         return result;
     }
+
+    public LiveData<Boolean> assignLabelToMail(String token, String mailId, String labelId) {
+        MutableLiveData<Boolean> result = new MutableLiveData<>();
+        Map<String, String> body = new HashMap<>();
+        body.put("label_id", labelId);
+
+        apiService.assignLabelToMail("Bearer " + token, mailId, body).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                result.postValue(response.isSuccessful());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                result.postValue(false);
+            }
+        });
+
+        return result;
+    }
+
+    public LiveData<Boolean> removeLabelFromMail(String token, String mailId, String labelId) {
+        MutableLiveData<Boolean> result = new MutableLiveData<>();
+        Map<String, String> body = new HashMap<>();
+        body.put("label_id", labelId);
+
+        apiService.removeLabelFromMail("Bearer " + token, mailId, body).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                result.postValue(response.isSuccessful());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                result.postValue(false);
+            }
+        });
+
+        return result;
+    }
+
+    public LiveData<List<Mail>> getMailsForLabel(String labelId, String token) {
+        MutableLiveData<List<Mail>> data = new MutableLiveData<>();
+        apiService.getMailsForLabel("Bearer " + token, labelId).enqueue(new Callback<List<Mail>>() {
+            @Override
+            public void onResponse(Call<List<Mail>> call, Response<List<Mail>> response) {
+//                if (response.isSuccessful()) {
+//                    data.postValue(response.body());
+//                } else {
+//                    data.postValue(null);
+//                }
+                if (response.isSuccessful()) {
+                    Log.d("LabelRepo", "Loaded mails: " + response.body().size());
+                    data.postValue(response.body());
+                } else {
+                    Log.e("LabelRepo", "Failed response: " + response.code());
+                    try {
+                        Log.e("LabelRepo", "Error body: " + response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    data.postValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Mail>> call, Throwable t) {
+                data.postValue(null);
+            }
+        });
+        return data;
+    }
+
+    public LiveData<Label> getLabelById(String labelId) {
+        MutableLiveData<Label> data = new MutableLiveData<>();
+        getAllLabelsLocal().observeForever(labels -> {
+            for (Label label : labels) {
+                if (label.getId().equals(labelId)) {
+                    data.postValue(label);
+                    return;
+                }
+            }
+            data.postValue(null);
+        });
+        return data;
+    }
+
+
+
 
 }

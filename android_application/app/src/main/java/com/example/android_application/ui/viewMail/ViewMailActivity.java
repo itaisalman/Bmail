@@ -6,6 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.android_application.R;
 import com.example.android_application.data.local.entity.Mail;
+import com.example.android_application.ui.label.LabelDialogHelper;
+import com.example.android_application.ui.label.LabelViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -14,12 +17,13 @@ import java.util.TimeZone;
     public class ViewMailActivity extends AppCompatActivity {
         private boolean isStarred = false;
         private boolean isImportant = false;
-
+        private LabelViewModel labelViewModel;
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_view_mail);
+            labelViewModel = new ViewModelProvider(this).get(LabelViewModel.class);
 
             // Retrieve the display elements
             TextView subjectTextView = findViewById(R.id.subjectTextView);
@@ -29,6 +33,7 @@ import java.util.TimeZone;
             ImageButton closeButton = findViewById(R.id.closeButton);
             ImageButton starButton = findViewById(R.id.starButton);
             ImageButton importantButton = findViewById(R.id.importantButton);
+            ImageButton labelAssignButton = findViewById(R.id.labelButton);
 
             // Listens for the screen to close
             closeButton.setOnClickListener(v -> finish());
@@ -102,6 +107,7 @@ import java.util.TimeZone;
                 prefs.edit().putBoolean("isImportant_" + mailId, isImportant).apply();
             });
 
+            labelAssignButton.setOnClickListener(v -> LabelDialogHelper.showLabelAssignmentDialog(this, mail, labelViewModel, this));
         }
 
     @Override

@@ -2,6 +2,7 @@ package com.example.android_application.ui.label;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -9,6 +10,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.android_application.data.local.entity.Label;
+import com.example.android_application.data.local.entity.Mail;
 import com.example.android_application.data.repository.LabelRepository;
 
 import java.util.List;
@@ -69,5 +71,27 @@ public class LabelViewModel extends AndroidViewModel {
 
     private boolean hasToken() {
         return token != null && !token.isEmpty();
+    }
+
+    public LiveData<Boolean> assignLabelToMail(String mailId, String labelId) {
+        return hasToken()
+                ? labelRepository.assignLabelToMail(token, mailId, labelId)
+                : new MutableLiveData<>(false);
+    }
+
+    public LiveData<Boolean> removeLabelFromMail(String mailId, String labelId) {
+        return hasToken()
+                ? labelRepository.removeLabelFromMail(token, mailId, labelId)
+                : new MutableLiveData<>(false);
+    }
+
+    public LiveData<List<Mail>> getMailsForLabel(String labelId, String token) {
+        Log.d("LabelRepo", "Requesting mails for labelId: " + labelId);
+        Log.d("LabelRepo", "Token starts with: " + token.substring(0, 10));
+        return labelRepository.getMailsForLabel(labelId, token);
+    }
+
+    public LiveData<Label> getLabelById(String labelId) {
+        return labelRepository.getLabelById(labelId);
     }
 }

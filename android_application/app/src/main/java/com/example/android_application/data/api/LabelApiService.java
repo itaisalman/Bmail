@@ -1,6 +1,8 @@
 package com.example.android_application.data.api;
 
 import com.example.android_application.data.local.entity.Label;
+import com.example.android_application.data.local.entity.Mail;
+
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +10,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.Header;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
@@ -35,4 +38,25 @@ public interface LabelApiService {
             @Header("authorization") String authHeader,
             @Path("id") String labelId
     );
+
+    @PATCH("labels/{mail_id}/assign-label")
+    Call<Void> assignLabelToMail(
+            @Header("Authorization") String token,
+            @Path("mail_id") String mailId,
+            @Body Map<String, String> body
+    );
+
+    @HTTP(method = "DELETE", path = "labels/mail/{mailId}", hasBody = true)
+    Call<Void> removeLabelFromMail(
+            @Header("Authorization") String token,
+            @Path("mailId") String mailId,
+            @Body Map<String, String> body
+    );
+
+    @GET("labels/{label_id}/mails")
+    Call<List<Mail>> getMailsForLabel(
+            @Header("Authorization") String token,
+            @Path("label_id") String labelId
+    );
+
 }

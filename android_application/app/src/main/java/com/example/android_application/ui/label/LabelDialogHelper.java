@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -13,6 +14,10 @@ import androidx.lifecycle.LifecycleOwner;
 
 import com.example.android_application.R;
 import com.example.android_application.data.local.entity.Label;
+import com.example.android_application.data.local.entity.Mail;
+import com.example.android_application.data.repository.LabelRepository;
+
+import java.util.List;
 
 public class LabelDialogHelper {
     /**
@@ -110,4 +115,50 @@ public class LabelDialogHelper {
                 .setNegativeButton("Cancel", null)
                 .show();
     }
+
+    public static void showLabelAssignmentDialog(
+            Context context,
+            Mail mail,
+            LabelViewModel labelViewModel,
+            LifecycleOwner owner
+    ) {
+        String mailId = mail.getId();
+
+        LabelRepository labelRepository = new LabelRepository(context);
+        labelRepository.getAllLabelsLocal().observe(owner, labels -> {
+            if (labels == null || labels.isEmpty()) {
+                Toast.makeText(context, "No labels available", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String[] labelNames = new String[labels.size()];
+            boolean[] checkedItems = new boolean[labels.size()];
+
+            for (int i = 0; i < labels.size(); i++) {
+                labelNames[i] = labels.get(i).getName();
+
+                List<String> mailIds = labels.get(i).getMails();
+                checkedItems[i] = mailIds != null && mailIds.contains(mailId);
+            }
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("Assign/Remove labels");
+
+            builder.setMultiChoiceItems(labelNames, checkedItems, (dialogInterface, index, isChecked) -> {
+                String labelId = labels.get(index).getId();
+
+                if (isChecked) {
+                    labelViewModel.assignLabelToMail(mailId, labelId);
+                } else {
+                    labelViewModel.removeLabelFromMail(mailId, labelId);
+                }
+            });
+
+            builder.setNegativeButton("Cancel", null);
+            builder.create().show();
+        });
+    }
+
+
+
 }
