@@ -16,7 +16,6 @@ import com.example.android_application.R;
 import com.example.android_application.data.local.entity.Draft;
 import com.example.android_application.ui.bottom_sheet.ComposeBottomSheet;
 import com.example.android_application.ui.bottom_sheet.ComposeViewModel;
-
 import java.util.ArrayList;
 
 public class DraftFragment extends Fragment {
