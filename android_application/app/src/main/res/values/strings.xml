@@ -76,5 +76,8 @@
     <string name="label_name">Add Label name</string>
     <string name="error_empty_name">Missing/Invalid Label Name</string>
     <string name="error_duplicate_name">The label name you selected already exists. Try a different name</string>
+    <string name="edit_label">Edit Label</string>
+    <string name="label_name_">Label Name</string>
+    <string name="delete_label">Delete Label</string>
 </resources>
 

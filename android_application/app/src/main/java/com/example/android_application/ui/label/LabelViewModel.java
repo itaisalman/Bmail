@@ -1,46 +1,73 @@
 package com.example.android_application.ui.label;
 
+import android.app.Application;
+import android.content.Context;
+
 import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
+
 import com.example.android_application.data.local.entity.Label;
 import com.example.android_application.data.repository.LabelRepository;
+
 import java.util.List;
 
-public class LabelViewModel extends ViewModel {
-    private final LabelRepository repository;
-    private final MutableLiveData<List<Label>> labelsLiveData = new MutableLiveData<>();
+public class LabelViewModel extends AndroidViewModel {
 
-    public LabelViewModel(LabelRepository repository) {
-        this.repository = repository;
+    private final LabelRepository labelRepository;
+
+    // LiveData to hold the current list of labels
+    private final MutableLiveData<List<Label>> labels = new MutableLiveData<>();
+    private final String token;
+
+    public LabelViewModel(@NonNull Application application) {
+        super(application);
+        labelRepository = new LabelRepository(application);
+        token = application.getSharedPreferences("auth", Context.MODE_PRIVATE)
+                .getString("jwt", "");
     }
 
-    public LiveData<List<Label>> getLabels(String token) {
-        if (labelsLiveData.getValue() == null) {
-            fetchLabels(token);
+    public LiveData<List<Label>> getLabels() {
+        return labels;
+    }
+
+    // Fetch labels from the server and update local database
+    public void fetchLabels() {
+        if (!hasToken()) return;
+
+        // Refresh data from server
+        labelRepository.refreshLabelsFromServer(token);
+        // Then observe local data
+        labelRepository.getAllLabelsLocal().observeForever(labels::postValue);
+    }
+
+    // Create a new label
+    public LiveData<Label> createLabel(String name) {
+        MutableLiveData<Label> result = new MutableLiveData<>();
+        if (!hasToken()) {
+            result.setValue(null);
+            return result;
         }
-        return labelsLiveData;
+
+        // Observe result from repository and post it to caller
+        labelRepository.createLabel(token, name).observeForever(result::setValue);
+        return result;
     }
 
-    public void fetchLabels(String token) {
-        repository.getAllUserLabels(token).observeForever(labels -> {
-            if (labels != null) {
-                labelsLiveData.setValue(labels);
-            }
-        });
+    // Update an existing label
+    public LiveData<Boolean> updateLabel(String labelId, String newName) {
+        return hasToken() ? labelRepository.updateLabel(token, labelId, newName)
+                : new MutableLiveData<>(false);
     }
 
-    public LiveData<Label> createLabel(String token, String labelName) {
-        return repository.createLabel(token, labelName);
+    // Delete an existing label
+    public LiveData<Boolean> deleteLabel(String labelId) {
+        return hasToken() ? labelRepository.deleteLabel(token, labelId)
+                : new MutableLiveData<>(false);
     }
 
-    public static class Factory implements ViewModelProvider.Factory {
-        @NonNull
-        @Override
-        public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            return (T) new LabelViewModel(new LabelRepository());
-        }
+    private boolean hasToken() {
+        return token != null && !token.isEmpty();
     }
 }

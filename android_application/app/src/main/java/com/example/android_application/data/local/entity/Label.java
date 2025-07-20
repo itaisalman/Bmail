@@ -1,48 +1,38 @@
 package com.example.android_application.data.local.entity;
 
-import com.google.gson.annotations.SerializedName;
-import java.util.List;
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
+import com.google.gson.annotations.SerializedName;
+
+@Entity(tableName = "labels")
 public class Label {
 
+    @PrimaryKey
+    @NonNull
     @SerializedName("_id")
-    private String id;
+    @ColumnInfo(name = "id")
+    private String _id;
 
+    @ColumnInfo(name = "name")
     private String name;
 
-    private String user;
-
-    private List<String> mails;
-
-    public String getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public List<String> getMails() {
-        return mails;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
+    // Constructors
+    public Label(@NonNull String _id, String name) {
+        this._id = _id;
         this.name = name;
     }
 
-    public void setUser(String user) {
-        this.user = user;
-    }
+    public Label() {}
 
-    public void setMails(List<String> mails) {
-        this.mails = mails;
-    }
+    @NonNull
+    public String getId() { return _id; }
+
+    public void setId(String id) { this._id = id; }
+
+    public String getName() { return name; }
+
+    public void setName(String name) { this.name = name; }
 }
