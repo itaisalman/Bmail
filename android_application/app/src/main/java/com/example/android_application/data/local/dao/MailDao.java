@@ -28,17 +28,20 @@ public interface MailDao {
     @Query("SELECT * FROM mails WHERE is_important = 1 AND (receiver_address = :mailAddress OR sender_address = :mailAddress) ORDER BY date DESC")
     LiveData<List<Mail>> getImportantMails(String mailAddress);
 
-    @Query("SELECT * FROM mails WHERE id = :id")
-    Mail getMail(String id);
+    @Query("SELECT * FROM mails WHERE id = :mailId LIMIT 1")
+    LiveData<Mail> getMailByIdLive(String mailId);
+
+    @Query("SELECT * FROM mails WHERE id = :mailId LIMIT 1")
+    Mail getMailById(String mailId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert (List<Mail> mails);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertOne(Mail mail);
+    void insertMail(Mail mail);
 
     @Update
-    void update (Mail... mails);
+    void updateMail(Mail mail);
 
     @Delete
     void delete (Mail... mails);

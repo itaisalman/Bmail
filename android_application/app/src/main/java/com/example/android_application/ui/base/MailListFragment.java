@@ -71,7 +71,7 @@ public class MailListFragment extends Fragment {
 
         mailAdapter.setOnItemClickListener(mail -> {
             Intent intent = new Intent(requireContext(), ViewMailActivity.class);
-            intent.putExtra("mail", mail);
+            intent.putExtra("mail_id", mail.getId());
             startActivity(intent);
         });
     }

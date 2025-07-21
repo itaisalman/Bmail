@@ -1,52 +1,72 @@
 package com.example.android_application.ui.viewMail;
-import android.content.SharedPreferences;
+
 import android.os.Bundle;
 import android.widget.*;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import com.example.android_application.R;
-import com.example.android_application.data.local.entity.Mail;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-    public class ViewMailActivity extends AppCompatActivity {
-        private boolean isStarred = false;
-        private boolean isImportant = false;
+public class ViewMailActivity extends AppCompatActivity {
 
+    private ViewMailViewModel viewModel;
+    private String mailBox;
 
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_view_mail);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_view_mail);
 
-            // Retrieve the display elements
-            TextView subjectTextView = findViewById(R.id.subjectTextView);
-            TextView fromTextView = findViewById(R.id.fromEmail);
-            TextView dateTextView = findViewById(R.id.dateTextView);
-            TextView bodyTextView = findViewById(R.id.bodyTextView);
-            ImageButton closeButton = findViewById(R.id.closeButton);
-            ImageButton starButton = findViewById(R.id.starButton);
-            ImageButton importantButton = findViewById(R.id.importantButton);
+        viewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(getApplication()))
+                .get(ViewMailViewModel.class);
 
-            // Listens for the screen to close
-            closeButton.setOnClickListener(v -> finish());
+        TextView subjectTextView = findViewById(R.id.subjectTextView);
+        TextView fromTextView = findViewById(R.id.fromEmail);
+        TextView dateTextView = findViewById(R.id.dateTextView);
+        TextView bodyTextView = findViewById(R.id.bodyTextView);
+        TextView fromLabel = findViewById(R.id.fromLabel);
+        ImageButton closeButton = findViewById(R.id.closeButton);
+        ImageButton starButton = findViewById(R.id.starButton);
+        ImageButton importantButton = findViewById(R.id.importantButton);
 
-            // Receiving the sent email
-            Mail mail = (Mail) getIntent().getSerializableExtra("mail");
+        mailBox = getIntent().getStringExtra("mail_box");
 
-            TextView fromLabel = findViewById(R.id.fromLabel);
+        // Observe ViewModel
+        viewModel.getIsStarred().observe(this, isStarred -> {
+            starButton.setImageResource(isStarred ? R.drawable.ic_star : R.drawable.ic_star_view_mail);
+        });
 
-            String mailBox = getIntent().getStringExtra("mail_box");
+        viewModel.getIsImportant().observe(this, isImportant -> {
+            importantButton.setImageResource(isImportant ? R.drawable.ic_important : R.drawable.ic_important_view_mail);
+        });
 
+        starButton.setOnClickListener(v -> viewModel.toggleStarred());
+        importantButton.setOnClickListener(v -> viewModel.toggleImportant());
+        closeButton.setOnClickListener(v -> finish());
+
+        String mailId = getIntent().getStringExtra("mail_id");
+
+        if (mailId == null || mailId.isEmpty()) {
+            Toast.makeText(this, "Error: Email ID not received", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
+        viewModel.loadMailById(mailId).observe(this, mail -> {
             if (mail == null) {
-                Toast.makeText(this, "Error: The email was not received", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Error: Email not found", Toast.LENGTH_LONG).show();
                 finish();
                 return;
             }
 
-            // Change title according to the box
+            viewModel.setMail(mail);
+
+            subjectTextView.setText(mail.getTitle());
+            bodyTextView.setText(mail.getContent());
+
             if ("sent".equals(mailBox)) {
                 fromLabel.setText(getString(R.string.to));
                 fromTextView.setText(mail.getReceiverAddress());
@@ -55,18 +75,11 @@ import java.util.TimeZone;
                 fromTextView.setText(mail.getSenderAddress());
             }
 
-            // Display the email details
-            subjectTextView.setText(mail.getTitle());
-            bodyTextView.setText(mail.getContent());
-
             try {
                 SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
                 parser.setTimeZone(TimeZone.getTimeZone("UTC"));
-
                 Date parsedDate = parser.parse(mail.getDate());
-
                 if (parsedDate != null) {
-                    // Convert the date to a readable format in the local display
                     SimpleDateFormat displayFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
                     displayFormat.setTimeZone(TimeZone.getTimeZone("Asia/Jerusalem"));
                     dateTextView.setText(displayFormat.format(parsedDate));
@@ -76,39 +89,6 @@ import java.util.TimeZone;
             } catch (Exception e) {
                 dateTextView.setText(mail.getDate());
             }
-
-            // Handling Favorite and Important buttons
-            String mailId = mail.getId();
-
-            // Using SharedPreferences to save locally if the email is starred/important
-            SharedPreferences prefs = getSharedPreferences("MailPrefs", MODE_PRIVATE);
-            isStarred = prefs.getBoolean("isStarred_" + mailId, false);
-            isImportant = prefs.getBoolean("isImportant_" + mailId, false);
-
-            // Update the icons according to the saved state
-            starButton.setImageResource(isStarred ? R.drawable.ic_star : R.drawable.ic_star_view_mail);
-            importantButton.setImageResource(isImportant ? R.drawable.ic_important : R.drawable.ic_important_view_mail);
-
-            starButton.setOnClickListener(v -> {
-                isStarred = !isStarred;
-                starButton.setImageResource(isStarred ? R.drawable.ic_star : R.drawable.ic_star_view_mail);
-                prefs.edit().putBoolean("isStarred_" + mailId, isStarred).apply();
-            });
-
-            importantButton.setOnClickListener(v -> {
-                isImportant = !isImportant;
-                importantButton.setImageResource(isImportant ? R.drawable.ic_important : R.drawable.ic_important_view_mail);
-                prefs.edit().putBoolean("isImportant_" + mailId, isImportant).apply();
-            });
-
-        }
-
-    @Override
-    // Save the star and important state before screen rotation
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean("isStarred", isStarred);
-        outState.putBoolean("isImportant", isImportant);
+        });
     }
-
 }
