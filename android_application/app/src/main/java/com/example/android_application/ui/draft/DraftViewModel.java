@@ -1,12 +1,15 @@
 package com.example.android_application.ui.draft;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.example.android_application.data.local.entity.Draft;
 import com.example.android_application.data.repository.DraftRepository;
+import com.example.android_application.data.repository.MailRepository;
 import java.util.List;
 
 public class DraftViewModel extends AndroidViewModel {
@@ -18,6 +21,16 @@ public class DraftViewModel extends AndroidViewModel {
     private boolean isLastPage = false;
     private boolean isLoading = false;
     private final MutableLiveData<Boolean> isLastPageLiveData = new MutableLiveData<>(false);
+
+    private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
+
+    public LiveData<String> getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void clearErrorMessage() {
+        errorMessage.postValue(null);
+    }
 
     public LiveData<Boolean> getIsLastPage() {
         return isLastPageLiveData;
@@ -73,8 +86,25 @@ public class DraftViewModel extends AndroidViewModel {
 
             @Override
             public void onError(String error) {
-                // Optional: expose error LiveData or log
+                errorMessage.postValue(error);
             }
         });
+    }
+
+    public void deleteDraft(Draft draft) {
+        draftRepository.deleteDraftById(getTokenFromStorage(), draft.getId(), new MailRepository.RepositoryCallback() {
+            @Override
+            public void onSuccess() {}
+
+            @Override
+            public void onError(String error) {
+                errorMessage.postValue(error);
+            }
+        });
+    }
+
+    private String getTokenFromStorage() {
+        SharedPreferences prefs = getApplication().getSharedPreferences("auth", Context.MODE_PRIVATE);
+        return prefs.getString("jwt", "");
     }
 }

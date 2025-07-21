@@ -44,7 +44,7 @@ public class DraftAdapter extends RecyclerView.Adapter<DraftAdapter.DraftViewHol
     @NonNull
     @Override
     public DraftViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mail, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_draft, parent, false);
         return new DraftViewHolder(view);
     }
 
@@ -58,11 +58,11 @@ public class DraftAdapter extends RecyclerView.Adapter<DraftAdapter.DraftViewHol
 
         holder.title.setText(draft.getSubject() != null ? draft.getSubject() : "No Subject");
         holder.snippet.setText(draft.getBody() != null ? draft.getBody() : "No Content");
-        holder.date.setText("");
-
-        // Set up click listener to notify listener when item is clicked
         holder.itemView.setOnClickListener(v -> listener.onClick(draft));
-//        holder.deleteBtn.setOnClickListener(v -> listener.onDelete(draft));
+
+        // Delete button click
+        holder.deleteBtn.setVisibility(View.VISIBLE);
+        holder.deleteBtn.setOnClickListener(v -> listener.onDelete(draft));
     }
 
     @Override
@@ -76,15 +76,14 @@ public class DraftAdapter extends RecyclerView.Adapter<DraftAdapter.DraftViewHol
 
         public DraftViewHolder(@NonNull View itemView) {
             super(itemView);
-            receiver = itemView.findViewById(R.id.mail_sender);
-            title = itemView.findViewById(R.id.mail_title);
-            snippet = itemView.findViewById(R.id.mail_snippet);
-            date = itemView.findViewById(R.id.mail_date);
-//            deleteBtn = itemView.findViewById(R.id.mail_delete_button); // Uncomment if used
+            receiver = itemView.findViewById(R.id.draft_receiver);
+            title = itemView.findViewById(R.id.draft_title);
+            snippet = itemView.findViewById(R.id.draft_snippet);
+            date = itemView.findViewById(R.id.draft_date);
+            deleteBtn = itemView.findViewById(R.id.deleteButton);
         }
     }
 
-    // DiffUtil calculates minimal updates between old and new draft lists
     private static class DiffCallback extends DiffUtil.Callback {
 
         private final List<Draft> oldList;

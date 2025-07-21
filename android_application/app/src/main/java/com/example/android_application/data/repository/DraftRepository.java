@@ -56,10 +56,51 @@ public class DraftRepository {
         executorService.execute(() -> draftDao.insert(draft));
     }
 
-    // Delete a draft from the local Room DB.
-    public void deleteDraft(Draft draft) {
-        executorService.execute(() -> draftDao.delete(draft));
+    // Delete a draft from the server and from local DB.
+    public void deleteDraftById(String token, String draftId, MailRepository.RepositoryCallback callback) {
+        Call<ResponseBody> call = apiService.deleteDraft("Bearer " + token, draftId);
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+
+                    Executors.newSingleThreadExecutor().execute(() -> {
+                        draftDao.deleteById(draftId);
+
+                        // Re-fetch drafts from server.
+                        getAllDraftsFromServer(1, new ApiCallback() {
+                            @Override
+                            public void onSuccess(int fetchedCount) {
+                                callback.onSuccess();
+                            }
+
+                            @Override
+                            public void onError(String errorMessage) {
+                                callback.onError("Deleted but failed to sync: " + errorMessage);
+                            }
+                        });
+                    });
+                } else {
+                    try (ResponseBody errorBody = response.errorBody()) {
+                        if (errorBody != null) {
+                            String errorJson = errorBody.string();
+                            callback.onError("Server error: " + errorJson);
+                        } else {
+                            callback.onError("Unknown server error");
+                        }
+                    } catch (Exception e) {
+                        callback.onError("Unexpected server response.");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                callback.onError("Delete draft error: " + t.getMessage());
+            }
+        });
     }
+
 
     // Fetch paginated drafts from server and save them locally.
     public void getAllDraftsFromServer(int page, ApiCallback callback) {
@@ -148,6 +189,47 @@ public class DraftRepository {
             }
         });
     }
+
+    // Updates an existing draft on the server and refreshes local drafts on success.
+    public void updateDraft(String token, String id, String to, String subject, String body, MailRepository.RepositoryCallback callback) {
+        MailRequest mailRequest = new MailRequest(to, subject, body);
+        Call<ResponseBody> call = apiService.updateDraft("Bearer " + token, id, mailRequest);
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    getAllDraftsFromServer(1, new ApiCallback() {
+                        @Override
+                        public void onSuccess(int fetchedCount) {
+                            callback.onSuccess();
+                        }
+
+                        @Override
+                        public void onError(String errorMessage) {
+                            callback.onError("Failed to refresh drafts after updating: " + errorMessage);
+                        }
+                    });
+                } else {
+                    try (ResponseBody errorBody = response.errorBody()) {
+                        if (errorBody != null) {
+                            callback.onError("Server error: " + errorBody.string());
+                        } else {
+                            callback.onError("Unknown server error");
+                        }
+                    } catch (Exception e) {
+                        callback.onError("Unexpected error parsing error body");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                callback.onError("Update draft request failed: " + t.getMessage());
+            }
+        });
+    }
+
 
 
     // Interface to notify the result of the API call.
