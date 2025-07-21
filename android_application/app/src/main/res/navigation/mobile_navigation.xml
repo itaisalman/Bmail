@@ -42,5 +42,18 @@
         android:name="com.example.android_application.ui.spam.SpamFragment"
         android:label="@string/spam"
         tools:layout="@layout/fragment_spam" />
+    <fragment
+        android:id="@+id/nav_label_mails"
+        android:name="com.example.android_application.ui.label.LabelFragment"
+        android:label="Label Mails"
+        tools:layout="@layout/fragment_label_mails">
+        <argument
+            android:name="labelId"
+            app:argType="string" />
+        <argument
+            android:name="labelName"
+            app:argType="string" />
+    </fragment>
+
 
 </navigation>

@@ -1,7 +1,6 @@
 package com.example.android_application.data.local.dao;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -37,4 +36,6 @@ public interface MailDao {
     @Delete
     void delete (Mail... mails);
 
+    @Query("SELECT * FROM mails WHERE id IN (:mailIds) ORDER BY date DESC")
+    LiveData<List<Mail>> getMailsByIds(List<String> mailIds);
 }

@@ -1,20 +1,19 @@
 package com.example.android_application.data.repository;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
 import com.example.android_application.data.api.LabelApiService;
 import com.example.android_application.data.local.dao.LabelDao;
 import com.example.android_application.data.local.AppDatabase;
+import com.example.android_application.data.local.dao.MailDao;
 import com.example.android_application.data.local.entity.Label;
 import com.example.android_application.data.local.entity.Mail;
-import com.google.gson.Gson;
-
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +29,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class LabelRepository {
 
     private final LabelDao labelDao;
+    private final MailDao mailDao;
     private final LabelApiService apiService;
     private final Executor executor;
 
@@ -37,18 +37,16 @@ public class LabelRepository {
      * Initializes the repository with local Room DB and remote Retrofit service.
      */
     public LabelRepository(Context context) {
-        // Room
         AppDatabase db = AppDatabase.getDatabase(context);
         labelDao = db.labelDao();
+        mailDao = db.mailDao();
 
-        // Retrofit
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://10.0.2.2:3000/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         apiService = retrofit.create(LabelApiService.class);
 
-        // Thread executor
         executor = Executors.newSingleThreadExecutor();
     }
 
@@ -91,20 +89,16 @@ public class LabelRepository {
             @Override
             public void onResponse(@NonNull Call<Label> call, @NonNull Response<Label> response) {
                 if (response.isSuccessful()) {
-                    Log.d("LabelRepository", "Raw JSON: " + new Gson().toJson(response.body()));
                     refreshLabelsFromServer(token);
-
                     Label dummy = new Label("temp_id_" + System.currentTimeMillis(), labelName);
                     result.postValue(dummy);
                 } else {
-                    Log.e("LabelRepository", "Create failed: " + response.code());
                     result.postValue(null);
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Label> call, @NonNull Throwable t) {
-                Log.e("LabelRepository", "Create label failed", t);
                 result.postValue(null);
             }
         });
@@ -173,6 +167,9 @@ public class LabelRepository {
         return result;
     }
 
+    /**
+     * Assigns a label to a mail using a REST API call.
+     */
     public LiveData<Boolean> assignLabelToMail(String token, String mailId, String labelId) {
         MutableLiveData<Boolean> result = new MutableLiveData<>();
         Map<String, String> body = new HashMap<>();
@@ -193,6 +190,9 @@ public class LabelRepository {
         return result;
     }
 
+    /**
+     * Remove a label to a mail using a REST API call.
+     */
     public LiveData<Boolean> removeLabelFromMail(String token, String mailId, String labelId) {
         MutableLiveData<Boolean> result = new MutableLiveData<>();
         Map<String, String> body = new HashMap<>();
@@ -213,53 +213,54 @@ public class LabelRepository {
         return result;
     }
 
-    public LiveData<List<Mail>> getMailsForLabel(String labelId, String token) {
-        MutableLiveData<List<Mail>> data = new MutableLiveData<>();
-        apiService.getMailsForLabel("Bearer " + token, labelId).enqueue(new Callback<List<Mail>>() {
+    /**
+     * Retrieves all user labels from the server via API call.
+     */
+    public LiveData<List<Label>> getAllUserLabels(String token) {
+        MutableLiveData<List<Label>> data = new MutableLiveData<>();
+
+        apiService.getAllUserLabels("Bearer " + token).enqueue(new Callback<>() {
             @Override
-            public void onResponse(Call<List<Mail>> call, Response<List<Mail>> response) {
-//                if (response.isSuccessful()) {
-//                    data.postValue(response.body());
-//                } else {
-//                    data.postValue(null);
-//                }
+            public void onResponse(@NonNull Call<List<Label>> call, @NonNull Response<List<Label>> response) {
                 if (response.isSuccessful()) {
-                    Log.d("LabelRepo", "Loaded mails: " + response.body().size());
                     data.postValue(response.body());
                 } else {
-                    Log.e("LabelRepo", "Failed response: " + response.code());
-                    try {
-                        Log.e("LabelRepo", "Error body: " + response.errorBody().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                     data.postValue(null);
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Mail>> call, Throwable t) {
+            public void onFailure(@NonNull Call<List<Label>> call,@NonNull Throwable t) {
                 data.postValue(null);
             }
         });
+
         return data;
     }
 
-    public LiveData<Label> getLabelById(String labelId) {
-        MutableLiveData<Label> data = new MutableLiveData<>();
-        getAllLabelsLocal().observeForever(labels -> {
-            for (Label label : labels) {
-                if (label.getId().equals(labelId)) {
-                    data.postValue(label);
-                    return;
+    /**
+     * Retrieves all mails associated with a specific label (by label name)
+     */
+    public LiveData<List<Mail>> getLabelMailsLive(String labelName) {
+        return Transformations.switchMap(
+                labelDao.getAllLabels(),
+                labels -> {
+                    for (Label label : labels) {
+                        if (label.getName().equals(labelName)) {
+                            List<String> mailIds = label.getMails();
+                            if (mailIds == null || mailIds.isEmpty()) {
+                                MutableLiveData<List<Mail>> empty = new MutableLiveData<>();
+                                empty.setValue(new ArrayList<>());
+                                return empty;
+                            }
+                            return mailDao.getMailsByIds(mailIds);
+                        }
+                    }
+                    MutableLiveData<List<Mail>> notFound = new MutableLiveData<>();
+                    notFound.setValue(new ArrayList<>());
+                    return notFound;
                 }
-            }
-            data.postValue(null);
-        });
-        return data;
+        );
     }
-
-
-
 
 }

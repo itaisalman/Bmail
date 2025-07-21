@@ -4,19 +4,20 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.lifecycle.LifecycleOwner;
 
 import com.example.android_application.R;
+import com.example.android_application.data.local.AppDatabase;
 import com.example.android_application.data.local.entity.Label;
 import com.example.android_application.data.local.entity.Mail;
-import com.example.android_application.data.repository.LabelRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LabelDialogHelper {
@@ -116,49 +117,77 @@ public class LabelDialogHelper {
                 .show();
     }
 
-    public static void showLabelAssignmentDialog(
-            Context context,
-            Mail mail,
-            LabelViewModel labelViewModel,
-            LifecycleOwner owner
-    ) {
-        String mailId = mail.getId();
+        /**
+         * Displays a dialog allowing the user to assign or unassign labels to a specific mail item.
+         */
+        public static void showLabelAssignmentDialog(
+                Context context,
+                Mail mail,
+                LabelViewModel labelViewModel,
+                LabelMailsViewModel labelMailsViewModel,
+                String token,
+                LifecycleOwner owner,
+                Runnable onLabelChanged
+        ) {
+            String mailId = mail.getId();
 
-        LabelRepository labelRepository = new LabelRepository(context);
-        labelRepository.getAllLabelsLocal().observe(owner, labels -> {
-            if (labels == null || labels.isEmpty()) {
-                Toast.makeText(context, "No labels available", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            String[] labelNames = new String[labels.size()];
-            boolean[] checkedItems = new boolean[labels.size()];
-
-            for (int i = 0; i < labels.size(); i++) {
-                labelNames[i] = labels.get(i).getName();
-
-                List<String> mailIds = labels.get(i).getMails();
-                checkedItems[i] = mailIds != null && mailIds.contains(mailId);
-            }
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle("Assign/Remove labels");
-
-            builder.setMultiChoiceItems(labelNames, checkedItems, (dialogInterface, index, isChecked) -> {
-                String labelId = labels.get(index).getId();
-
-                if (isChecked) {
-                    labelViewModel.assignLabelToMail(mailId, labelId);
-                } else {
-                    labelViewModel.removeLabelFromMail(mailId, labelId);
+            // Observe the list of all user labels
+            labelViewModel.getAllUserLabels(token).observe(owner, labels -> {
+                if (labels == null || labels.isEmpty()) {
+                    Toast.makeText(context, "No labels available", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+
+                // Collect label IDs that are already assigned to this mail
+                List<String> mailLabelIds = new ArrayList<>();
+                for (Label label : labels) {
+                    if (label.getMails() != null) {
+                        for (String id : label.getMails()) {
+                            if (id.equals(mailId)) {
+                                mailLabelIds.add(label.getId());
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                ListView listView = new ListView(context);
+                // Create a custom adapter that shows all labels with checkboxes,
+                // and handles assigning/removing labels to/from the mail
+                LabelCheckboxAdapter adapter = new LabelCheckboxAdapter(
+                        context,
+                        labels,
+                        mailId,
+                        mailLabelIds,
+                        labelViewModel,
+                        owner,
+                        () -> {
+                            if (onLabelChanged != null) onLabelChanged.run();
+
+                            // Refresh label mails only if view model is available
+                            if (labelMailsViewModel != null) {
+                                for (Label label : labels) {
+                                    // Save label changes to the database in the background
+                                    AppDatabase.databaseWriteExecutor.execute(() ->
+                                            AppDatabase.getDatabase(context).labelDao().insertLabel(label));
+                                }
+                            } else {
+                                Toast.makeText(context, "labelMailsViewModel is null", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                );
+                listView.setAdapter(adapter);
+
+                // Show the dialog with the list of labels
+                new AlertDialog.Builder(context)
+                        .setTitle("Assign Labels")
+                        .setView(listView)
+                        .setNegativeButton("Cancel", null)
+                        .create()
+                        .show();
             });
-
-            builder.setNegativeButton("Cancel", null);
-            builder.create().show();
-        });
-    }
-
+        }
 
 
 }

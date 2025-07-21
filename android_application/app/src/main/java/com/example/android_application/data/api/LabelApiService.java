@@ -1,7 +1,6 @@
 package com.example.android_application.data.api;
 
 import com.example.android_application.data.local.entity.Label;
-import com.example.android_application.data.local.entity.Mail;
 
 import java.util.List;
 import java.util.Map;
@@ -41,22 +40,15 @@ public interface LabelApiService {
 
     @PATCH("labels/{mail_id}/assign-label")
     Call<Void> assignLabelToMail(
-            @Header("Authorization") String token,
+            @Header("authorization") String token,
             @Path("mail_id") String mailId,
             @Body Map<String, String> body
     );
 
     @HTTP(method = "DELETE", path = "labels/mail/{mailId}", hasBody = true)
     Call<Void> removeLabelFromMail(
-            @Header("Authorization") String token,
+            @Header("authorization") String token,
             @Path("mailId") String mailId,
             @Body Map<String, String> body
     );
-
-    @GET("labels/{label_id}/mails")
-    Call<List<Mail>> getMailsForLabel(
-            @Header("Authorization") String token,
-            @Path("label_id") String labelId
-    );
-
 }

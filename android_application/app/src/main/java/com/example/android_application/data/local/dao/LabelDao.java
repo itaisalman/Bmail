@@ -2,7 +2,6 @@ package com.example.android_application.data.local.dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -15,7 +14,7 @@ import java.util.List;
 @Dao
 public interface LabelDao {
 
-    @Query("SELECT * FROM labels")
+    @Query("SELECT * FROM labels ORDER BY name ASC")
     LiveData<List<Label>> getAllLabels();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -27,10 +26,8 @@ public interface LabelDao {
     @Update
     void updateLabel(Label label);
 
-    @Delete
-    void deleteLabel(Label label);
-
     @Query("DELETE FROM labels WHERE id = :labelId")
     void deleteById(String labelId);
+
 
 }

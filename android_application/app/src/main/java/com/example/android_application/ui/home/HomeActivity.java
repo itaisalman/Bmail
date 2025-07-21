@@ -18,13 +18,14 @@ import android.widget.Toast;
 import com.example.android_application.data.local.entity.Label;
 import com.example.android_application.ui.bottom_sheet.ComposeBottomSheet;
 import com.example.android_application.ui.label.LabelDialogHelper;
-import com.example.android_application.ui.label.LabelMailsActivity;
 import com.example.android_application.ui.label.LabelViewModel;
 import com.example.android_application.ui.login.LoginActivity;
 import com.google.android.material.navigation.NavigationView;
 import com.example.android_application.R;
 import androidx.annotation.NonNull;
+import androidx.core.view.GravityCompat;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -130,7 +131,7 @@ public class HomeActivity extends AppCompatActivity {
         // Configure navigation drawer destinations
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_inbox, R.id.nav_star, R.id.nav_important, R.id.nav_sent,
-                R.id.nav_draft, R.id.nav_spam)
+                R.id.nav_draft, R.id.nav_spam, R.id.nav_label_mails)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -289,12 +290,23 @@ public class HomeActivity extends AppCompatActivity {
             ImageButton deleteButton = labelView.findViewById(R.id.deleteLabelButton);
 
             labelNameTextView.setText(label.getName());
-            labelNameTextView.setOnClickListener(v -> {
-                Intent intent = new Intent(this, LabelMailsActivity.class);
-                intent.putExtra("label_id", label.getId());
-                this.startActivity(intent);
-            });
 
+            labelNameTextView.setOnClickListener(v -> {
+                Bundle args = new Bundle();
+                args.putString("labelId", label.getId());
+                args.putString("labelName", label.getName());
+
+                NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_home);
+                NavOptions navOptions = new NavOptions.Builder()
+                        .setPopUpTo(R.id.nav_label_mails, true)
+                        .build();
+
+                navController.navigate(R.id.nav_label_mails, args, navOptions);
+
+
+                DrawerLayout drawer = this.findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
+            });
 
             if (enableEdit) {
                 editButton.setOnClickListener(v -> LabelDialogHelper.showEditLabelDialog(this, label, labelViewModel, this));

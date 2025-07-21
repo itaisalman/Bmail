@@ -5,10 +5,12 @@ import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.example.android_application.data.local.dao.DraftDao;
 import com.example.android_application.data.local.dao.MailDao;
+import com.example.android_application.data.local.entity.Converters;
 import com.example.android_application.data.local.entity.Draft;
 import com.example.android_application.data.local.entity.Mail;
 import java.util.concurrent.ExecutorService;
@@ -16,7 +18,8 @@ import java.util.concurrent.Executors;
 import com.example.android_application.data.local.entity.Label;
 import com.example.android_application.data.local.dao.LabelDao;
 
-@Database(entities = {Draft.class, Label.class, Mail.class}, version = 6) // Incremented version due to schema change
+@Database(entities = {Draft.class, Label.class, Mail.class}, version = 7)
+@TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract DraftDao draftDao();
     public abstract MailDao mailDao();
@@ -32,7 +35,8 @@ public abstract class AppDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "bmail_database")
-                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
+                                    MIGRATION_5_6, MIGRATION_6_7)
                             .fallbackToDestructiveMigration()
                             .build();
                 }
@@ -104,4 +108,12 @@ public abstract class AppDatabase extends RoomDatabase {
             database.execSQL("CREATE TABLE IF NOT EXISTS `labels` (`_id` TEXT NOT NULL, `name` TEXT, PRIMARY KEY(`_id`))");
         }
     };
+
+    static final Migration MIGRATION_6_7 = new Migration(6, 7) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE labels ADD COLUMN mails TEXT");
+        }
+    };
+
 }

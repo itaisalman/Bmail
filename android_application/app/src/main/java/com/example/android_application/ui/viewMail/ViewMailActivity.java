@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.android_application.R;
 import com.example.android_application.data.local.entity.Mail;
 import com.example.android_application.ui.label.LabelDialogHelper;
+import com.example.android_application.ui.label.LabelMailsViewModel;
 import com.example.android_application.ui.label.LabelViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import java.text.SimpleDateFormat;
@@ -24,6 +25,15 @@ import java.util.TimeZone;
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_view_mail);
             labelViewModel = new ViewModelProvider(this).get(LabelViewModel.class);
+            SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
+            String currentUserEmail = prefs.getString("email", "");
+            String labelName = getIntent().getStringExtra("labelName");
+            LabelMailsViewModel.Factory factory = new LabelMailsViewModel.Factory(
+                    getApplication(),
+                    currentUserEmail, labelName
+            );
+
+            LabelMailsViewModel viewModel = new ViewModelProvider(this, factory).get(LabelMailsViewModel.class);
 
             // Retrieve the display elements
             TextView subjectTextView = findViewById(R.id.subjectTextView);
@@ -87,7 +97,6 @@ import java.util.TimeZone;
             String mailId = mail.getId();
 
             // Using SharedPreferences to save locally if the email is starred/important
-            SharedPreferences prefs = getSharedPreferences("MailPrefs", MODE_PRIVATE);
             isStarred = prefs.getBoolean("isStarred_" + mailId, false);
             isImportant = prefs.getBoolean("isImportant_" + mailId, false);
 
@@ -107,7 +116,19 @@ import java.util.TimeZone;
                 prefs.edit().putBoolean("isImportant_" + mailId, isImportant).apply();
             });
 
-            labelAssignButton.setOnClickListener(v -> LabelDialogHelper.showLabelAssignmentDialog(this, mail, labelViewModel, this));
+            String token = prefs.getString("jwt", "");
+            labelViewModel.fetchLabels();
+            labelAssignButton.setOnClickListener(v ->
+                    LabelDialogHelper.showLabelAssignmentDialog(
+                            this,
+                            mail,
+                            labelViewModel,
+                            viewModel,
+                            token,
+                            this,
+                            null
+                    )
+            );
         }
 
     @Override

@@ -42,7 +42,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.viewMail.ViewMailActivity" />
-        <activity android:name=".ui.label.LabelMailsActivity" />
     </application>
 
 </manifest>
