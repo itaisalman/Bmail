@@ -90,6 +90,8 @@ public abstract class MailListViewModel extends AndroidViewModel {
 
                 if (label.equalsIgnoreCase("Starred")) {
                     mailRepository.insertStarredMails(mails);
+                } else if (label.equalsIgnoreCase("Important")) {
+                    mailRepository.insertImportantMails(mails);
                 } else {
                     mailRepository.insertMails(mails);
                 }
