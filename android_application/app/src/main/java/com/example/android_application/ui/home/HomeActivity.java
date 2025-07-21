@@ -326,8 +326,10 @@ public class HomeActivity extends AppCompatActivity {
     private void observeAndRenderLabels() {
         LinearLayout labelsContainer = findViewById(R.id.labels_container);
 
+        SharedPreferences prefs = getApplication().getSharedPreferences("auth", Context.MODE_PRIVATE);
+        String token = prefs.getString("jwt", "");
         // Observe the LiveData from the ViewModel
-        labelViewModel.getLabels().observe(this, labels -> renderLabels(labelsContainer, labels, true));
+        labelViewModel.getAllUserLabels(token).observe(this, labels -> renderLabels(labelsContainer, labels, true));
     }
 
     // Sets up the labels in the navigation drawer without edit/delete functionality
