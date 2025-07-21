@@ -1,6 +1,7 @@
 package com.example.android_application.data.repository;
 
 import android.content.Context;
+
 import com.example.android_application.data.api.MailApiService;
 import com.example.android_application.data.api.MailRequest;
 import com.example.android_application.data.local.AppDatabase;
@@ -66,6 +67,7 @@ public class MailRepository {
             if (existingMail != null) {
                 mailFromServer.setStarred(existingMail.isStarred());
                 mailFromServer.setImportant(existingMail.isImportant());
+                mailFromServer.setTrash(existingMail.isTrash());
             }
             mailDao.insertMail(mailFromServer);
         });
@@ -203,4 +205,15 @@ public class MailRepository {
             getMailsByLabel(token, label, 1, null);
         }
     }
+
+    public void deleteMailFromServer(String mailId, String token) {
+        Call<Void> call = api.moveToTrash("Bearer " + token, mailId);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {}
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {}
+        });
+    }
+
 }
