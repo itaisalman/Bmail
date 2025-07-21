@@ -17,6 +17,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -29,6 +31,7 @@ public class MailRepository {
     private final MailApiService api;
     private final MailDao mailDao;
     private final AppDatabase db;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public interface RepositoryCallback {
         void onSuccess();
@@ -56,6 +59,26 @@ public class MailRepository {
         mailDao = db.mailDao();
     }
 
+    public LiveData<Mail> getMailById(String mailId) {
+        return mailDao.getMailByIdLive(mailId);
+    }
+
+    public void insertOrUpdateMailFromServer(Mail mailFromServer) {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            Mail existingMail = mailDao.getMailById(mailFromServer.getId());
+            if (existingMail != null) {
+                mailFromServer.setStarred(existingMail.isStarred());
+                mailFromServer.setImportant(existingMail.isImportant());
+            }
+            mailDao.insertMail(mailFromServer);
+        });
+    }
+
+
+    public void updateMail(Mail mail) {
+        executor.execute(() -> mailDao.updateMail(mail));
+    }
+
     public LiveData<List<Mail>> getReceivedMailsLive(String receiverAddress) {
 
         return mailDao.getReceivedMailsLive(receiverAddress);
@@ -65,30 +88,12 @@ public class MailRepository {
         return mailDao.getSentMailsLive(senderAddress);
     }
 
-    public void insertMails(List<Mail> mails) {
-        new Thread(() -> mailDao.insert(mails)).start();
-    }
-
-    public void insertStarredMails(List<Mail> mails) {
-        for (Mail mail : mails) {
-            mail.setStarred(true);
-        }
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            mailDao.insert(mails);
-        });
+    public LiveData<List<Mail>> getTrashMailsLive(String senderAddress) {
+        return mailDao.getTrashMailsLive(senderAddress);
     }
 
     public LiveData<List<Mail>> getStarredMailsLive(String mailAddress) {
         return mailDao.getStarredMails(mailAddress);
-    }
-
-    public void insertImportantMails(List<Mail> mails) {
-        for (Mail mail : mails) {
-            mail.setImportant(true);
-        }
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            mailDao.insert(mails);
-        });
     }
 
     public LiveData<List<Mail>> getImportantMailsLive(String mailAddress) {
@@ -168,15 +173,18 @@ public class MailRepository {
                 if (response.isSuccessful() && response.body() != null) {
                     responseLiveData.postValue(response.body());
                     List<Mail> mails = response.body().getMails();
-
-                    if (label.equalsIgnoreCase("Starred")) {
-                        insertStarredMails(mails);
-                    } else if (label.equalsIgnoreCase("Important")) {
-                        insertImportantMails(mails);
-                    } else {
-                        insertMails(mails);
+                    for (Mail mail : mails) {
+                        if (label.equalsIgnoreCase("Starred")) {
+                            mail.setStarred(true);
+                        }
+                        if (label.equalsIgnoreCase("Important")) {
+                            mail.setImportant(true);
+                        }
+                        if (label.equalsIgnoreCase("Trash")) {
+                            mail.setTrash(true);
+                        }
+                        insertOrUpdateMailFromServer(mail);
                     }
-
                     if (callback != null) {
                         callback.onSuccess(mails, response.body().getTotalCount());
                     }

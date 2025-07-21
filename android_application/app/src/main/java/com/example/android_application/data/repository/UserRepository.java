@@ -1,5 +1,8 @@
 package com.example.android_application.data.repository;
 
+import android.content.Context;
+import android.widget.Toast;
+
 import com.example.android_application.data.api.UserApiService;
 
 import org.json.JSONObject;
@@ -19,7 +22,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class UserRepository {
 
     private final UserApiService api;
-
     /**
      * Initializes Retrofit and creates an instance of the API service.
      */
@@ -84,6 +86,22 @@ public class UserRepository {
             @Override
             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                 onError.accept("Get user error: " + t.getMessage());
+            }
+        });
+    }
+
+    // Update theme in the server.
+    public void updateUserTheme(Context context, String token, String theme) {
+        UserApiService.ThemeUpdateRequest request = new UserApiService.ThemeUpdateRequest(theme);
+        Call<Void> call = api.updateUserTheme("Bearer " + token, request);
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(context, "Network error", Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -29,11 +29,14 @@
             android:icon="@drawable/ic_spam"
             android:title="@string/spam" />
         <item
+            android:id="@+id/nav_trash"
+            android:icon="@drawable/ic_trash"
+            android:title="@string/trash" />
+        <item
             android:id="@+id/nav_labels_anchor"
             android:icon="@drawable/ic_label"
             android:title="@string/labels"
             android:enabled="false"
-            android:tint="?attr/colorControlNormal"
             />
         <item
             android:id="@+id/nav_add_label"

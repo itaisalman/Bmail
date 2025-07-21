@@ -1,7 +1,6 @@
-package com.example.android_application.ui.sent;
+package com.example.android_application.ui.trash;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,12 +9,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.android_application.ui.base.MailListFragment;
-import com.example.android_application.ui.search.MailAdapter;
-import com.example.android_application.ui.viewMail.ViewMailActivity;
 
-public class SentFragment extends MailListFragment {
+public class TrashFragment extends MailListFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -29,8 +25,8 @@ public class SentFragment extends MailListFragment {
 
         SharedPreferences prefs = requireActivity().getSharedPreferences("auth", Context.MODE_PRIVATE);
         String currentUserEmail = prefs.getString("username", null);
-        SentViewModel.Factory factory = new SentViewModel.Factory(requireActivity().getApplication(), currentUserEmail);
-        mailListViewModel = new ViewModelProvider(this, factory).get(SentViewModel.class);
+        TrashViewModel.Factory factory = new TrashViewModel.Factory(requireActivity().getApplication(), currentUserEmail);
+        mailListViewModel = new ViewModelProvider(this, factory).get(TrashViewModel.class);
 
         mailListViewModel.getMailListLiveData().observe(getViewLifecycleOwner(), this::handleMailList);
         mailListViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
@@ -41,29 +37,9 @@ public class SentFragment extends MailListFragment {
     }
 
     @Override
-    protected void setupRecyclerView() {
-        mailAdapter = new MailAdapter(showReceiverInsteadOfSender());
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        recyclerView.setAdapter(mailAdapter);
-
-        mailAdapter.setOnItemClickListener(mail -> {
-            Intent intent = new Intent(requireContext(), ViewMailActivity.class);
-            intent.putExtra("mail_box", "sent");
-            intent.putExtra("mail_id", mail.getId());
-            startActivity(intent);
-        });
-    }
-
-    @Override
     protected String getLabel() {
-        return "Sent";
+        return "Trash";
     }
-
-    @Override
-    protected boolean showReceiverInsteadOfSender() {
-        return true;
-    }
-
 
     @Override
     public void onResume() {
@@ -71,3 +47,4 @@ public class SentFragment extends MailListFragment {
         mailListViewModel.initMails(getLabel());
     }
 }
+

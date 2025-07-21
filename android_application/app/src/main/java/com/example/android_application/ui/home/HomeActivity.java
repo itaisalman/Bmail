@@ -3,8 +3,13 @@ package com.example.android_application.ui.home;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +21,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.android_application.data.local.entity.Label;
+import com.example.android_application.data.repository.UserRepository;
+import com.example.android_application.ui.BaseThemedActivity;
 import com.example.android_application.ui.bottom_sheet.ComposeBottomSheet;
 import com.example.android_application.ui.label.LabelDialogHelper;
 import com.example.android_application.ui.label.LabelViewModel;
@@ -30,14 +37,12 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.example.android_application.databinding.ActivityHomeBinding;
-
 import java.util.List;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends BaseThemedActivity {
 
     // Navigation and theme toggle
     private AppBarConfiguration mAppBarConfiguration;
@@ -52,6 +57,7 @@ public class HomeActivity extends AppCompatActivity {
     // ViewModel for search and user data
     private HomeViewModel homeViewModel;
     private LabelViewModel labelViewModel;
+    private UserRepository  userRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +67,9 @@ public class HomeActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             isDarkModeIconVisible = savedInstanceState.getBoolean(ICON_STATE_KEY, false);
         } else {
-            int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-            isDarkModeIconVisible = (currentNightMode == Configuration.UI_MODE_NIGHT_NO);
+            SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
+            String theme = prefs.getString("theme", "light");
+            isDarkModeIconVisible = theme.equals("dark");
         }
 
         // Setup view binding and toolbar
@@ -92,7 +99,23 @@ public class HomeActivity extends AppCompatActivity {
             themeToggleDrawerHeader.setOnClickListener(v -> {
                 isDarkModeIconVisible = !isDarkModeIconVisible;
                 updateThemeToggleButtonIcon();
+
+                // Determine theme
+                String selectedTheme = isDarkModeIconVisible ? "dark" : "light";
+
+                // Save new theme locally.
+                SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("theme", selectedTheme);
+                editor.apply();
+                String token = prefs.getString("jwt", "");
+                userRepository = new UserRepository();
+                userRepository.updateUserTheme(this, token, selectedTheme);
+                // Restart activity to apply new theme
+                recreate();
             });
+
+
 
             // Load user details
             TextView nameTextView = headerView.findViewById(R.id.nameTextView);
@@ -105,8 +128,6 @@ public class HomeActivity extends AppCompatActivity {
                 String username = userJson.optString("username", "");
 
                 SharedPreferences prefs = getApplicationContext().getSharedPreferences("auth", Context.MODE_PRIVATE);
-                prefs.edit().putString("username", username).apply();
-
                 String profilePath = userJson.optString("image", "");
                 String profileUrl = "http://10.0.2.2:3000/" + profilePath;
 
@@ -132,7 +153,7 @@ public class HomeActivity extends AppCompatActivity {
         // Configure navigation drawer destinations
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_inbox, R.id.nav_star, R.id.nav_important, R.id.nav_sent,
-                R.id.nav_draft, R.id.nav_spam)
+                R.id.nav_draft, R.id.nav_spam, R.id.nav_trash)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -142,7 +163,6 @@ public class HomeActivity extends AppCompatActivity {
 
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
-
             if (id == R.id.nav_add_label) {
                 LabelDialogHelper.showAddLabelDialog(this, labelViewModel, this);
                 return true;
@@ -260,7 +280,6 @@ public class HomeActivity extends AppCompatActivity {
         } else if (id == R.id.action_logout) {
             SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
             prefs.edit().clear().apply();
-
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
@@ -340,7 +359,6 @@ public class HomeActivity extends AppCompatActivity {
             Toast.makeText(this, "labels_container is missing", Toast.LENGTH_SHORT).show();
             return;
         }
-
         // Observe the labels and render them in the drawer without edit/delete buttons
         labelViewModel.getLabels().observe(this, labels -> renderLabels(labelsContainer, labels, false));
     }

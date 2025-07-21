@@ -1,19 +1,22 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.Android_application" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="colorPrimary">@color/blue_title</item>
+        <item name="colorPrimaryContainer">@color/blue_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryDark">@color/blue_primary</item>
+        <item name="colorSurface">@color/white</item> <!-- light surface -->
+        <item name="colorOnSurface">@color/black</item> <!-- text on surface -->
+        <item name="android:windowBackground">@color/white</item>
     </style>
-
     <style name="Theme.Android_application" parent="Base.Theme.Android_application" />
-
-    <style name="Theme.Android_application.NoActionBar">
+    <style name="Theme.Android_application.NoActionBar" parent="Base.Theme.Android_application">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-
-    <style name="Theme.Android_application.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="Theme.Android_application.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="Theme.Android_application.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="colorPrimary">@color/blue_primary</item>
+        <item name="colorPrimaryContainer">@color/blue_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+    <style name="Theme.Android_application.PopupOverlay" parent="ThemeOverlay.Material3.Light" />
 </resources>
