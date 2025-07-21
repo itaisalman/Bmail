@@ -13,8 +13,8 @@ public interface DraftDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Draft draft);
 
-    @Delete
-    void delete(Draft draft);
+    @Query("DELETE FROM drafts WHERE id = :draftId")
+    void deleteById(String draftId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertDrafts(List<Draft> drafts);

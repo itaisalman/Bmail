@@ -57,7 +57,7 @@
     <string name="spam">Spam</string>
     <string name="search">Search</string>
     <string name="logout">Logout</string>
-    <string name="no_search_results_found">No search results found</string>
+    <string name="no_search_results_found">No results found</string>
     <string name="unknown_sender">(Unknown Sender)</string>
     <string name="no_subject">(No Subject)</string>
     <string name="no_content_message">(No Content)</string>
@@ -71,5 +71,13 @@
     <string name="content">Content:</string>
     <string name="content_example">This is the full content of the email</string>
     <string name="to">To:</string>
+    <string name="labels">Labels</string>
+    <string name="add_label">Add Label</string>
+    <string name="label_name">Add Label name</string>
+    <string name="error_empty_name">Missing/Invalid Label Name</string>
+    <string name="error_duplicate_name">The label name you selected already exists. Try a different name</string>
+    <string name="edit_label">Edit Label</string>
+    <string name="label_name_">Label Name</string>
+    <string name="delete_label">Delete Label</string>
 </resources>
 

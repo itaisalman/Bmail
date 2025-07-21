@@ -55,9 +55,13 @@ public class HomeViewModel extends AndroidViewModel {
         return error;
     }
 
+    public void clearErrorMessage() {
+        error.postValue(null);
+    }
+
     public void clearSearchResults() {
-        searchResults.setValue(Collections.emptyList()); // or null
-        currentSearchQuery.setValue(""); // clear query
+        searchResults.setValue(Collections.emptyList());
+        currentSearchQuery.setValue("");
     }
 
     public LiveData<String> getCurrentSearchQuery() {

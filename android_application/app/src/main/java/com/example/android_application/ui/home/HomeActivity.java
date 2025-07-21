@@ -4,20 +4,31 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 import android.widget.ImageButton;
 import androidx.appcompat.widget.SearchView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.example.android_application.data.local.entity.Label;
 import com.example.android_application.ui.bottom_sheet.ComposeBottomSheet;
+import com.example.android_application.ui.label.LabelDialogHelper;
+import com.example.android_application.ui.label.LabelViewModel;
 import com.example.android_application.ui.login.LoginActivity;
 import com.google.android.material.navigation.NavigationView;
 import com.example.android_application.R;
 import androidx.annotation.NonNull;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -27,6 +38,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.example.android_application.databinding.ActivityHomeBinding;
+
+import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -42,6 +55,7 @@ public class HomeActivity extends AppCompatActivity {
 
     // ViewModel for search and user data
     private HomeViewModel homeViewModel;
+    private LabelViewModel labelViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +73,7 @@ public class HomeActivity extends AppCompatActivity {
         ActivityHomeBinding binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        labelViewModel = new ViewModelProvider(this).get(LabelViewModel.class);
         setSupportActionBar(binding.appBarHome.toolbar);
 
         // FAB opens compose bottom sheet
@@ -70,6 +85,24 @@ public class HomeActivity extends AppCompatActivity {
         // Setup navigation drawer and header
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
+
+        navigationView.post(() -> {
+            Menu menu = navigationView.getMenu();
+            MenuItem labelItem = menu.findItem(R.id.nav_labels_anchor);
+
+            SpannableString s = new SpannableString(labelItem.getTitle());
+            s.setSpan(new ForegroundColorSpan(Color.BLACK), 0, s.length(), 0);
+            labelItem.setTitle(s);
+
+            Drawable icon = labelItem.getIcon();
+            if (icon != null) {
+                Drawable wrappedIcon = DrawableCompat.wrap(icon);
+                DrawableCompat.setTint(wrappedIcon, Color.RED);
+                labelItem.setIcon(wrappedIcon);
+            }
+        });
+
+
         homeViewModel.getUser();
 
         // Handle drawer header user data and theme toggle
@@ -112,9 +145,10 @@ public class HomeActivity extends AppCompatActivity {
             });
 
             // Handle possible errors
-            homeViewModel.error.observe(this, errorMessage ->
-                    Toast.makeText(this, "error: " + errorMessage, Toast.LENGTH_SHORT).show()
-            );
+            homeViewModel.error.observe(this, errorMessage -> {
+                Toast.makeText(this, "error: " + errorMessage, Toast.LENGTH_SHORT).show();
+                homeViewModel.clearErrorMessage();
+            });
         }
 
         // Configure navigation drawer destinations
@@ -127,6 +161,23 @@ public class HomeActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_home);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        navigationView.setNavigationItemSelectedListener(item -> {
+            int id = item.getItemId();
+
+            if (id == R.id.nav_add_label) {
+                LabelDialogHelper.showAddLabelDialog(this, labelViewModel, this);
+                return true;
+            }
+
+            NavigationUI.onNavDestinationSelected(item, navController);
+            drawer.closeDrawers();
+            return true;
+        });
+
+        setupLabelsMenu();
+        labelViewModel.fetchLabels();
+        observeAndRenderLabels();
     }
 
     // Save icon state on rotation
@@ -249,4 +300,51 @@ public class HomeActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
+    // Renders the list of labels into the given container
+    private void renderLabels(LinearLayout container, List<Label> labels, boolean enableEdit) {
+        container.removeAllViews();
+
+        for (Label label : labels) {
+            View labelView = LayoutInflater.from(this).inflate(R.layout.item_label, container, false);
+
+            TextView labelNameTextView = labelView.findViewById(R.id.labelNameTextView);
+            ImageButton editButton = labelView.findViewById(R.id.editLabelButton);
+            ImageButton deleteButton = labelView.findViewById(R.id.deleteLabelButton);
+
+            labelNameTextView.setText(label.getName());
+
+            if (enableEdit) {
+                editButton.setOnClickListener(v -> LabelDialogHelper.showEditLabelDialog(this, label, labelViewModel, this));
+                deleteButton.setOnClickListener(v -> LabelDialogHelper.showDeleteLabelDialog(this, label, labelViewModel, this));
+            } else {
+                editButton.setVisibility(View.GONE);
+                deleteButton.setVisibility(View.GONE);
+            }
+
+            container.addView(labelView);
+        }
+    }
+
+    // Observes label data and renders them with edit/delete enabled
+    private void observeAndRenderLabels() {
+        LinearLayout labelsContainer = findViewById(R.id.labels_container);
+
+        // Observe the LiveData from the ViewModel
+        labelViewModel.getLabels().observe(this, labels -> renderLabels(labelsContainer, labels, true));
+    }
+
+    // Sets up the labels in the navigation drawer without edit/delete functionality
+    private void setupLabelsMenu() {
+        LinearLayout labelsContainer = findViewById(R.id.labels_container);
+
+
+        if (labelsContainer == null) {
+            Toast.makeText(this, "labels_container is missing", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        // Observe the labels and render them in the drawer without edit/delete buttons
+        labelViewModel.getLabels().observe(this, labels -> renderLabels(labelsContainer, labels, false));
+    }
+
 }

@@ -37,6 +37,12 @@ public class ComposeBottomSheet extends BottomSheetDialogFragment {
                 new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication()))
                 .get(ComposeViewModel.class);
 
+        // Pre-fill the fields if arguments are passed (for editing a draft)
+        if (getArguments() != null) {
+            toInput.setText(getArguments().getString("to", ""));
+            subjectInput.setText(getArguments().getString("subject", ""));
+            bodyInput.setText(getArguments().getString("body", ""));
+        }
 
         viewModel.draftSaved.observe(getViewLifecycleOwner(), saved -> {
             if (saved != null && saved) {
@@ -47,23 +53,45 @@ public class ComposeBottomSheet extends BottomSheetDialogFragment {
                 viewModel.draftSaved.setValue(false);
             }
         });
-        // Save draft and dismiss when close (X) is pressed
+
+        ComposeViewModel viewModel = new ViewModelProvider(requireActivity()).get(ComposeViewModel.class);
+        boolean isEditing = viewModel.getIsDraftClicked().getValue() != null && viewModel.getIsDraftClicked().getValue();
+
         closeButton.setOnClickListener(v -> {
-            viewModel.saveDraft(
+            String to = toInput.getText().toString();
+            String subject = subjectInput.getText().toString();
+            String body = bodyInput.getText().toString();
+            if (isEditing) {
+                // We're editing an existing draft.
+                String draftId = getArguments().getString("id");
+                viewModel.updateDraft(draftId, to, subject, body);
+            } else {
+                // We're saving a new draft.
+                viewModel.saveDraft(to, subject, body);
+            }
+        });
+
+        // Send mail when send button is pressed.
+        // If isDraftClicked is true, then send the mail and also delete and draft.
+        sendButton.setOnClickListener(v -> {
+            String draftId = null;
+            if (isEditing) {
+                if (getArguments() != null) {
+                    draftId = getArguments().getString("id");
+                }
+            }
+            viewModel.sendMail(
+                    draftId,
                     toInput.getText().toString(),
                     subjectInput.getText().toString(),
                     bodyInput.getText().toString()
             );
         });
 
-        // Send mail when send button is pressed
-        sendButton.setOnClickListener(v ->
-                viewModel.sendMail(toInput.getText().toString(), subjectInput.getText().toString(), bodyInput.getText().toString())
-        );
-
         // Observe LiveData for success or error
         observeViewModel();
     }
+
 
     private void observeViewModel() {
         // Dismiss bottom sheet when mail is sent successfully
@@ -78,6 +106,7 @@ public class ComposeBottomSheet extends BottomSheetDialogFragment {
         viewModel.error.observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
                 Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+                viewModel.clearErrorMessage();
             }
         });
     }
