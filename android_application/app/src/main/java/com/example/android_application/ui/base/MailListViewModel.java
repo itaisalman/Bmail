@@ -87,6 +87,13 @@ public abstract class MailListViewModel extends AndroidViewModel {
         mailRepository.getMailsByLabel(getTokenFromStorage(), label, page, new MailRepository.MailListCallback() {
             @Override
             public void onSuccess(List<Mail> mails, int count) {
+
+                if (label.equalsIgnoreCase("Starred")) {
+                    mailRepository.insertStarredMails(mails);
+                } else {
+                    mailRepository.insertMails(mails);
+                }
+
                 mailList.postValue(mails);
                 numMails = count;
                 onMailsLoaded(mails, count);
