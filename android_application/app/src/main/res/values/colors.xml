@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#FF000000</color>
+    <color name="address">#FF000000</color>
+    <color name="text">#FFFFFF</color>
     <color name="white">#FFFFFFFF</color>
     <color name="subtitle_color">#666666</color>
     <color name="description_color">#ff6f00</color>
     <color name="button_color">#FF9800</color>
     <color name="blue_title">#022a60</color>
+    <color name="toolbar">#022a60</color>
     <color name="blue_primary">#0057D9</color>
     <color name="blue_link">#0033CC</color>
     <color name="orange">#FF6F00</color>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="light_gray_background">#FF2A2A2A</color>
+    <color name="address">#FFFFFF</color>
+    <color name="blue_title">#FFFFFF</color>
+    <color name="mail_title">#FFFFFFFF</color>
+    <color name="mail_date">#FF888888</color>
+    <color name="mail_snippet">#FFFFFF</color>
+    <color name="subtitle_color">#FFAAAAAA</color>
+    <color name="button_color">#FFBBBBBB</color>
+    <color name="hint_gray">#FF666666</color>
+</resources>
