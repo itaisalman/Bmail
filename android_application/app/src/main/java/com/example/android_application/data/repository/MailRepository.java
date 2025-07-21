@@ -85,26 +85,12 @@ public class MailRepository {
         return mailDao.getSentMailsLive(senderAddress);
     }
 
-    public void insertStarredMails(List<Mail> mails) {
-        for (Mail mail : mails) {
-            mail.setStarred(true);
-        }
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            mailDao.insert(mails);
-        });
+    public LiveData<List<Mail>> getTrashMailsLive(String senderAddress) {
+        return mailDao.getTrashMailsLive(senderAddress);
     }
 
     public LiveData<List<Mail>> getStarredMailsLive(String mailAddress) {
         return mailDao.getStarredMails(mailAddress);
-    }
-
-    public void insertImportantMails(List<Mail> mails) {
-        for (Mail mail : mails) {
-            mail.setImportant(true);
-        }
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            mailDao.insert(mails);
-        });
     }
 
     public LiveData<List<Mail>> getImportantMailsLive(String mailAddress) {
@@ -190,6 +176,9 @@ public class MailRepository {
                         }
                         if (label.equalsIgnoreCase("Important")) {
                             mail.setImportant(true);
+                        }
+                        if (label.equalsIgnoreCase("Trash")) {
+                            mail.setTrash(true);
                         }
                         insertOrUpdateMailFromServer(mail);
                     }

@@ -42,9 +42,7 @@ public class StarViewModel extends MailListViewModel {
     public void getMails(String label, int page) {
         mailRepository.getMailsByLabel(getTokenFromStorage(), label, page, new MailRepository.MailListCallback() {
             @Override
-            public void onSuccess(List<Mail> mails, int totalCount) {
-                mailRepository.insertStarredMails(mails);
-            }
+            public void onSuccess(List<Mail> mails, int totalCount) {}
 
             @Override
             public void onFailure(String errorMessage) {

@@ -26,7 +26,7 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="590dp"
+            android:layout_marginTop="640dp"
             android:layout_marginStart="30dp"
             android:fillViewport="true"
             android:importantForAccessibility="no">

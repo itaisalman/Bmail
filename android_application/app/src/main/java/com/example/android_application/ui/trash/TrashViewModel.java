@@ -1,4 +1,4 @@
-package com.example.android_application.ui.important;
+package com.example.android_application.ui.trash;
 
 import android.app.Application;
 import android.content.Context;
@@ -12,21 +12,21 @@ import com.example.android_application.data.repository.MailRepository;
 import com.example.android_application.ui.base.MailListViewModel;
 import java.util.List;
 
-public class ImportantViewModel extends MailListViewModel {
+public class TrashViewModel extends MailListViewModel {
 
-    private LiveData<List<Mail>> importantMails;
+    private LiveData<List<Mail>> trashMails;
     private final MailRepository mailRepository;
 
-    public ImportantViewModel(@NonNull Application application, String currentUserEmail) {
+    public TrashViewModel(@NonNull Application application, String currentUserEmail) {
         super(application);
         mailRepository = new MailRepository(application.getApplicationContext());
-        getMails("Important", currentPage);
-        importantMails = mailRepository.getImportantMailsLive(currentUserEmail);
+        getMails("Trash", currentPage);
+        trashMails = mailRepository.getTrashMailsLive(currentUserEmail);
     }
 
     @Override
     public LiveData<List<Mail>> getMailListLiveData() {
-        return importantMails;
+        return trashMails;
     }
 
     @Override
@@ -70,11 +70,12 @@ public class ImportantViewModel extends MailListViewModel {
         @NonNull
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            if (modelClass.isAssignableFrom(ImportantViewModel.class)) {
-                return (T) new ImportantViewModel(application, currentUserEmail);
+            if (modelClass.isAssignableFrom(com.example.android_application.ui.trash.TrashViewModel.class)) {
+                return (T) new com.example.android_application.ui.trash.TrashViewModel(application, currentUserEmail);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
         }
     }
 
 }
+

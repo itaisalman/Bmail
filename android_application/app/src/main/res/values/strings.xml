@@ -79,5 +79,6 @@
     <string name="edit_label">Edit Label</string>
     <string name="label_name_">Label Name</string>
     <string name="delete_label">Delete Label</string>
+    <string name="trash">Trash</string>
 </resources>
 
