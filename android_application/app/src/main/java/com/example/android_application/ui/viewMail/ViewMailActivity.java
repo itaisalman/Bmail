@@ -1,16 +1,21 @@
 package com.example.android_application.ui.viewMail;
-
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.annotation.NonNull;
 import com.example.android_application.R;
+import com.example.android_application.data.local.entity.Mail;
+import com.example.android_application.ui.BaseThemedActivity;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-public class ViewMailActivity extends AppCompatActivity {
+public class ViewMailActivity extends BaseThemedActivity {
+    private boolean isStarred = false;
+    private boolean isImportant = false;
 
     private ViewMailViewModel viewModel;
     private String mailBox;
@@ -48,6 +53,7 @@ public class ViewMailActivity extends AppCompatActivity {
         closeButton.setOnClickListener(v -> finish());
 
         String mailId = getIntent().getStringExtra("mail_id");
+        // Receiving the sent email
 
         if (mailId == null || mailId.isEmpty()) {
             Toast.makeText(this, "Error: Email ID not received", Toast.LENGTH_LONG).show();

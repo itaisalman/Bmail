@@ -1,7 +1,6 @@
-
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:fillViewport="true"
@@ -30,6 +29,7 @@
                 android:contentDescription="@string/star"
                 android:layout_marginTop="15dp"
                 android:scaleType="centerInside"
+                app:tint="?attr/colorOnSurface"
                 android:src="@drawable/ic_star_view_mail" />
 
             <ImageButton
@@ -40,6 +40,7 @@
                 android:contentDescription="@string/important"
                 android:layout_marginTop="15dp"
                 android:scaleType="centerInside"
+                app:tint="?attr/colorOnSurface"
                 android:src="@drawable/ic_important_view_mail" />
 
             <ImageButton
@@ -50,6 +51,7 @@
                 android:contentDescription="@string/delete"
                 android:layout_marginTop="15dp"
                 android:scaleType="centerInside"
+                app:tint="?attr/colorOnSurface"
                 android:src="@drawable/ic_trash" />
 
             <ImageButton
@@ -60,6 +62,7 @@
                 android:contentDescription="@string/spam"
                 android:layout_marginTop="15dp"
                 android:scaleType="centerInside"
+                app:tint="?attr/colorOnSurface"
                 android:src="@drawable/ic_spam" />
 
             <ImageButton
@@ -70,6 +73,7 @@
                 android:contentDescription="@string/label"
                 android:layout_marginTop="15dp"
                 android:scaleType="centerInside"
+                app:tint="?attr/colorOnSurface"
                 android:src="@drawable/ic_label_view_mail" />
             <View
                 android:layout_width="0dp"
@@ -84,6 +88,7 @@
                 android:contentDescription="@string/close_button_desc"
                 android:gravity="end"
                 android:scaleType="centerInside"
+                app:tint="?attr/colorOnSurface"
                 android:src="@drawable/ic_close" />
         </LinearLayout>
 
@@ -133,6 +138,7 @@
             android:paddingEnd="8dp"
             android:textSize="22sp"
             android:background="@drawable/rounded_body_background"
+            android:textColor="@color/black"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"/>
@@ -159,6 +165,7 @@
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:text="@string/content_example"
+            android:textColor="@color/black"
             android:textSize="20sp"
             android:scrollHorizontally="true"
             android:singleLine="false"
