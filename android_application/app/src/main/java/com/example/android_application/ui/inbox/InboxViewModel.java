@@ -3,13 +3,10 @@ package com.example.android_application.ui.inbox;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.example.android_application.data.local.entity.Mail;
 import com.example.android_application.data.repository.MailRepository;
 import com.example.android_application.ui.base.MailListViewModel;

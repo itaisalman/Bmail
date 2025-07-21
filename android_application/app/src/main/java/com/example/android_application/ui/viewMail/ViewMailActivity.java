@@ -57,7 +57,6 @@ import java.util.TimeZone;
 
             // Display the email details
             subjectTextView.setText(mail.getTitle());
-            fromTextView.setText(mail.getSenderAddress());
             bodyTextView.setText(mail.getContent());
 
             try {

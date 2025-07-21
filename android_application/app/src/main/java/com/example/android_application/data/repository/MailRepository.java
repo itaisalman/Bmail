@@ -1,7 +1,6 @@
 package com.example.android_application.data.repository;
 
 import android.content.Context;
-
 import com.example.android_application.data.api.MailApiService;
 import com.example.android_application.data.api.MailRequest;
 import com.example.android_application.data.local.AppDatabase;
@@ -15,8 +14,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -61,10 +58,39 @@ public class MailRepository {
         return mailDao.getReceivedMailsLive(receiverAddress);
     }
 
+    public LiveData<List<Mail>> getSentMailsLive(String senderAddress) {
+        return mailDao.getSentMailsLive(senderAddress);
+    }
+
     public void insertMails(List<Mail> mails) {
         new Thread(() -> mailDao.insert(mails)).start();
     }
 
+    public void insertStarredMails(List<Mail> mails) {
+        for (Mail mail : mails) {
+            mail.setStarred(true);
+        }
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            mailDao.insert(mails);
+        });
+    }
+
+    public LiveData<List<Mail>> getStarredMailsLive(String mailAddress) {
+        return mailDao.getStarredMails(mailAddress);
+    }
+
+    public void insertImportantMails(List<Mail> mails) {
+        for (Mail mail : mails) {
+            mail.setImportant(true);
+        }
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            mailDao.insert(mails);
+        });
+    }
+
+    public LiveData<List<Mail>> getImportantMailsLive(String mailAddress) {
+        return mailDao.getImportantMails(mailAddress);
+    }
 
     // Sends a mail to the server asynchronously
     public void sendMail(String token, Mail mail, RepositoryCallback callback) {
@@ -139,9 +165,17 @@ public class MailRepository {
                 if (response.isSuccessful() && response.body() != null) {
                     responseLiveData.postValue(response.body());
                     List<Mail> mails = response.body().getMails();
-                    new Thread(() -> mailDao.insert(mails)).start();
+
+                    if (label.equalsIgnoreCase("Starred")) {
+                        insertStarredMails(mails);
+                    } else if (label.equalsIgnoreCase("Important")) {
+                        insertImportantMails(mails);
+                    } else {
+                        insertMails(mails);
+                    }
+
                     if (callback != null) {
-                        callback.onSuccess(response.body().getMails(), response.body().getTotalCount());
+                        callback.onSuccess(mails, response.body().getTotalCount());
                     }
                 } else {
                     responseLiveData.postValue(new MailPageResponse());

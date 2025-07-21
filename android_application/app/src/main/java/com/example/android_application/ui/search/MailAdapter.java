@@ -19,7 +19,11 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MailViewHolder
 
     private List<Mail> mailList = new ArrayList<>();
     private OnItemClickListener listener;
-    private Context context;
+    private boolean showReceiverInstead;
+
+    public MailAdapter(boolean showReceiverInstead) {
+        this.showReceiverInstead = showReceiverInstead;
+    }
 
     public interface OnItemClickListener {
         void onItemClick(Mail mail);
@@ -45,12 +49,12 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MailViewHolder
     @Override
     public void onBindViewHolder(@NonNull MailViewHolder holder, int position) {
         Mail mail = mailList.get(position);
-
         Context context = holder.itemView.getContext();
+
         // Setting the properties that will get rendered on the screen.
-        String sender = mail.getSenderAddress();
+        String addressToShow = showReceiverInstead ? mail.getReceiverAddress() : mail.getSenderAddress();
         holder.sender.setText(
-                (sender != null && !sender.trim().isEmpty()) ? sender : context.getString(R.string.unknown_sender)
+                (addressToShow != null && !addressToShow.trim().isEmpty()) ? addressToShow : context.getString(R.string.unknown_sender)
         );
         String title = mail.getTitle();
         holder.title.setText(

@@ -28,5 +28,16 @@
             android:id="@+id/nav_spam"
             android:icon="@drawable/ic_spam"
             android:title="@string/spam" />
+        <item
+            android:id="@+id/nav_labels_anchor"
+            android:icon="@drawable/ic_label"
+            android:title="@string/labels"
+            android:enabled="false"
+            android:tint="?attr/colorControlNormal"
+            />
+        <item
+            android:id="@+id/nav_add_label"
+            android:title="@string/add_label"
+            android:icon="@drawable/ic_add" />
     </group>
 </menu>

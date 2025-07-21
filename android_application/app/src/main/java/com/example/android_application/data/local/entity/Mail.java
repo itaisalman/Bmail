@@ -59,6 +59,12 @@ public class Mail implements Serializable {
     @ColumnInfo(name = "date")
     private String date;
 
+    @ColumnInfo(name = "is_starred")
+    private boolean isStarred = false;
+
+    @ColumnInfo(name = "is_important")
+    private boolean isImportant = false;
+
     // Constructor, getters, setters below...
 
     public Mail() {}
@@ -98,4 +104,10 @@ public class Mail implements Serializable {
 
     public String getDate() { return date; }
     public void setDate(String date) { this.date = date; }
+
+    public boolean isStarred() { return isStarred; }
+    public void setStarred(boolean starred) { isStarred = starred; }
+
+    public boolean isImportant() { return isImportant; }
+    public void setImportant(boolean important) { isImportant = important; }
 }
