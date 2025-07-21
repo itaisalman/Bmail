@@ -21,9 +21,9 @@ import java.util.List;
 public class MailListFragment extends Fragment {
 
     protected  MailListViewModel mailListViewModel;
-    private MailAdapter mailAdapter;
-    private TextView noResultsTextView;
-    private RecyclerView recyclerView;
+    protected MailAdapter mailAdapter;
+    protected TextView noResultsTextView;
+    protected RecyclerView recyclerView;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -64,8 +64,8 @@ public class MailListFragment extends Fragment {
         noResultsTextView = view.findViewById(R.id.noResultsTextView);
     }
 
-    private void setupRecyclerView() {
-        mailAdapter = new MailAdapter();
+    protected void setupRecyclerView() {
+        mailAdapter = new MailAdapter(showReceiverInsteadOfSender());
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setAdapter(mailAdapter);
 
@@ -101,5 +101,9 @@ public class MailListFragment extends Fragment {
 
     protected String getLabel() {
         return "Inbox"; // default, override in InboxFragment etc.
+    }
+
+    protected boolean showReceiverInsteadOfSender() {
+        return false;
     }
 }

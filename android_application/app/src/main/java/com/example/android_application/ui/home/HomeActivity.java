@@ -131,7 +131,7 @@ public class HomeActivity extends AppCompatActivity {
         // Configure navigation drawer destinations
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_inbox, R.id.nav_star, R.id.nav_important, R.id.nav_sent,
-                R.id.nav_draft, R.id.nav_spam, R.id.nav_label_mails)
+                R.id.nav_draft, R.id.nav_spam)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -297,16 +297,18 @@ public class HomeActivity extends AppCompatActivity {
                 args.putString("labelName", label.getName());
 
                 NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_home);
+
                 NavOptions navOptions = new NavOptions.Builder()
                         .setPopUpTo(R.id.nav_label_mails, true)
+                        .setLaunchSingleTop(true)
                         .build();
 
                 navController.navigate(R.id.nav_label_mails, args, navOptions);
 
-
                 DrawerLayout drawer = this.findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
             });
+
 
             if (enableEdit) {
                 editButton.setOnClickListener(v -> LabelDialogHelper.showEditLabelDialog(this, label, labelViewModel, this));

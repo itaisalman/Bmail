@@ -48,7 +48,7 @@ public class SearchResultsFragment extends Fragment {
 
     // Setup RecyclerView with adapter and click listener.
     private void setupRecyclerView() {
-        adapter = new MailAdapter();
+        adapter = new MailAdapter(false);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setAdapter(adapter);
 
@@ -67,6 +67,7 @@ public class SearchResultsFragment extends Fragment {
         homeViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null && !error.isEmpty()) {
                 Toast.makeText(requireContext(), "Search error: " + error, Toast.LENGTH_SHORT).show();
+                homeViewModel.clearErrorMessage();
             }
         });
     }

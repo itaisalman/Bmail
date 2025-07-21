@@ -18,12 +18,11 @@ import java.util.concurrent.Executors;
 import com.example.android_application.data.local.entity.Label;
 import com.example.android_application.data.local.dao.LabelDao;
 
-@Database(entities = {Draft.class, Label.class, Mail.class}, version = 7)
+@Database(entities = {Draft.class, Label.class, Mail.class}, version = 9) // Incremented version due to schema change
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract DraftDao draftDao();
     public abstract MailDao mailDao();
-
     public abstract LabelDao labelDao();
 
     private static volatile AppDatabase INSTANCE;
@@ -36,7 +35,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "bmail_database")
                             .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
-                                    MIGRATION_5_6, MIGRATION_6_7)
+                                    MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9)
                             .fallbackToDestructiveMigration()
                             .build();
                 }
@@ -112,8 +111,20 @@ public abstract class AppDatabase extends RoomDatabase {
     static final Migration MIGRATION_6_7 = new Migration(6, 7) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-            database.execSQL("ALTER TABLE labels ADD COLUMN mails TEXT");
+            database.execSQL("ALTER TABLE mails ADD COLUMN is_starred INTEGER NOT NULL DEFAULT 0");
         }
     };
 
+    static final Migration MIGRATION_7_8= new Migration(7, 8) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE mails ADD COLUMN is_important INTEGER NOT NULL DEFAULT 0");
+        }
+    };
+    static final Migration MIGRATION_8_9 = new Migration(8, 9) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE labels ADD COLUMN mails TEXT");
+        }
+    };
 }

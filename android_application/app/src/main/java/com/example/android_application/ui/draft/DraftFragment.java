@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -13,8 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.android_application.R;
 import com.example.android_application.data.local.entity.Draft;
+import com.example.android_application.ui.bottom_sheet.ComposeBottomSheet;
 import com.example.android_application.ui.bottom_sheet.ComposeViewModel;
-
 import java.util.ArrayList;
 
 public class DraftFragment extends Fragment {
@@ -43,16 +44,31 @@ public class DraftFragment extends Fragment {
         draftViewModel = new ViewModelProvider(this).get(DraftViewModel.class);
         // Load drafts for specific user.
         draftViewModel.loadDraftsForUser(userId);
+        ComposeViewModel composeViewModel = new ViewModelProvider(requireActivity()).get(ComposeViewModel.class);
 
         draftAdapter = new DraftAdapter(new ArrayList<>(), new DraftAdapter.OnDraftClickListener() {
             @Override
             public void onClick(Draft draft) {
-                // TODO: Open ComposeBottomSheet with this draft
+                composeViewModel.setIsDraftClicked(true);
+                ComposeBottomSheet bottomSheet = new ComposeBottomSheet();
+                Bundle args = new Bundle();
+                args.putString("id", draft.getId());
+                args.putString("to", draft.getTo());
+                args.putString("subject", draft.getSubject());
+                args.putString("body", draft.getBody());
+                bottomSheet.setArguments(args);
+                bottomSheet.show(getParentFragmentManager(), "ComposeBottomSheet");
             }
 
             @Override
             public void onDelete(Draft draft) {
-                // Leave empty for now or handle delete if you want later
+                draftViewModel.deleteDraft(draft);
+            }
+        });
+        draftViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
+            if (error != null && !error.isEmpty()) {
+                Toast.makeText(requireContext(), "Failed to delete draft: " + error, Toast.LENGTH_LONG).show();
+                draftViewModel.clearErrorMessage();
             }
         });
 
@@ -87,8 +103,6 @@ public class DraftFragment extends Fragment {
             }
         });
         draftViewModel.getIsLastPage().observe(getViewLifecycleOwner(), lastPage -> isLastPage = lastPage);
-
-        ComposeViewModel composeViewModel = new ViewModelProvider(requireActivity()).get(ComposeViewModel.class);
         composeViewModel.getNewDraftCreated().observe(getViewLifecycleOwner(), created -> {
             if (Boolean.TRUE.equals(created)) {
                 // Reloads the local DB drafts after a new one is added from ComposeBottomSheet.

@@ -54,6 +54,4 @@
             android:name="labelName"
             app:argType="string" />
     </fragment>
-
-
 </navigation>

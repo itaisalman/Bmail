@@ -57,7 +57,7 @@
     <string name="spam">Spam</string>
     <string name="search">Search</string>
     <string name="logout">Logout</string>
-    <string name="no_search_results_found">No search results found</string>
+    <string name="no_search_results_found">No results found</string>
     <string name="unknown_sender">(Unknown Sender)</string>
     <string name="no_subject">(No Subject)</string>
     <string name="no_content_message">(No Content)</string>
