@@ -75,11 +75,22 @@ public class MailRepository {
         });
     }
 
-
     public LiveData<List<Mail>> getStarredMailsLive(String mailAddress) {
         return mailDao.getStarredMails(mailAddress);
     }
 
+    public void insertImportantMails(List<Mail> mails) {
+        for (Mail mail : mails) {
+            mail.setImportant(true);
+        }
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            mailDao.insert(mails);
+        });
+    }
+
+    public LiveData<List<Mail>> getImportantMailsLive(String mailAddress) {
+        return mailDao.getImportantMails(mailAddress);
+    }
 
     // Sends a mail to the server asynchronously
     public void sendMail(String token, Mail mail, RepositoryCallback callback) {
@@ -155,8 +166,10 @@ public class MailRepository {
                     responseLiveData.postValue(response.body());
                     List<Mail> mails = response.body().getMails();
 
-                    if (label.equalsIgnoreCase("starred")) {
+                    if (label.equalsIgnoreCase("Starred")) {
                         insertStarredMails(mails);
+                    } else if (label.equalsIgnoreCase("Important")) {
+                        insertImportantMails(mails);
                     } else {
                         insertMails(mails);
                     }

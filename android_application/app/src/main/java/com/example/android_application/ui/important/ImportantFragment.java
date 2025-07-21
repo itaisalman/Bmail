@@ -1,59 +1,49 @@
 package com.example.android_application.ui.important;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
+import android.widget.Toast;
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import com.example.android_application.ui.base.MailListFragment;
 
-import com.example.android_application.databinding.FragmentImportantBinding;
+public class ImportantFragment extends MailListFragment {
 
-/**
- * A Fragment representing the "Important" screen in the application.
- */
-public class ImportantFragment extends Fragment {
-
-    // ViewBinding object to access views in fragment_important.xml
-    private FragmentImportantBinding binding;
-
-    /**
-     * Called to inflate the fragment's UI and set up ViewModel observation.
-     *
-     * @param inflater           LayoutInflater used to inflate any views in the fragment
-     * @param container          Parent view that the fragment's UI should be attached to
-     * @param savedInstanceState Bundle containing previous saved state (if any)
-     * @return The root view of the fragment's layout
-     */
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-
-        // Create a ViewModel instance scoped to this Fragment
-        ImportantViewModel importantViewModel =
-                new ViewModelProvider(this).get(ImportantViewModel.class);
-
-        // Inflate the layout using ViewBinding
-        binding = FragmentImportantBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-
-        // Reference the TextView from the binding
-        final TextView textView = binding.textImportant;
-
-        // Observe LiveData from the ViewModel and update the TextView when data changes
-        importantViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-        return root;
+                             ViewGroup container,
+                             Bundle savedInstanceState) {
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
-    /**
-     * Called when the fragment's view is destroyed.
-     * Clears the binding reference to avoid memory leaks.
-     */
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+    protected void setupViewModel() {
+
+        SharedPreferences prefs = requireActivity().getSharedPreferences("auth", Context.MODE_PRIVATE);
+        String currentUserEmail = prefs.getString("username", null);
+        ImportantViewModel.Factory factory = new ImportantViewModel.Factory(requireActivity().getApplication(), currentUserEmail);
+        mailListViewModel = new ViewModelProvider(this, factory).get(ImportantViewModel.class);
+
+        mailListViewModel.getMailListLiveData().observe(getViewLifecycleOwner(), this::handleMailList);
+        mailListViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
+            if (error != null && !error.isEmpty()) {
+                Toast.makeText(requireContext(), "Search error: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    protected String getLabel() {
+        return "Important";
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mailListViewModel.initMails(getLabel());
     }
 }
