@@ -1,6 +1,7 @@
 package com.example.android_application.ui.viewMail;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -48,9 +49,9 @@ public class ViewMailActivity extends BaseThemedActivity {
         ImageButton closeButton = findViewById(R.id.closeButton);
         ImageButton starButton = findViewById(R.id.starButton);
         ImageButton importantButton = findViewById(R.id.importantButton);
+        ImageButton trashButton = findViewById(R.id.deleteButton);
         ImageButton labelAssignButton = findViewById(R.id.labelButton);
 
-        mailBox = getIntent().getStringExtra("mail_box");
 
         // Observe ViewModel
         viewModel.getIsStarred().observe(this, isStarred -> {
@@ -61,8 +62,18 @@ public class ViewMailActivity extends BaseThemedActivity {
             importantButton.setImageResource(isImportant ? R.drawable.ic_important : R.drawable.ic_important_view_mail);
         });
 
-        starButton.setOnClickListener(v -> viewModel.toggleStarred());
-        importantButton.setOnClickListener(v -> viewModel.toggleImportant());
+        mailBox = getIntent().getStringExtra("mail_box");
+        if (mailBox != null) {
+            if (!(mailBox.equalsIgnoreCase("Trash"))) {
+                starButton.setOnClickListener(v -> viewModel.toggleStarred());
+                importantButton.setOnClickListener(v -> viewModel.toggleImportant());
+                trashButton.setOnClickListener(v -> {
+                    viewModel.moveToTrash(mailBox);
+                    finish();
+                });
+            }
+        }
+
         closeButton.setOnClickListener(v -> finish());
 
         String mailId = getIntent().getStringExtra("mail_id");

@@ -1,6 +1,10 @@
 package com.example.android_application.ui.viewMail;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -12,6 +16,7 @@ public class ViewMailViewModel extends AndroidViewModel {
     private final MailRepository repository;
     private final MutableLiveData<Boolean> isStarred = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isImportant = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isTrash = new MutableLiveData<>(false);
     private final MutableLiveData<Mail> mailLiveData = new MutableLiveData<>();
 
     private Mail currentMail;
@@ -29,6 +34,7 @@ public class ViewMailViewModel extends AndroidViewModel {
         currentMail = mail;
         isStarred.setValue(mail.isStarred());
         isImportant.setValue(mail.isImportant());
+        isTrash.setValue(mail.isTrash());
         mailLiveData.setValue(mail);
     }
 
@@ -38,6 +44,10 @@ public class ViewMailViewModel extends AndroidViewModel {
 
     public LiveData<Boolean> getIsImportant() {
         return isImportant;
+    }
+
+    public LiveData<Boolean> getIsTrash() {
+        return isTrash;
     }
 
     public LiveData<Mail> getMailLiveData() {
@@ -62,5 +72,24 @@ public class ViewMailViewModel extends AndroidViewModel {
         currentMail.setImportant(newImportant);
         // Database update
         repository.updateMail(currentMail);
+    }
+
+    private String getTokenFromStorage() {
+        SharedPreferences prefs = getApplication().getSharedPreferences("auth", Context.MODE_PRIVATE);
+        return prefs.getString("jwt", "");
+    }
+
+    public void moveToTrash(String label) {
+        if (currentMail == null || (label.equalsIgnoreCase("Trash"))) return;
+
+        isTrash.setValue(true);
+        isStarred.setValue(false);
+        isImportant.setValue(false);
+        currentMail.setTrash(true);
+        // Server update
+        repository.deleteMailFromServer(currentMail.getId(), getTokenFromStorage());
+        // Database update
+        repository.updateMail(currentMail);
+
     }
 }
