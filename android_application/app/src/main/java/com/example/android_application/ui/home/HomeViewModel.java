@@ -30,8 +30,8 @@ public class HomeViewModel extends AndroidViewModel {
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
-        this.repository = new UserRepository();
         this.mailRepository = new MailRepository(application.getApplicationContext());
+        this.repository = new UserRepository();
     }
 
     public void getUser() {

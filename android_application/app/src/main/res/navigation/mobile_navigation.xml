@@ -11,7 +11,7 @@
         android:id="@+id/searchResultsFragment"
         android:name="com.example.android_application.ui.search.SearchResultsFragment"
         android:label="Search Results"
-        tools:layout="@layout/fragment_search_results" />
+        tools:layout="@layout/fragment_mail_list" />
     <fragment
         android:id="@+id/nav_inbox"
         android:name="com.example.android_application.ui.inbox.InboxFragment"
