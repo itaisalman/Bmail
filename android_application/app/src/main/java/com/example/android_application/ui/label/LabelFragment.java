@@ -1,8 +1,10 @@
 package com.example.android_application.ui.label;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +13,12 @@ import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.android_application.R;
 import com.example.android_application.ui.base.MailListFragment;
+import com.example.android_application.ui.search.MailAdapter;
+import com.example.android_application.ui.viewMail.ViewMailActivity;
 
 public class LabelFragment extends MailListFragment {
     private String labelId;
@@ -48,6 +53,21 @@ public class LabelFragment extends MailListFragment {
             if (error != null && !error.isEmpty()) {
                 Toast.makeText(requireContext(), "Search error: " + error, Toast.LENGTH_SHORT).show();
             }
+        });
+    }
+
+    @Override
+    protected void setupRecyclerView() {
+        mailAdapter = new MailAdapter(showReceiverInsteadOfSender());
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recyclerView.setAdapter(mailAdapter);
+
+        mailAdapter.setOnItemClickListener(mail -> {
+            Intent intent = new Intent(requireContext(), ViewMailActivity.class);
+            intent.putExtra("mail_box", labelName);
+            Log.d("LABEL", labelName);
+            intent.putExtra("mail_id", mail.getId());
+            startActivity(intent);
         });
     }
 
