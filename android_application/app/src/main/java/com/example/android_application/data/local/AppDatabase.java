@@ -13,11 +13,15 @@ import com.example.android_application.data.local.entity.Draft;
 import com.example.android_application.data.local.entity.Mail;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import com.example.android_application.data.local.entity.Label;
+import com.example.android_application.data.local.dao.LabelDao;
 
-@Database(entities = {Draft.class, Mail.class}, version = 5) // Incremented version due to schema change
+@Database(entities = {Draft.class, Label.class, Mail.class}, version = 6) // Incremented version due to schema change
 public abstract class AppDatabase extends RoomDatabase {
     public abstract DraftDao draftDao();
     public abstract MailDao mailDao();
+
+    public abstract LabelDao labelDao();
 
     private static volatile AppDatabase INSTANCE;
 
@@ -28,7 +32,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "bmail_database")
-                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
                             .fallbackToDestructiveMigration()
                             .build();
                 }
@@ -91,6 +95,13 @@ public abstract class AppDatabase extends RoomDatabase {
                             "content TEXT, " +
                             "date TEXT)"
             );
+        }
+    };
+
+    static final Migration MIGRATION_5_6 = new Migration(5, 6) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS `labels` (`_id` TEXT NOT NULL, `name` TEXT, PRIMARY KEY(`_id`))");
         }
     };
 }
