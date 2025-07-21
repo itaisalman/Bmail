@@ -67,6 +67,7 @@ public class SearchResultsFragment extends Fragment {
         homeViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null && !error.isEmpty()) {
                 Toast.makeText(requireContext(), "Search error: " + error, Toast.LENGTH_SHORT).show();
+                homeViewModel.clearErrorMessage();
             }
         });
     }
