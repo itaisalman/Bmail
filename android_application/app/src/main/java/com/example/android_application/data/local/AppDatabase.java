@@ -19,6 +19,7 @@ import com.example.android_application.data.local.entity.Label;
 import com.example.android_application.data.local.dao.LabelDao;
 
 @Database(entities = {Draft.class, Label.class, Mail.class}, version = 11) // Incremented version due to schema change
+@TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract DraftDao draftDao();
     public abstract MailDao mailDao();

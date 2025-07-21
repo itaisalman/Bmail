@@ -22,23 +22,23 @@ public class ViewMailActivity extends BaseThemedActivity {
     private String mailBox;
     private LabelViewModel labelViewModel;
 
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_view_mail);
-            labelViewModel = new ViewModelProvider(this).get(LabelViewModel.class);
-            SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
-            String currentUserEmail = prefs.getString("email", "");
-            String labelName = getIntent().getStringExtra("labelName");
-            LabelMailsViewModel.Factory factory = new LabelMailsViewModel.Factory(
-                    getApplication(),
-                    currentUserEmail, labelName
-            );
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_view_mail);
+        labelViewModel = new ViewModelProvider(this).get(LabelViewModel.class);
+        SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
+        String currentUserEmail = prefs.getString("email", "");
+        String labelName = getIntent().getStringExtra("labelName");
+        LabelMailsViewModel.Factory factory = new LabelMailsViewModel.Factory(
+                getApplication(),
+                currentUserEmail, labelName
+        );
 
-            LabelMailsViewModel labelMailsViewModel = new ViewModelProvider(this, factory).get(LabelMailsViewModel.class);
+        LabelMailsViewModel labelMailsViewModel = new ViewModelProvider(this, factory).get(LabelMailsViewModel.class);
 
-            viewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(getApplication()))
-                .get(ViewMailViewModel.class);
+        viewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(getApplication()))
+            .get(ViewMailViewModel.class);
 
         TextView subjectTextView = findViewById(R.id.subjectTextView);
         TextView fromTextView = findViewById(R.id.fromEmail);
@@ -124,11 +124,7 @@ public class ViewMailActivity extends BaseThemedActivity {
                             null
                     )
             );
-        }
-
-
         });
-
     }
 }
 
