@@ -13,9 +13,12 @@ public interface DraftDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Draft draft);
 
-    @Delete
-    void delete(Draft draft);
+    @Query("DELETE FROM drafts WHERE id = :draftId")
+    void deleteById(String draftId);
 
-    @Query("SELECT * FROM drafts ORDER BY last_modified DESC")
-    LiveData<List<Draft>> getAllDrafts();
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertDrafts(List<Draft> drafts);
+
+    @Query("SELECT * FROM drafts WHERE user_id = :userId ORDER BY last_modified")
+    LiveData<List<Draft>> getAllDrafts(String userId);
 }

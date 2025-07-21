@@ -25,11 +25,12 @@ public class HomeViewModel extends AndroidViewModel {
 
     private final MutableLiveData<String> currentSearchQuery = new MutableLiveData<>();
 
-    private final MailRepository mailRepository = new MailRepository();
+    private final MailRepository mailRepository;
 
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
+        this.mailRepository = new MailRepository(application.getApplicationContext());
         this.repository = new UserRepository();
     }
 
@@ -54,9 +55,13 @@ public class HomeViewModel extends AndroidViewModel {
         return error;
     }
 
+    public void clearErrorMessage() {
+        error.postValue(null);
+    }
+
     public void clearSearchResults() {
-        searchResults.setValue(Collections.emptyList()); // or null
-        currentSearchQuery.setValue(""); // clear query
+        searchResults.setValue(Collections.emptyList());
+        currentSearchQuery.setValue("");
     }
 
     public LiveData<String> getCurrentSearchQuery() {

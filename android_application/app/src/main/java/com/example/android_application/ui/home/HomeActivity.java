@@ -1,5 +1,6 @@
 package com.example.android_application.ui.home;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -91,9 +92,19 @@ public class HomeActivity extends AppCompatActivity {
                 String firstName = userJson.optString("first_name", "");
                 String lastName = userJson.optString("last_name", "");
                 String username = userJson.optString("username", "");
+
+                SharedPreferences prefs = getApplicationContext().getSharedPreferences("auth", Context.MODE_PRIVATE);
+                prefs.edit().putString("username", username).apply();
+
                 String profilePath = userJson.optString("image", "");
                 String profileUrl = "http://10.0.2.2:3000/" + profilePath;
 
+                // Save userID in SharedPreferences in order to extract only it's values from local DB.
+                String userId = userJson.optString("_id", null);
+                getSharedPreferences("MyPrefs", MODE_PRIVATE)
+                        .edit()
+                        .putString("userID", userId)
+                        .apply();
                 nameTextView.setText(String.format("%s %s", firstName, lastName));
                 usernameTextView.setText(username);
 
@@ -101,9 +112,10 @@ public class HomeActivity extends AppCompatActivity {
             });
 
             // Handle possible errors
-            homeViewModel.error.observe(this, errorMessage ->
-                    Toast.makeText(this, "error: " + errorMessage, Toast.LENGTH_SHORT).show()
-            );
+            homeViewModel.error.observe(this, errorMessage -> {
+                Toast.makeText(this, "error: " + errorMessage, Toast.LENGTH_SHORT).show();
+                homeViewModel.clearErrorMessage();
+            });
         }
 
         // Configure navigation drawer destinations
