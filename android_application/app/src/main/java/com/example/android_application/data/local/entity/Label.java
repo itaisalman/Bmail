@@ -7,6 +7,8 @@ import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 @Entity(tableName = "labels")
 public class Label {
 
@@ -18,6 +20,13 @@ public class Label {
 
     @ColumnInfo(name = "name")
     private String name;
+
+    @SerializedName("mails")
+    @ColumnInfo(name = "mails")
+    private List<String> mails;
+
+    @ColumnInfo(name = "user_id")
+    public String userId;
 
     // Constructors
     public Label(@NonNull String _id, String name) {
@@ -35,4 +44,17 @@ public class Label {
     public String getName() { return name; }
 
     public void setName(String name) { this.name = name; }
+
+    public List<String> getMails() {
+        return mails;
+    }
+
+    public void setMails(List<String> mails) {
+        this.mails = mails;
+    }
+
+    public String getUserId() { return userId; }
+
+    public void setUserId(String userId) { this.userId = userId; }
+
 }

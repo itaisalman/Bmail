@@ -48,4 +48,16 @@
         android:label="@string/trash"
         tools:layout="@layout/fragment_trash" />
 
+    <fragment
+        android:id="@+id/nav_label_mails"
+        android:name="com.example.android_application.ui.label.LabelFragment"
+        android:label="Label Mails"
+        tools:layout="@layout/fragment_label_mails">
+        <argument
+            android:name="labelId"
+            app:argType="string" />
+        <argument
+            android:name="labelName"
+            app:argType="string" />
+    </fragment>
 </navigation>

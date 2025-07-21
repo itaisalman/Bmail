@@ -51,11 +51,6 @@ public class DraftRepository {
         return draftDao.getAllDrafts(userId);
     }
 
-    // Insert one draft into the local Room DB.
-    public void insertDraft(Draft draft) {
-        executorService.execute(() -> draftDao.insert(draft));
-    }
-
     // Delete a draft from the server and from local DB.
     public void deleteDraftById(String token, String draftId, MailRepository.RepositoryCallback callback) {
         Call<ResponseBody> call = apiService.deleteDraft("Bearer " + token, draftId);
@@ -229,8 +224,6 @@ public class DraftRepository {
             }
         });
     }
-
-
 
     // Interface to notify the result of the API call.
     public interface ApiCallback {
