@@ -3,13 +3,12 @@ package com.example.android_application.ui.home;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +20,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.android_application.data.local.entity.Label;
+import com.example.android_application.data.repository.UserRepository;
+import com.example.android_application.ui.BaseThemedActivity;
 import com.example.android_application.ui.bottom_sheet.ComposeBottomSheet;
 import com.example.android_application.ui.label.LabelDialogHelper;
 import com.example.android_application.ui.label.LabelViewModel;
@@ -34,14 +35,12 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.example.android_application.databinding.ActivityHomeBinding;
-
 import java.util.List;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends BaseThemedActivity {
 
     // Navigation and theme toggle
     private AppBarConfiguration mAppBarConfiguration;
@@ -56,6 +55,7 @@ public class HomeActivity extends AppCompatActivity {
     // ViewModel for search and user data
     private HomeViewModel homeViewModel;
     private LabelViewModel labelViewModel;
+    private UserRepository  userRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +65,9 @@ public class HomeActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             isDarkModeIconVisible = savedInstanceState.getBoolean(ICON_STATE_KEY, false);
         } else {
-            int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-            isDarkModeIconVisible = (currentNightMode == Configuration.UI_MODE_NIGHT_NO);
+            SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
+            String theme = prefs.getString("theme", "light");
+            isDarkModeIconVisible = theme.equals("dark");
         }
 
         // Setup view binding and toolbar
@@ -104,7 +105,6 @@ public class HomeActivity extends AppCompatActivity {
 
 
         homeViewModel.getUser();
-
         // Handle drawer header user data and theme toggle
         View headerView = navigationView.getHeaderView(0);
         if (headerView != null) {
@@ -114,7 +114,23 @@ public class HomeActivity extends AppCompatActivity {
             themeToggleDrawerHeader.setOnClickListener(v -> {
                 isDarkModeIconVisible = !isDarkModeIconVisible;
                 updateThemeToggleButtonIcon();
+
+                // Determine theme
+                String selectedTheme = isDarkModeIconVisible ? "dark" : "light";
+
+                // Save new theme locally.
+                SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("theme", selectedTheme);
+                editor.apply();
+                String token = prefs.getString("jwt", "");
+                userRepository = new UserRepository();
+                userRepository.updateUserTheme(this, token, selectedTheme);
+                // Restart activity to apply new theme
+                recreate();
             });
+
+
 
             // Load user details
             TextView nameTextView = headerView.findViewById(R.id.nameTextView);
@@ -164,7 +180,6 @@ public class HomeActivity extends AppCompatActivity {
 
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
-
             if (id == R.id.nav_add_label) {
                 LabelDialogHelper.showAddLabelDialog(this, labelViewModel, this);
                 return true;
@@ -283,7 +298,7 @@ public class HomeActivity extends AppCompatActivity {
         } else if (id == R.id.action_logout) {
             SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
             prefs.edit().clear().apply();
-
+//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);

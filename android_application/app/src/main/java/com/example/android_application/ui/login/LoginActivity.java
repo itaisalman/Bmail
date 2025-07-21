@@ -4,10 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.widget.*;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.example.android_application.R;
 import com.example.android_application.ui.home.HomeActivity;
 import com.example.android_application.ui.signup.SignupActivity;
@@ -19,6 +18,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 

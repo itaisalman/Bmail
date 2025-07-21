@@ -28,7 +28,7 @@
         android:textSize="16sp"
         android:maxLines="1"
         android:ellipsize="end"
-        android:textColor="@color/black"
+        android:textColor="@color/address"
         />
 
     <ImageButton
