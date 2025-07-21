@@ -143,8 +143,6 @@ public class HomeActivity extends BaseThemedActivity {
                 String username = userJson.optString("username", "");
 
                 SharedPreferences prefs = getApplicationContext().getSharedPreferences("auth", Context.MODE_PRIVATE);
-                prefs.edit().putString("username", username).apply();
-
                 String profilePath = userJson.optString("image", "");
                 String profileUrl = "http://10.0.2.2:3000/" + profilePath;
 
