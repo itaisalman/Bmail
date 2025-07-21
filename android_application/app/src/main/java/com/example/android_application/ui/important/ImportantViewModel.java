@@ -42,7 +42,9 @@ public class ImportantViewModel extends MailListViewModel {
     public void getMails(String label, int page) {
         mailRepository.getMailsByLabel(getTokenFromStorage(), label, page, new MailRepository.MailListCallback() {
             @Override
-            public void onSuccess(List<Mail> mails, int totalCount) {}
+            public void onSuccess(List<Mail> mails, int totalCount) {
+                mailRepository.insertImportantMails(mails);
+            }
 
             @Override
             public void onFailure(String errorMessage) {

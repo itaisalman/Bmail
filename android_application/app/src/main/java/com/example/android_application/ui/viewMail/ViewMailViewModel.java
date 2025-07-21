@@ -1,0 +1,66 @@
+package com.example.android_application.ui.viewMail;
+
+import android.app.Application;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import com.example.android_application.data.local.entity.Mail;
+import com.example.android_application.data.repository.MailRepository;
+
+public class ViewMailViewModel extends AndroidViewModel {
+    private final MailRepository repository;
+    private final MutableLiveData<Boolean> isStarred = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isImportant = new MutableLiveData<>(false);
+    private final MutableLiveData<Mail> mailLiveData = new MutableLiveData<>();
+
+    private Mail currentMail;
+
+    public ViewMailViewModel(@NonNull Application application) {
+        super(application);
+        repository = new MailRepository(application.getApplicationContext());
+    }
+
+    public LiveData<Mail> loadMailById(String mailId) {
+        return repository.getMailById(mailId);
+    }
+
+    public void setMail(Mail mail) {
+        currentMail = mail;
+        isStarred.setValue(mail.isStarred());
+        isImportant.setValue(mail.isImportant());
+        mailLiveData.setValue(mail);
+    }
+
+    public LiveData<Boolean> getIsStarred() {
+        return isStarred;
+    }
+
+    public LiveData<Boolean> getIsImportant() {
+        return isImportant;
+    }
+
+    public LiveData<Mail> getMailLiveData() {
+        return mailLiveData;
+    }
+
+    public void toggleStarred() {
+        if (currentMail == null) return;
+
+        boolean newStarred = !(isStarred.getValue() != null && isStarred.getValue());
+        isStarred.setValue(newStarred);
+        currentMail.setStarred(newStarred);
+        // Database update
+        repository.updateMail(currentMail);
+    }
+
+    public void toggleImportant() {
+        if (currentMail == null) return;
+
+        boolean newImportant = !(isImportant.getValue() != null && isImportant.getValue());
+        isImportant.setValue(newImportant);
+        currentMail.setImportant(newImportant);
+        // Database update
+        repository.updateMail(currentMail);
+    }
+}

@@ -62,4 +62,15 @@ public interface MailApiService {
             @Path("id") String draftId
     );
 
+    @PATCH("/api/mails/star/{id}")
+    Call<Void> updateStarStatus(
+            @Header("Authorization") String token,
+            @Path("id") String mailId
+    );
+
+    @PATCH("/api/mails/important/{id}")
+    Call<Void> updateImportantStatus(
+            @Header("Authorization") String token,
+            @Path("id") String mailId
+    );
 }
