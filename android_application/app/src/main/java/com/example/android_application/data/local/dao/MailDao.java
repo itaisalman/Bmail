@@ -28,6 +28,9 @@ public interface MailDao {
     @Query("SELECT * FROM mails WHERE is_important = 1 AND (receiver_address = :mailAddress OR sender_address = :mailAddress) ORDER BY date DESC")
     LiveData<List<Mail>> getImportantMails(String mailAddress);
 
+    @Query("SELECT * FROM mails WHERE is_trash = 1 AND (receiver_address = :mailAddress OR sender_address = :mailAddress) ORDER BY date DESC")
+    LiveData<List<Mail>> getTrashMailsLive(String mailAddress);
+
     @Query("SELECT * FROM mails WHERE id = :mailId LIMIT 1")
     LiveData<Mail> getMailByIdLive(String mailId);
 

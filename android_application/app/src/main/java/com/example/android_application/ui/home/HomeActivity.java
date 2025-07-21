@@ -168,7 +168,7 @@ public class HomeActivity extends BaseThemedActivity {
         // Configure navigation drawer destinations
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_inbox, R.id.nav_star, R.id.nav_important, R.id.nav_sent,
-                R.id.nav_draft, R.id.nav_spam)
+                R.id.nav_draft, R.id.nav_spam, R.id.nav_trash)
                 .setOpenableLayout(drawer)
                 .build();
 

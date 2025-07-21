@@ -73,4 +73,11 @@ public interface MailApiService {
             @Header("Authorization") String token,
             @Path("id") String mailId
     );
+
+    @DELETE("/api/mails/{id}")
+    Call<Void> moveToTrash(
+            @Header("Authorization") String token,
+            @Path("id") String mailId
+    );
+
 }
