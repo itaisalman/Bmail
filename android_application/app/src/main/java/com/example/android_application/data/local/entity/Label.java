@@ -21,6 +21,13 @@ public class Label {
     @ColumnInfo(name = "name")
     private String name;
 
+    @SerializedName("mails")
+    @ColumnInfo(name = "mails")
+    private List<String> mails;
+
+    @ColumnInfo(name = "user_id")
+    public String userId;
+
     // Constructors
     public Label(@NonNull String _id, String name) {
         this._id = _id;
@@ -38,15 +45,16 @@ public class Label {
 
     public void setName(String name) { this.name = name; }
 
-    @SerializedName("mails")
-    @ColumnInfo(name = "mails")
-    private List<String> mails;
-
     public List<String> getMails() {
         return mails;
     }
+
     public void setMails(List<String> mails) {
         this.mails = mails;
     }
+
+    public String getUserId() { return userId; }
+
+    public void setUserId(String userId) { this.userId = userId; }
 
 }

@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.example.android_application.data.local.entity.Mail;
 import com.example.android_application.data.repository.LabelRepository;
 import com.example.android_application.data.repository.MailRepository;
@@ -16,7 +15,7 @@ import java.util.List;
 
 public class LabelMailsViewModel extends MailListViewModel {
 
-    private LiveData<List<Mail>> labelMails;
+    private final LiveData<List<Mail>> labelMails;
 
     private final MailRepository mailRepository;
     private final LabelRepository labelRepository;
@@ -26,7 +25,9 @@ public class LabelMailsViewModel extends MailListViewModel {
         mailRepository = new MailRepository(application.getApplicationContext());
         labelRepository = new LabelRepository(application.getApplicationContext());
         getMails(labelName, currentPage);
-        labelMails = labelRepository.getLabelMailsLive(labelName);
+        SharedPreferences prefs = getApplication().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        String userId = prefs.getString("userID", null);
+        labelMails = labelRepository.getLabelMailsLive(labelName, userId);
     }
 
     @Override

@@ -116,6 +116,7 @@ public class HomeActivity extends AppCompatActivity {
                         .edit()
                         .putString("userID", userId)
                         .apply();
+                labelViewModel.fetchLabels();
                 nameTextView.setText(String.format("%s %s", firstName, lastName));
                 usernameTextView.setText(username);
 
@@ -153,7 +154,6 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         setupLabelsMenu(navigationView);
-        labelViewModel.fetchLabels();
         observeAndRenderLabels();
     }
 
@@ -329,7 +329,7 @@ public class HomeActivity extends AppCompatActivity {
         SharedPreferences prefs = getApplication().getSharedPreferences("auth", Context.MODE_PRIVATE);
         String token = prefs.getString("jwt", "");
         // Observe the LiveData from the ViewModel
-        labelViewModel.getAllUserLabels(token).observe(this, labels -> renderLabels(labelsContainer, labels, true));
+        labelViewModel.getLabels().observe(this, labels -> renderLabels(labelsContainer, labels, true));
     }
 
     // Sets up the labels in the navigation drawer without edit/delete functionality

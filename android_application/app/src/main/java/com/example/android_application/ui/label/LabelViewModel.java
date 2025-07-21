@@ -2,15 +2,13 @@ package com.example.android_application.ui.label;
 
 import android.app.Application;
 import android.content.Context;
-
+import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
 import com.example.android_application.data.local.entity.Label;
 import com.example.android_application.data.repository.LabelRepository;
-
 import java.util.List;
 
 public class LabelViewModel extends AndroidViewModel {
@@ -20,6 +18,7 @@ public class LabelViewModel extends AndroidViewModel {
     // LiveData to hold the current list of labels
     private final MutableLiveData<List<Label>> labels = new MutableLiveData<>();
     private final String token;
+
 
     public LabelViewModel(@NonNull Application application) {
         super(application);
@@ -35,11 +34,12 @@ public class LabelViewModel extends AndroidViewModel {
     // Fetch labels from the server and update local database
     public void fetchLabels() {
         if (!hasToken()) return;
-
+        SharedPreferences prefs = getApplication().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        String userId = prefs.getString("userID", null);
         // Refresh data from server
-        labelRepository.refreshLabelsFromServer(token);
+        labelRepository.refreshLabelsFromServer(token, userId);
         // Then observe local data
-        labelRepository.getAllLabelsLocal().observeForever(labels::postValue);
+        labelRepository.getAllLabelsLocal(userId).observeForever(labels::postValue);
     }
 
     // Create a new label
@@ -49,9 +49,10 @@ public class LabelViewModel extends AndroidViewModel {
             result.setValue(null);
             return result;
         }
-
+        SharedPreferences prefs = getApplication().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        String userId = prefs.getString("userID", null);
         // Observe result from repository and post it to caller
-        labelRepository.createLabel(token, name).observeForever(result::setValue);
+        labelRepository.createLabel(token, name, userId).observeForever(result::setValue);
         return result;
     }
 
@@ -90,5 +91,6 @@ public class LabelViewModel extends AndroidViewModel {
     public LiveData<List<Label>> getAllUserLabels(String token) {
         return labelRepository.getAllUserLabels(token);
     }
+
 
 }
