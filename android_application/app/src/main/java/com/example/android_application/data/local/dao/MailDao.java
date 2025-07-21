@@ -49,4 +49,6 @@ public interface MailDao {
     @Delete
     void delete (Mail... mails);
 
+    @Query("SELECT * FROM mails WHERE id IN (:mailIds) ORDER BY date DESC")
+    LiveData<List<Mail>> getMailsByIds(List<String> mailIds);
 }
