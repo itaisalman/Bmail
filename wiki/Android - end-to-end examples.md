@@ -12,7 +12,9 @@ This local storage provides a smooth and responsive experience, even when offlin
 - After successful registration, you will be redirected to the **login** screen.
 - Alternatively, you can tap **"Log In"** from the start if you already have an account.
 
-📸 Example screenshot
+<img src="../photos/homeScreen_part5.jpg" alt="home" width="190"/>
+<img src="../photos/signUpScreen_part5.jpg" alt="home" width="200"/>
+<img src="../photos/loginScreen_part5.jpg" alt="home" width="200"/>
 
 ### Inbox & Email Feed
 
@@ -22,7 +24,7 @@ This local storage provides a smooth and responsive experience, even when offlin
   - Open specific email threads
   - Filter emails by labels
 
-📸 Example screenshot
+<img src="../photos/sideBar_part5.jpg" alt="home" width="200"/>
 
 ### Create, Edit, and Delete Emails
 
@@ -30,18 +32,12 @@ This local storage provides a smooth and responsive experience, even when offlin
 - You can **edit** or **delete** saved drafts.
 - If an email contains a **malicious or blacklisted URL**, it will be blocked and an alert will be shown to the user.
 
-📸 Example screenshot
-
 ### Labels
 
 - You can add, edit and delete labels according to your preferences.
 - You can assign **labels** to emails from the message screen.
 - Labels help organize and categorize your emails (e.g., Work, School, Spam).
 
-📸 Example screenshot
-
 ### Light & Dark Mode
 
 - Tap the theme icon at the top right to toggle between light and dark themes.
-
-📸 Example screenshot

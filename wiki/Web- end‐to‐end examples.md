@@ -6,27 +6,54 @@ There is one thing to note about the client's workflow. When a user logs in, the
 
 ## What can you do?
 
-<img src="photos/homeScreen_part4.jpg" alt="home screen" width = "600" height="300"/>
+### Home Screen
 
-<img src="photos/signUpScreen_part4.jpg" alt="sign up screen" width = "600" height="300"/>
+![home](../photos/homeScreen_part4.jpg)
 
-<img src="photos/loginScreen_part4.jpg" alt="login screen" width = "600" height="300"/>
+### Sign Up Screen
 
-<img src="photos/mainScreen_part4.jpg" alt="main screen" width = "600" height="300"/>
+![sign up screen](../photos/signUpScreen_part4.jpg)
 
-<img src="photos/viewMail_part4.jpg" alt="view mail" width = "600" height="300"/>
+### Login Screen
 
-<img src="photos/ComposeMail_part4.jpg" alt="create new mail" width = "600" height="300"/>
+![login screen](../photos/loginScreen_part4.jpg)
 
-<img src="photos/PatchDraft_part4.jpg" alt="edit draft" width = "600" height="300"/>
+### Main Inbox Screen
 
-<img src="photos/CreateLabel_part4.jpg" alt="creat label" width = "600" height="300"/>
+![main screen](../photos/mainScreen_part4.jpg)
 
-<img src="photos/assignToLabel_part4.jpg" alt="assign to label" width = "600" height="300"/>
+### View Mail
 
-<img src="photos/searchBar_part4.jpg" alt="search bar" width = "600" height="300"/>
+![view mail](../photos/viewMail_part4.jpg)
 
-<img src="photos/Trash_part4.jpg" alt="trash" width = "600" height="300"/>
+### Compose New Mail
 
-<img src="photos/darkMode_part4.jpg" alt="dark mode" width = "600" height="300"/>
+![create new mail](../photos/ComposeMail_part4.jpg)
+
+### Edit Draft
+
+![edit draft](../photos/PatchDraft_part4.jpg)
+
+### Create New Label
+
+![creat label](../photos/CreateLabel_part4.jpg)
+
+### Assign Mail to Label
+
+![assign to label](../photos/assignToLabel_part4.jpg)
+
+### Search Bar
+
+![search bar](../photos/searchBar_part4.jpg)
+
+### Trash Folder
+
+![trash](../photos/Trash_part4.jpg)
+
+### 🌙 Dark Mode View
+
+![dark mode](../photos/darkMode_part4.jpg)
+
+```
+
 ```
