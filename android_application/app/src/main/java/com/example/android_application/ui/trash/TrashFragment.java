@@ -11,7 +11,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
 import com.example.android_application.ui.base.MailListFragment;
 import com.example.android_application.ui.home.HomeActivity;
 import com.example.android_application.ui.search.MailAdapter;

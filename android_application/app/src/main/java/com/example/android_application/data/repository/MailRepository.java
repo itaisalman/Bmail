@@ -1,7 +1,7 @@
 package com.example.android_application.data.repository;
 
 import android.content.Context;
-
+import android.util.Log;
 import com.example.android_application.data.api.MailApiService;
 import com.example.android_application.data.api.MailRequest;
 import com.example.android_application.data.local.AppDatabase;
@@ -13,7 +13,6 @@ import org.json.JSONObject;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -64,21 +63,42 @@ public class MailRepository {
 
     public void insertOrUpdateMailFromServer(Mail mailFromServer, String owner) {
         Executors.newSingleThreadExecutor().execute(() -> {
-            mailFromServer.setOwner(owner);
-            Mail existingMail = mailDao.getMailById(mailFromServer.getId(), owner);
-            if (existingMail != null) {
-                mailFromServer.setStarred(existingMail.isStarred());
-                mailFromServer.setImportant(existingMail.isImportant());
-                mailFromServer.setTrash(existingMail.isTrash());
-            }
             mailDao.insertMail(mailFromServer);
         });
     }
 
 
-    public void updateMail(Mail mail) {
-        executor.execute(() -> mailDao.updateMail(mail));
+    public void updateMail(Mail mail, String label, String token) {
+        executor.execute(() -> {
+            mailDao.updateMail(mail);
+
+            Call<Void> call = null;
+            if ("Starred".equalsIgnoreCase(label)) {
+                call = api.updateStarStatus("Bearer " + token, mail.getId());
+            } else if ("Important".equalsIgnoreCase(label)) {
+                call = api.updateImportantStatus("Bearer " + token, mail.getId());
+            } else if ("Trash".equalsIgnoreCase(label)) {
+                call = api.moveToTrash("Bearer " + token, mail.getId());
+            }
+
+            if (call != null) {
+                call.enqueue(new Callback<>() {
+                    @Override
+                    public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                        if (!response.isSuccessful()) {
+                            Log.e("MailRepository", "Failed to update " + label + " status for mail: " + mail.getId());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                        Log.e("MailRepository", "Error updating " + label + " status for mail: " + mail.getId(), t);
+                    }
+                });
+            }
+        });
     }
+
 
     public LiveData<List<Mail>> getReceivedMailsLive(String owner) {
 
@@ -165,7 +185,7 @@ public class MailRepository {
         });
     }
 
-    public void getMailsByLabel(String owner, String token, String label,int page, MailListCallback callback) {
+    public void getMailsByLabel(String owner, String token, String label, int page, MailListCallback callback) {
         MutableLiveData<MailPageResponse> responseLiveData = new MutableLiveData<>();
         Call<MailPageResponse> call = api.getMails("Bearer " + token, label, page);
         call.enqueue(new Callback<>() {
@@ -174,21 +194,33 @@ public class MailRepository {
                 if (response.isSuccessful() && response.body() != null) {
                     responseLiveData.postValue(response.body());
                     List<Mail> mails = response.body().getMails();
-                    for (Mail mail : mails) {
-                        if (label.equalsIgnoreCase("Starred")) {
-                            mail.setStarred(true);
+                    Executors.newSingleThreadExecutor().execute(() -> {
+                        for (Mail mail : mails) {
+                            mail.setOwner(owner);
+                            if (label.equalsIgnoreCase("Starred")) {
+                                mail.setStarred(true);
+                            }
+                            if (label.equalsIgnoreCase("Important")) {
+                                mail.setImportant(true);
+                            }
+                            if (label.equalsIgnoreCase("Trash")) {
+                                mail.setTrash(true);
+                            }
+
+                            Mail existingMail = mailDao.getMailById(mail.getId(), owner);
+                            if (existingMail != null) {
+                                mail.setStarred(mail.isStarred() || existingMail.isStarred());
+                                mail.setImportant(mail.isImportant() || existingMail.isImportant());
+                                mail.setTrash(mail.isTrash() || existingMail.isTrash());
+                            }
+
+                            insertOrUpdateMailFromServer(mail, owner);
                         }
-                        if (label.equalsIgnoreCase("Important")) {
-                            mail.setImportant(true);
+
+                        if (callback != null) {
+                            callback.onSuccess(mails, response.body().getTotalCount());
                         }
-                        if (label.equalsIgnoreCase("Trash")) {
-                            mail.setTrash(true);
-                        }
-                        insertOrUpdateMailFromServer(mail, owner);
-                    }
-                    if (callback != null) {
-                        callback.onSuccess(mails, response.body().getTotalCount());
-                    }
+                    });
                 } else {
                     responseLiveData.postValue(new MailPageResponse());
                 }
@@ -207,15 +239,4 @@ public class MailRepository {
             getMailsByLabel(owner, token, label, 1, null);
         }
     }
-
-    public void deleteMailFromServer(String mailId, String token) {
-        Call<Void> call = api.moveToTrash("Bearer " + token, mailId);
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {}
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {}
-        });
-    }
-
 }

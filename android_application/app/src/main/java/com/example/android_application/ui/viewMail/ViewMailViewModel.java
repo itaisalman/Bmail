@@ -58,8 +58,8 @@ public class ViewMailViewModel extends AndroidViewModel {
         boolean newStarred = !(isStarred.getValue() != null && isStarred.getValue());
         isStarred.setValue(newStarred);
         currentMail.setStarred(newStarred);
-        // Database update
-        repository.updateMail(currentMail);
+        // Update server and room
+        repository.updateMail(currentMail, "Starred", getTokenFromStorage());
     }
 
     public void toggleImportant() {
@@ -68,8 +68,8 @@ public class ViewMailViewModel extends AndroidViewModel {
         boolean newImportant = !(isImportant.getValue() != null && isImportant.getValue());
         isImportant.setValue(newImportant);
         currentMail.setImportant(newImportant);
-        // Database update
-        repository.updateMail(currentMail);
+        // Update server and room
+        repository.updateMail(currentMail, "Important", getTokenFromStorage());
     }
 
     private String getTokenFromStorage() {
@@ -90,10 +90,8 @@ public class ViewMailViewModel extends AndroidViewModel {
         isStarred.setValue(false);
         isImportant.setValue(false);
         currentMail.setTrash(true);
-        // Server update
-        repository.deleteMailFromServer(currentMail.getId(), getTokenFromStorage());
-        // Database update
-        repository.updateMail(currentMail);
+        // Update server and room
+        repository.updateMail(currentMail, "Trash", getTokenFromStorage());
 
     }
 }
