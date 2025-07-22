@@ -1,17 +1,12 @@
 package com.example.android_application.ui.viewMail;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.*;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.annotation.NonNull;
 import com.example.android_application.R;
-import com.example.android_application.data.local.entity.Mail;
 import com.example.android_application.ui.label.LabelDialogHelper;
 import com.example.android_application.ui.label.LabelMailsViewModel;
 import com.example.android_application.ui.label.LabelViewModel;
-import androidx.lifecycle.ViewModelProvider;
 import com.example.android_application.ui.BaseThemedActivity;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -49,26 +44,45 @@ public class ViewMailActivity extends BaseThemedActivity {
         ImageButton closeButton = findViewById(R.id.closeButton);
         ImageButton starButton = findViewById(R.id.starButton);
         ImageButton importantButton = findViewById(R.id.importantButton);
+        ImageButton spamButton = findViewById(R.id.spamButton);
         ImageButton trashButton = findViewById(R.id.deleteButton);
         ImageButton labelAssignButton = findViewById(R.id.labelButton);
 
 
         // Observe ViewModel
-        viewModel.getIsStarred().observe(this, isStarred -> {
-            starButton.setImageResource(isStarred ? R.drawable.ic_star : R.drawable.ic_star_view_mail);
-        });
+        viewModel.getIsStarred().observe(this, isStarred -> starButton.setImageResource(isStarred ? R.drawable.ic_star : R.drawable.ic_star_view_mail));
 
-        viewModel.getIsImportant().observe(this, isImportant -> {
-            importantButton.setImageResource(isImportant ? R.drawable.ic_important : R.drawable.ic_important_view_mail);
-        });
+        viewModel.getIsImportant().observe(this, isImportant -> importantButton.setImageResource(isImportant ? R.drawable.ic_important : R.drawable.ic_important_view_mail));
 
         mailBox = getIntent().getStringExtra("mail_box");
         if (mailBox != null) {
-            if (!(mailBox.equalsIgnoreCase("Trash"))) {
-                starButton.setOnClickListener(v -> viewModel.toggleStarred());
-                importantButton.setOnClickListener(v -> viewModel.toggleImportant());
+            if ((mailBox.equalsIgnoreCase("Spam"))) {
+                labelAssignButton.setEnabled(false);
+                spamButton.setImageResource(R.drawable.ic_spam_out);
+                spamButton.setOnClickListener(v -> {
+                    viewModel.restoreFromSpam(mailBox);
+                    finish();
+                });
                 trashButton.setOnClickListener(v -> {
                     viewModel.moveToTrash(mailBox);
+                    finish();
+                });
+            } else if (!(mailBox.equalsIgnoreCase("Trash"))) {
+                starButton.setOnClickListener(v -> viewModel.toggleStarred());
+                importantButton.setOnClickListener(v -> viewModel.toggleImportant());
+                spamButton.setOnClickListener(v -> {
+                    viewModel.moveToSpam(mailBox);
+                    finish();
+                });
+                trashButton.setOnClickListener(v -> {
+                    viewModel.moveToTrash(mailBox);
+                    finish();
+                });
+            }
+            if (mailBox.equalsIgnoreCase("Trash")) {
+                labelAssignButton.setEnabled(false);
+                spamButton.setOnClickListener(v -> {
+                    viewModel.moveToSpam(mailBox);
                     finish();
                 });
             }

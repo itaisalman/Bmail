@@ -18,7 +18,6 @@ import com.example.android_application.ui.search.MailAdapter;
 import com.example.android_application.ui.viewMail.ViewMailActivity;
 
 public class LabelFragment extends MailListFragment {
-    private String labelId;
     private String labelName;
 
 
@@ -33,7 +32,7 @@ public class LabelFragment extends MailListFragment {
     protected void setupViewModel() {
         SharedPreferences prefs = requireActivity().getSharedPreferences("auth", Context.MODE_PRIVATE);
         String currentUserEmail = prefs.getString("username", null);
-        labelId = getArguments().getString("labelId");
+        assert getArguments() != null;
         labelName = getArguments().getString("labelName");
         Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
         if (toolbar != null) {

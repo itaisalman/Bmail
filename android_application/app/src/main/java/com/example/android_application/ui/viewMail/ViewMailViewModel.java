@@ -14,6 +14,7 @@ public class ViewMailViewModel extends AndroidViewModel {
     private final MailRepository repository;
     private final MutableLiveData<Boolean> isStarred = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isImportant = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isSpam = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isTrash = new MutableLiveData<>(false);
     private final MutableLiveData<Mail> mailLiveData = new MutableLiveData<>();
 
@@ -32,6 +33,7 @@ public class ViewMailViewModel extends AndroidViewModel {
         currentMail = mail;
         isStarred.setValue(mail.isStarred());
         isImportant.setValue(mail.isImportant());
+        isSpam.setValue(mail.isSpam());
         isTrash.setValue(mail.isTrash());
         mailLiveData.setValue(mail);
     }
@@ -42,14 +44,6 @@ public class ViewMailViewModel extends AndroidViewModel {
 
     public LiveData<Boolean> getIsImportant() {
         return isImportant;
-    }
-
-    public LiveData<Boolean> getIsTrash() {
-        return isTrash;
-    }
-
-    public LiveData<Mail> getMailLiveData() {
-        return mailLiveData;
     }
 
     public void toggleStarred() {
@@ -89,9 +83,48 @@ public class ViewMailViewModel extends AndroidViewModel {
         isTrash.setValue(true);
         isStarred.setValue(false);
         isImportant.setValue(false);
+        isSpam.setValue(false);
+
         currentMail.setTrash(true);
+        currentMail.setStarred(false);
+        currentMail.setImportant(false);
+        currentMail.setSpam(false);
         // Update server and room
         repository.updateMail(currentMail, "Trash", getTokenFromStorage());
+
+    }
+
+    public void moveToSpam(String label) {
+        if (currentMail == null || (label.equalsIgnoreCase("Spam"))) return;
+
+        isSpam.setValue(true);
+        isStarred.setValue(false);
+        isTrash.setValue(false);
+        isImportant.setValue(false);
+        currentMail.setSpam(true);
+        currentMail.setStarred(false);
+        currentMail.setImportant(false);
+        currentMail.setTrash(false);
+
+        // Server and Database update
+        repository.updateMail(currentMail, "Spam", getTokenFromStorage());
+
+    }
+
+    public void restoreFromSpam(String label) {
+        if (currentMail == null || !(label.equalsIgnoreCase("Spam"))) return;
+
+        isSpam.setValue(false);
+        isStarred.setValue(false);
+        isImportant.setValue(false);
+        isTrash.setValue(false);
+        currentMail.setSpam(false);
+        currentMail.setStarred(false);
+        currentMail.setImportant(false);
+        currentMail.setTrash(false);
+
+        // Server and Database update
+        repository.updateMail(currentMail, "RestoreSpam", getTokenFromStorage());
 
     }
 }

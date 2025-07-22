@@ -63,9 +63,7 @@ public class TrashFragment extends MailListFragment {
 
         Button emptyTrashButton = requireActivity().findViewById(R.id.btn_empty_trash);
 
-        emptyTrashButton.setOnClickListener(v -> {
-            mailListViewModel.emptyUserTrash();
-        });
+        emptyTrashButton.setOnClickListener(v -> mailListViewModel.emptyUserTrash());
     }
 
     @Override

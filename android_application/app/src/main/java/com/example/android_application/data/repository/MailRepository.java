@@ -15,8 +15,11 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -28,7 +31,6 @@ public class MailRepository {
 
     private final MailApiService api;
     private final MailDao mailDao;
-    private final AppDatabase db;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public interface RepositoryCallback {
@@ -53,7 +55,7 @@ public class MailRepository {
                 .build();
 
         api = retrofit.create(MailApiService.class);
-        db = AppDatabase.getDatabase(context);
+        AppDatabase db = AppDatabase.getDatabase(context);
         mailDao = db.mailDao();
     }
 
@@ -61,27 +63,25 @@ public class MailRepository {
         return mailDao.getMailByIdLive(mailId, owner);
     }
 
-    public void insertOrUpdateMailFromServer(Mail mailFromServer, String owner) {
-        Executors.newSingleThreadExecutor().execute(() -> {
-            mailDao.insertMail(mailFromServer);
-        });
+    public void insertOrUpdateMailFromServer(Mail mailFromServer) {
+        Executors.newSingleThreadExecutor().execute(() -> mailDao.insertMail(mailFromServer));
     }
-
 
     public void updateMail(Mail mail, String label, String token) {
         executor.execute(() -> {
             mailDao.updateMail(mail);
 
-            Call<Void> call = null;
-            if ("Starred".equalsIgnoreCase(label)) {
-                call = api.updateStarStatus("Bearer " + token, mail.getId());
-            } else if ("Important".equalsIgnoreCase(label)) {
-                call = api.updateImportantStatus("Bearer " + token, mail.getId());
-            } else if ("Trash".equalsIgnoreCase(label)) {
-                call = api.moveToTrash("Bearer " + token, mail.getId());
-            }
+            Map<String, Function<String, Call<Void>>> labelActions = Map.of(
+                    "Starred", t -> api.updateStarStatus(t, mail.getId()),
+                    "Important", t -> api.updateImportantStatus(t, mail.getId()),
+                    "Trash", t -> api.moveToTrash(t, mail.getId()),
+                    "Spam", t -> api.moveToSpam(t, mail.getId()),
+                    "RestoreSpam", t -> api.restoreFromSpam(t, mail.getId())
+            );
 
-            if (call != null) {
+            Function<String, Call<Void>> action = labelActions.get(label);
+            if (action != null) {
+                Call<Void> call = action.apply("Bearer " + token);
                 call.enqueue(new Callback<>() {
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
@@ -119,6 +119,10 @@ public class MailRepository {
 
     public LiveData<List<Mail>> getImportantMailsLive(String owner) {
         return mailDao.getImportantMails(owner);
+    }
+
+    public LiveData<List<Mail>> getSpamMailsLive(String mailAddress) {
+        return mailDao.getSpamMails(mailAddress);
     }
 
     // Sends a mail to the server asynchronously
@@ -203,6 +207,9 @@ public class MailRepository {
                             if (label.equalsIgnoreCase("Important")) {
                                 mail.setImportant(true);
                             }
+                            if (label.equalsIgnoreCase("Spam")) {
+                                mail.setSpam(true);
+                            }
                             if (label.equalsIgnoreCase("Trash")) {
                                 mail.setTrash(true);
                             }
@@ -214,7 +221,7 @@ public class MailRepository {
                                 mail.setTrash(mail.isTrash() || existingMail.isTrash());
                             }
 
-                            insertOrUpdateMailFromServer(mail, owner);
+                            insertOrUpdateMailFromServer(mail);
                         }
 
                         if (callback != null) {
@@ -249,16 +256,34 @@ public class MailRepository {
         Call<Void> call = api.emptyTrash("Bearer " + token);
         call.enqueue(new Callback<>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {}
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {}
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {}
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {}
         });
     }
 
     private void emptyTrashLocally(String owner) {
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            mailDao.emptyTrashByOwner(owner);
+        AppDatabase.databaseWriteExecutor.execute(() -> mailDao.emptyTrashByOwner(owner));
+    }
+
+    public void MoveMailToSpam(String mailId, String token) {
+        Call<Void> call = api.moveToSpam("Bearer " + token, mailId);
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {}
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {}
+        });
+    }
+
+    public void RestoreMailFromSpam(String mailId, String token) {
+        Call<Void> call = api.restoreFromSpam("Bearer " + token, mailId);
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {}
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {}
         });
     }
 

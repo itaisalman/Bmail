@@ -2,7 +2,6 @@ package com.example.android_application.data.local.entity;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
 import java.io.Serializable;
 import com.google.gson.annotations.SerializedName;
@@ -68,6 +67,9 @@ public class Mail implements Serializable {
     @ColumnInfo(name = "is_important")
     private boolean isImportant = false;
 
+    @ColumnInfo(name = "is_spam")
+    private boolean isSpam = false;
+
     @ColumnInfo(name = "is_trash")
     private boolean isTrash = false;
 
@@ -76,11 +78,13 @@ public class Mail implements Serializable {
 
     public Mail() {}
 
+    @NonNull
     public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public void setId(@NonNull String id) { this.id = id; }
 
+    @NonNull
     public String getOwner() { return owner; }
-    public void setOwner(String owner) { this.owner = owner; }
+    public void setOwner(@NonNull String owner) { this.owner = owner; }
 
     public String getSenderId() { return senderId; }
     public void setSenderId(String senderId) { this.senderId = senderId; }
@@ -120,6 +124,9 @@ public class Mail implements Serializable {
 
     public boolean isImportant() { return isImportant; }
     public void setImportant(boolean important) { isImportant = important; }
+
+    public boolean isSpam() { return isSpam; }
+    public void setSpam(boolean spam) { isSpam = spam; }
 
     public boolean isTrash() { return isTrash; }
     public void setTrash(boolean trash) { isTrash = trash; }

@@ -1,61 +1,67 @@
 package com.example.android_application.ui.spam;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
+import android.widget.Toast;
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.example.android_application.databinding.FragmentSpamBinding;
+import com.example.android_application.ui.base.MailListFragment;
+import com.example.android_application.ui.search.MailAdapter;
+import com.example.android_application.ui.viewMail.ViewMailActivity;
 
-/**
- * A Fragment representing the "Spam" screen in the application.
- */
-public class SpamFragment extends Fragment {
+public class SpamFragment extends MailListFragment {
 
-    // ViewBinding object to access views in fragment_spam.xml
-    private FragmentSpamBinding binding;
-
-    /**
-     * Called to create and return the view hierarchy associated with this fragment.
-     *
-     * @param inflater           LayoutInflater used to inflate the layout for the fragment
-     * @param container          The parent view to which the fragment's UI should be attached
-     * @param savedInstanceState Saved instance state from previous configurations (if any)
-     * @return The root view of the fragment's layout
-     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-
-        // Create the ViewModel scoped to this Fragment
-        SpamViewModel spamViewModel =
-                new ViewModelProvider(this).get(SpamViewModel.class);
-
-        // Inflate the layout using ViewBinding
-        binding = FragmentSpamBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-
-        // Access the TextView from the layout
-        final TextView textView = binding.textSpam;
-
-        // Observe LiveData from the ViewModel and update the TextView when data changes
-        spamViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-
-        return root;
+                             ViewGroup container,
+                             Bundle savedInstanceState) {
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
-    /**
-     * Called when the fragment's view is being destroyed.
-     * Clears the binding reference to prevent memory leaks.
-     */
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+    protected void setupViewModel() {
+
+        SharedPreferences prefs = requireActivity().getSharedPreferences("auth", Context.MODE_PRIVATE);
+        String currentUserEmail = prefs.getString("username", null);
+        SpamViewModel.Factory factory = new SpamViewModel.Factory(requireActivity().getApplication(), currentUserEmail);
+        mailListViewModel = new ViewModelProvider(this, factory).get(SpamViewModel.class);
+
+        mailListViewModel.getMailListLiveData().observe(getViewLifecycleOwner(), this::handleMailList);
+        mailListViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
+            if (error != null && !error.isEmpty()) {
+                Toast.makeText(requireContext(), "Search error: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    protected void setupRecyclerView() {
+        mailAdapter = new MailAdapter(showReceiverInsteadOfSender());
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recyclerView.setAdapter(mailAdapter);
+
+        mailAdapter.setOnItemClickListener(mail -> {
+            Intent intent = new Intent(requireContext(), ViewMailActivity.class);
+            intent.putExtra("mail_box", "Spam");
+            intent.putExtra("mail_id", mail.getId());
+            startActivity(intent);
+        });
+    }
+
+    @Override
+    protected String getLabel() {
+        return "Spam";
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mailListViewModel.initMails(getLabel());
     }
 }

@@ -85,4 +85,16 @@ public interface MailApiService {
             @Header("Authorization") String token
     );
 
+    @POST("/api/mails/spam/{id}")
+    Call<Void> moveToSpam(
+            @Header("Authorization") String token,
+            @Path("id") String mailId
+    );
+
+    @DELETE("/api/mails/spam/{id}")
+    Call<Void> restoreFromSpam(
+            @Header("Authorization") String token,
+            @Path("id") String mailId
+    );
+
 }
