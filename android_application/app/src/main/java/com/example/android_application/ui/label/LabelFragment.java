@@ -4,17 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
 import com.example.android_application.R;
 import com.example.android_application.ui.base.MailListFragment;
 import com.example.android_application.ui.search.MailAdapter;
@@ -65,7 +62,6 @@ public class LabelFragment extends MailListFragment {
         mailAdapter.setOnItemClickListener(mail -> {
             Intent intent = new Intent(requireContext(), ViewMailActivity.class);
             intent.putExtra("mail_box", labelName);
-            Log.d("LABEL", labelName);
             intent.putExtra("mail_id", mail.getId());
             startActivity(intent);
         });

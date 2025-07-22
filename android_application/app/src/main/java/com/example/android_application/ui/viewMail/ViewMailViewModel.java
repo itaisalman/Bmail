@@ -3,8 +3,6 @@ package com.example.android_application.ui.viewMail;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -27,7 +25,7 @@ public class ViewMailViewModel extends AndroidViewModel {
     }
 
     public LiveData<Mail> loadMailById(String mailId) {
-        return repository.getMailById(mailId);
+        return repository.getMailById(mailId, getUsernameFromStorage());
     }
 
     public void setMail(Mail mail) {
@@ -60,8 +58,8 @@ public class ViewMailViewModel extends AndroidViewModel {
         boolean newStarred = !(isStarred.getValue() != null && isStarred.getValue());
         isStarred.setValue(newStarred);
         currentMail.setStarred(newStarred);
-        // Database update
-        repository.updateMail(currentMail);
+        // Update server and room
+        repository.updateMail(currentMail, "Starred", getTokenFromStorage());
     }
 
     public void toggleImportant() {
@@ -70,13 +68,19 @@ public class ViewMailViewModel extends AndroidViewModel {
         boolean newImportant = !(isImportant.getValue() != null && isImportant.getValue());
         isImportant.setValue(newImportant);
         currentMail.setImportant(newImportant);
-        // Database update
-        repository.updateMail(currentMail);
+        // Update server and room
+        repository.updateMail(currentMail, "Important", getTokenFromStorage());
     }
 
     private String getTokenFromStorage() {
         SharedPreferences prefs = getApplication().getSharedPreferences("auth", Context.MODE_PRIVATE);
         return prefs.getString("jwt", "");
+    }
+
+
+    private String getUsernameFromStorage() {
+        SharedPreferences prefs = getApplication().getSharedPreferences("auth", Context.MODE_PRIVATE);
+        return prefs.getString("username", "");
     }
 
     public void moveToTrash(String label) {
@@ -86,10 +90,8 @@ public class ViewMailViewModel extends AndroidViewModel {
         isStarred.setValue(false);
         isImportant.setValue(false);
         currentMail.setTrash(true);
-        // Server update
-        repository.deleteMailFromServer(currentMail.getId(), getTokenFromStorage());
-        // Database update
-        repository.updateMail(currentMail);
+        // Update server and room
+        repository.updateMail(currentMail, "Trash", getTokenFromStorage());
 
     }
 }

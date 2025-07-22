@@ -40,7 +40,7 @@ public class TrashViewModel extends MailListViewModel {
 
     @Override
     public void getMails(String label, int page) {
-        mailRepository.getMailsByLabel(getTokenFromStorage(), label, page, new MailRepository.MailListCallback() {
+        mailRepository.getMailsByLabel(getUsernameFromStorage(), getTokenFromStorage(), label, page, new MailRepository.MailListCallback() {
             @Override
             public void onSuccess(List<Mail> mails, int totalCount) {}
 

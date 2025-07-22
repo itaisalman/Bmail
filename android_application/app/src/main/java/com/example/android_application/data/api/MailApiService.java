@@ -80,4 +80,9 @@ public interface MailApiService {
             @Path("id") String mailId
     );
 
+    @DELETE("/api/mails/trash")
+    Call<Void> emptyTrash(
+            @Header("Authorization") String token
+    );
+
 }

@@ -17,11 +17,11 @@ public class ImportantViewModel extends MailListViewModel {
     private LiveData<List<Mail>> importantMails;
     private final MailRepository mailRepository;
 
-    public ImportantViewModel(@NonNull Application application, String currentUserEmail) {
+    public ImportantViewModel(@NonNull Application application, String owner) {
         super(application);
         mailRepository = new MailRepository(application.getApplicationContext());
         getMails("Important", currentPage);
-        importantMails = mailRepository.getImportantMailsLive(currentUserEmail);
+        importantMails = mailRepository.getImportantMailsLive(owner);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class ImportantViewModel extends MailListViewModel {
 
     @Override
     public void getMails(String label, int page) {
-        mailRepository.getMailsByLabel(getTokenFromStorage(), label, page, new MailRepository.MailListCallback() {
+        mailRepository.getMailsByLabel(getUsernameFromStorage(), getTokenFromStorage(), label, page, new MailRepository.MailListCallback() {
             @Override
             public void onSuccess(List<Mail> mails, int totalCount) {}
 

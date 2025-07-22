@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.Button;
 import android.widget.ImageButton;
 import androidx.appcompat.widget.SearchView;
 import android.widget.ImageView;
@@ -354,7 +355,6 @@ public class HomeActivity extends BaseThemedActivity {
     // Sets up the labels in the navigation drawer without edit/delete functionality
     private void setupLabelsMenu(NavigationView navigationView) {
         LinearLayout labelsContainer = navigationView.findViewById(R.id.labels_container);
-
         if (labelsContainer == null) {
             Toast.makeText(this, "labels_container is missing", Toast.LENGTH_SHORT).show();
             return;
@@ -363,4 +363,8 @@ public class HomeActivity extends BaseThemedActivity {
         labelViewModel.getLabels().observe(this, labels -> renderLabels(labelsContainer, labels, false));
     }
 
+    public void showEmptyTrashButton(boolean show) {
+        Button btn = findViewById(R.id.btn_empty_trash);
+        btn.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
 }

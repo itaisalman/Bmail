@@ -6,14 +6,17 @@ import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
 import java.io.Serializable;
 import com.google.gson.annotations.SerializedName;
-@Entity(tableName = "mails")
+@Entity(tableName = "mails", primaryKeys = {"id", "owner"})
 public class Mail implements Serializable {
 
-    @PrimaryKey
     @NonNull
     @SerializedName("_id")
     @ColumnInfo(name = "id")
     private String id = "";
+
+    @NonNull
+    @ColumnInfo(name = "owner")
+    private String owner = "";
 
     @SerializedName("sender_id")
     @ColumnInfo(name = "sender_id")
@@ -75,6 +78,9 @@ public class Mail implements Serializable {
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
+
+    public String getOwner() { return owner; }
+    public void setOwner(String owner) { this.owner = owner; }
 
     public String getSenderId() { return senderId; }
     public void setSenderId(String senderId) { this.senderId = senderId; }
