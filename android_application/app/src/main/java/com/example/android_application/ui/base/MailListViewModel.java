@@ -46,7 +46,7 @@ public abstract class MailListViewModel extends AndroidViewModel {
 
     private void loadPage(String label, int page) {
         isLoading = true;
-        mailRepository.getMailsByLabel(getTokenFromStorage(), label, page, new MailRepository.MailListCallback() {
+        mailRepository.getMailsByLabel(getUsernameFromStorage(), getTokenFromStorage(), label, page, new MailRepository.MailListCallback() {
             @Override
             public void onSuccess(List<Mail> mails, int count) {
                 if (page == 1) {
@@ -83,8 +83,13 @@ public abstract class MailListViewModel extends AndroidViewModel {
         return prefs.getString("jwt", "");
     }
 
+    protected String getUsernameFromStorage() {
+        SharedPreferences prefs = getApplication().getSharedPreferences("auth", Context.MODE_PRIVATE);
+        return prefs.getString("username", "");
+    }
+
     public void getMails(String label, int page) {
-        mailRepository.getMailsByLabel(getTokenFromStorage(), label, page, new MailRepository.MailListCallback() {
+        mailRepository.getMailsByLabel(getUsernameFromStorage(), getTokenFromStorage(), label, page, new MailRepository.MailListCallback() {
             @Override
             public void onSuccess(List<Mail> mails, int count) {
                 mailList.postValue(mails);

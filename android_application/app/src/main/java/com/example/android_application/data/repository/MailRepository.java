@@ -58,13 +58,14 @@ public class MailRepository {
         mailDao = db.mailDao();
     }
 
-    public LiveData<Mail> getMailById(String mailId) {
-        return mailDao.getMailByIdLive(mailId);
+    public LiveData<Mail> getMailById(String mailId, String owner) {
+        return mailDao.getMailByIdLive(mailId, owner);
     }
 
-    public void insertOrUpdateMailFromServer(Mail mailFromServer) {
+    public void insertOrUpdateMailFromServer(Mail mailFromServer, String owner) {
         Executors.newSingleThreadExecutor().execute(() -> {
-            Mail existingMail = mailDao.getMailById(mailFromServer.getId());
+            mailFromServer.setOwner(owner);
+            Mail existingMail = mailDao.getMailById(mailFromServer.getId(), owner);
             if (existingMail != null) {
                 mailFromServer.setStarred(existingMail.isStarred());
                 mailFromServer.setImportant(existingMail.isImportant());
@@ -79,9 +80,9 @@ public class MailRepository {
         executor.execute(() -> mailDao.updateMail(mail));
     }
 
-    public LiveData<List<Mail>> getReceivedMailsLive(String receiverAddress) {
+    public LiveData<List<Mail>> getReceivedMailsLive(String owner) {
 
-        return mailDao.getReceivedMailsLive(receiverAddress);
+        return mailDao.getReceivedMailsLive(owner);
     }
 
     public LiveData<List<Mail>> getSentMailsLive(String senderAddress) {
@@ -96,12 +97,12 @@ public class MailRepository {
         return mailDao.getStarredMails(mailAddress);
     }
 
-    public LiveData<List<Mail>> getImportantMailsLive(String mailAddress) {
-        return mailDao.getImportantMails(mailAddress);
+    public LiveData<List<Mail>> getImportantMailsLive(String owner) {
+        return mailDao.getImportantMails(owner);
     }
 
     // Sends a mail to the server asynchronously
-    public void sendMail(String token, Mail mail, RepositoryCallback callback) {
+    public void sendMail(String owner, String token, Mail mail, RepositoryCallback callback) {
         MailRequest mailRequest = new MailRequest(
                 mail.getReceiverAddress(),
                 mail.getTitle(),
@@ -113,7 +114,7 @@ public class MailRepository {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
-                    refreshAllMailboxes(token);
+                    refreshAllMailboxes(token, owner);
                     callback.onSuccess();
                 } else {
                     try (ResponseBody errorBody = response.errorBody()) {
@@ -164,7 +165,7 @@ public class MailRepository {
         });
     }
 
-    public void getMailsByLabel(String token, String label,int page, MailListCallback callback) {
+    public void getMailsByLabel(String owner, String token, String label,int page, MailListCallback callback) {
         MutableLiveData<MailPageResponse> responseLiveData = new MutableLiveData<>();
         Call<MailPageResponse> call = api.getMails("Bearer " + token, label, page);
         call.enqueue(new Callback<>() {
@@ -183,7 +184,7 @@ public class MailRepository {
                         if (label.equalsIgnoreCase("Trash")) {
                             mail.setTrash(true);
                         }
-                        insertOrUpdateMailFromServer(mail);
+                        insertOrUpdateMailFromServer(mail, owner);
                     }
                     if (callback != null) {
                         callback.onSuccess(mails, response.body().getTotalCount());
@@ -200,10 +201,10 @@ public class MailRepository {
         });
     }
 
-    private void refreshAllMailboxes(String token) {
+    private void refreshAllMailboxes(String token, String owner) {
         String[] labels = {"Inbox", "Sent", "Spam"};
         for (String label : labels) {
-            getMailsByLabel(token, label, 1, null);
+            getMailsByLabel(owner, token, label, 1, null);
         }
     }
 
