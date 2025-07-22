@@ -50,10 +50,6 @@ There is one thing to note about the client's workflow. When a user logs in, the
 
 ![trash](../photos/Trash_part4.jpg)
 
-### 🌙 Dark Mode View
+### Dark Mode View
 
 ![dark mode](../photos/darkMode_part4.jpg)
-
-```
-
-```
