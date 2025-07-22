@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.android_application.ui.base.MailListFragment;
+import com.example.android_application.ui.home.HomeActivity;
 import com.example.android_application.ui.search.MailAdapter;
 import com.example.android_application.ui.viewMail.ViewMailActivity;
 
@@ -62,7 +63,14 @@ public class TrashFragment extends MailListFragment {
     @Override
     public void onResume() {
         super.onResume();
+        ((HomeActivity) requireActivity()).showEmptyTrashButton(true);
         mailListViewModel.initMails(getLabel());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        ((HomeActivity) requireActivity()).showEmptyTrashButton(false);
     }
 }
 

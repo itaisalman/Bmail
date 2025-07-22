@@ -14,8 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;

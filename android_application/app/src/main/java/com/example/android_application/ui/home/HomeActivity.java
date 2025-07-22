@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.Button;
 import android.widget.ImageButton;
 import androidx.appcompat.widget.SearchView;
 import android.widget.ImageView;
@@ -363,4 +364,8 @@ public class HomeActivity extends BaseThemedActivity {
         labelViewModel.getLabels().observe(this, labels -> renderLabels(labelsContainer, labels, false));
     }
 
+    public void showEmptyTrashButton(boolean show) {
+        Button btn = findViewById(R.id.btn_empty_trash);
+        btn.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
 }
