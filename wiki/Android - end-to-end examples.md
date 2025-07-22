@@ -7,37 +7,47 @@ This local storage provides a smooth and responsive experience, even when offlin
 
 ### Register and Log In
 
-- You can choose to either register or go directly to the login screen.
-- To register, tap on **"Sign Up"**, fill in all required personal details, and submit the form.
-- After successful registration, you will be redirected to the **login** screen.
-- Alternatively, you can tap **"Log In"** from the start if you already have an account.
+- To register, tap on "Sign Up", fill in all required personal details, and submit the form.
+- After successful registration, you will be redirected to the login screen.
+- Alternatively, you can tap "Log In" from the start if you already have an account.
 
-<img src="../photos/homeScreen_part5.jpg" alt="home" width="190"/>
-<img src="../photos/signUpScreen_part5.jpg" alt="home" width="200"/>
-<img src="../photos/loginScreen_part5.jpg" alt="home" width="200"/>
+<img src="../photos/homeScreen_part5.jpg" alt="home" width="185"/>
+<img src="../photos/signUpScreen_part5.jpg" alt="signup" width="200"/>
+<img src="../photos/loginScreen_part5.jpg" alt="login" width="205"/>
 
 ### Inbox & Email Feed
 
-- After logging in, you’ll be redirected to your **inbox**.
+- After logging in, you’ll be redirected to your inbox.
 - From there, you can:
   - View received emails
   - Open specific email threads
   - Filter emails by labels
 
-<img src="../photos/sideBar_part5.jpg" alt="home" width="200"/>
+<img src="../photos/Inbox_part5.jpg" alt="inbox" width="200"/>
+<img src="../photos/viewMail_part5.jpg" alt="viewMail" width="200"/>
 
 ### Create, Edit, and Delete Emails
 
-- Tap **"Compose"** to write a new email.
-- You can **edit** or **delete** saved drafts.
-- If an email contains a **malicious or blacklisted URL**, it will be blocked and an alert will be shown to the user.
+- You can create a new email by tapping the "Compose" button.
+- Draft emails can be edited before being sent.
+- Any email can be deleted.
+- If an email contains a URL that appears in the blacklist, it will be automatically classified as spam.
+
+<img src="../photos/CreateMail_part5.jpg" alt="inbox" width="200"/>
+<img src="../photos/Draft_part5.jpg" alt="inbox" width="210"/>
 
 ### Labels
 
 - You can add, edit and delete labels according to your preferences.
-- You can assign **labels** to emails from the message screen.
-- Labels help organize and categorize your emails (e.g., Work, School, Spam).
+- You can assign labels to emails from the message screen.
+- Labels help organize and categorize your emails.
+
+<img src="../photos/Labels_part5.jpg" alt="inbox" width="200"/>
+<img src="../photos/AssignToLabel_part5.jpg" alt="inbox" width="190"/>
 
 ### Light & Dark Mode
 
 - Tap the theme icon at the top right to toggle between light and dark themes.
+
+<img src="../photos/darkMode1_part5.jpg" alt="inbox" width="200"/>
+<img src="../photos/darkMode2_part5.jpg" alt="inbox" width="200"/>

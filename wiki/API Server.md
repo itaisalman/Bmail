@@ -24,8 +24,8 @@ The server exposes it's functionality through a REST API. Here's a list of the A
 | /api/blacklist           | POST   | Add a URL to the blacklist              |
 | /api/blacklist           | DELETE | Remove a URL from the blacklist         |
 | /api/mails/search/string | GET    | Search emails by string                 |
-| /mail/:mail_id           | DELETE | Remove a mail from its assigned label   |
 | /:mail_id/assign-label   | PATCH  | Assign a mail to a label                |
+| /mail/:mail_id           | DELETE | Remove a mail from its assigned label   |
 
 Most endpoints require the user to be authenticated. The authentication is done by sending the JWT token in the request's header.
 

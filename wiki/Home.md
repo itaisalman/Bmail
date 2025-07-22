@@ -1,6 +1,8 @@
 # Bmail – Email Client & Server System
 
-Bmail is a full-stack email application that supports user registration, login, sending and receiving emails, and advanced label management. BMAIL delivers a 360-degree experience, offering users full control and accessibility across web, Android, and server-side – all in a unified, user-friendly ecosystem. The system includes a backend server, a web client, and an Android application, all running together via Docker Compose. This WIKI provides an overview of the project, installation instructions, and details about its components.
+Bmail is a full-stack email application that supports user registration, login, sending and receiving emails, and advanced label management. The system includes a backend server, a web client, and an Android application, all running together via Docker Compose. This WIKI provides an overview of the project, installation instructions, and details about its components.
+
+<img src="../photos/logo.jpg" alt="logo" height="150" width="250"/>
 
 ## Application Security
 
