@@ -70,6 +70,7 @@ public class MailRepository {
             if (existingMail != null) {
                 mailFromServer.setStarred(existingMail.isStarred());
                 mailFromServer.setImportant(existingMail.isImportant());
+                mailFromServer.setSpam(existingMail.isSpam());
                 mailFromServer.setTrash(existingMail.isTrash());
             }
             mailDao.insertMail(mailFromServer);
@@ -100,6 +101,10 @@ public class MailRepository {
 
     public LiveData<List<Mail>> getImportantMailsLive(String mailAddress) {
         return mailDao.getImportantMails(mailAddress);
+    }
+
+    public LiveData<List<Mail>> getSpamMailsLive(String mailAddress) {
+        return mailDao.getSpamMails(mailAddress);
     }
 
     // Sends a mail to the server asynchronously
@@ -182,6 +187,9 @@ public class MailRepository {
                         if (label.equalsIgnoreCase("Important")) {
                             mail.setImportant(true);
                         }
+                        if (label.equalsIgnoreCase("Spam")) {
+                            mail.setSpam(true);
+                        }
                         if (label.equalsIgnoreCase("Trash")) {
                             mail.setTrash(true);
                         }
@@ -216,6 +224,26 @@ public class MailRepository {
             public void onResponse(Call<Void> call, Response<Void> response) {}
             @Override
             public void onFailure(Call<Void> call, Throwable t) {}
+        });
+    }
+
+    public void MoveMailToSpam(String mailId, String token) {
+        Call<Void> call = api.moveToSpam("Bearer " + token, mailId);
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {}
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {}
+        });
+    }
+
+    public void RestoreMailFromSpam(String mailId, String token) {
+        Call<Void> call = api.restoreFromSpam("Bearer " + token, mailId);
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {}
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {}
         });
     }
 

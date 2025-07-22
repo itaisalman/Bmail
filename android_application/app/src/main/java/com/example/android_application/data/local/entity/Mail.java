@@ -65,6 +65,9 @@ public class Mail implements Serializable {
     @ColumnInfo(name = "is_important")
     private boolean isImportant = false;
 
+    @ColumnInfo(name = "is_spam")
+    private boolean isSpam = false;
+
     @ColumnInfo(name = "is_trash")
     private boolean isTrash = false;
 
@@ -114,6 +117,9 @@ public class Mail implements Serializable {
 
     public boolean isImportant() { return isImportant; }
     public void setImportant(boolean important) { isImportant = important; }
+
+    public boolean isSpam() { return isSpam; }
+    public void setSpam(boolean spam) { isSpam = spam; }
 
     public boolean isTrash() { return isTrash; }
     public void setTrash(boolean trash) { isTrash = trash; }

@@ -2,6 +2,7 @@ package com.example.android_application.ui.viewMail;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -49,6 +50,7 @@ public class ViewMailActivity extends BaseThemedActivity {
         ImageButton closeButton = findViewById(R.id.closeButton);
         ImageButton starButton = findViewById(R.id.starButton);
         ImageButton importantButton = findViewById(R.id.importantButton);
+        ImageButton spamButton = findViewById(R.id.spamButton);
         ImageButton trashButton = findViewById(R.id.deleteButton);
         ImageButton labelAssignButton = findViewById(R.id.labelButton);
 
@@ -64,11 +66,33 @@ public class ViewMailActivity extends BaseThemedActivity {
 
         mailBox = getIntent().getStringExtra("mail_box");
         if (mailBox != null) {
-            if (!(mailBox.equalsIgnoreCase("Trash"))) {
-                starButton.setOnClickListener(v -> viewModel.toggleStarred());
-                importantButton.setOnClickListener(v -> viewModel.toggleImportant());
+            if ((mailBox.equalsIgnoreCase("Spam"))) {
+                labelAssignButton.setEnabled(false);
+                spamButton.setImageResource(R.drawable.ic_spam_out);
+                spamButton.setOnClickListener(v -> {
+                    viewModel.restoreFromSpam(mailBox);
+                    finish();
+                });
                 trashButton.setOnClickListener(v -> {
                     viewModel.moveToTrash(mailBox);
+                    finish();
+                });
+            } else if (!(mailBox.equalsIgnoreCase("Trash"))) {
+                starButton.setOnClickListener(v -> viewModel.toggleStarred());
+                importantButton.setOnClickListener(v -> viewModel.toggleImportant());
+                spamButton.setOnClickListener(v -> {
+                    viewModel.moveToSpam(mailBox);
+                    finish();
+                });
+                trashButton.setOnClickListener(v -> {
+                    viewModel.moveToTrash(mailBox);
+                    finish();
+                });
+            }
+            if (mailBox.equalsIgnoreCase("Trash")) {
+                labelAssignButton.setEnabled(false);
+                spamButton.setOnClickListener(v -> {
+                    viewModel.moveToSpam(mailBox);
                     finish();
                 });
             }

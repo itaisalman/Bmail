@@ -19,14 +19,17 @@ public interface MailDao {
     @Query("SELECT * FROM mails WHERE sender_address = :sender_address AND is_trash = 0 ORDER BY date DESC")
     LiveData<List<Mail>> getSentMailsLive(String sender_address);
 
-    @Query("SELECT * FROM mails WHERE receiver_address = :receiverAddress AND is_trash = 0 ORDER BY date DESC")
+    @Query("SELECT * FROM mails WHERE receiver_address = :receiverAddress AND is_trash = 0 AND is_spam = 0 ORDER BY date DESC")
     LiveData<List<Mail>> getReceivedMailsLive(String receiverAddress);
 
-    @Query("SELECT * FROM mails WHERE is_starred = 1 AND is_trash = 0 AND (receiver_address = :mailAddress OR sender_address = :mailAddress) ORDER BY date DESC")
+    @Query("SELECT * FROM mails WHERE is_starred = 1 AND is_trash = 0 AND is_spam = 0 AND (receiver_address = :mailAddress OR sender_address = :mailAddress) ORDER BY date DESC")
     LiveData<List<Mail>> getStarredMails(String mailAddress);
 
-    @Query("SELECT * FROM mails WHERE is_important = 1 AND is_trash = 0 AND (receiver_address = :mailAddress OR sender_address = :mailAddress) ORDER BY date DESC")
+    @Query("SELECT * FROM mails WHERE is_important = 1 AND is_trash = 0 AND is_spam = 0 AND (receiver_address = :mailAddress OR sender_address = :mailAddress) ORDER BY date DESC")
     LiveData<List<Mail>> getImportantMails(String mailAddress);
+
+    @Query("SELECT * FROM mails WHERE is_spam = 1 AND is_trash = 0 AND (receiver_address = :mailAddress OR sender_address = :mailAddress) ORDER BY date DESC")
+    LiveData<List<Mail>> getSpamMails(String mailAddress);
 
     @Query("SELECT * FROM mails WHERE is_trash = 1 AND (receiver_address = :mailAddress OR sender_address = :mailAddress) ORDER BY date DESC")
     LiveData<List<Mail>> getTrashMailsLive(String mailAddress);
