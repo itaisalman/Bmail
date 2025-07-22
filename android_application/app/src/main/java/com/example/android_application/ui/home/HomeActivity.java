@@ -355,7 +355,6 @@ public class HomeActivity extends BaseThemedActivity {
     // Sets up the labels in the navigation drawer without edit/delete functionality
     private void setupLabelsMenu(NavigationView navigationView) {
         LinearLayout labelsContainer = navigationView.findViewById(R.id.labels_container);
-
         if (labelsContainer == null) {
             Toast.makeText(this, "labels_container is missing", Toast.LENGTH_SHORT).show();
             return;

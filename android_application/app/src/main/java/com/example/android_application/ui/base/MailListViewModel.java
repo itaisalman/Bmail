@@ -104,6 +104,10 @@ public abstract class MailListViewModel extends AndroidViewModel {
         });
     }
 
+    public void emptyUserTrash() {
+        mailRepository.emptyUserTrash(getTokenFromStorage(), getUsernameFromStorage());
+    }
+
     protected void onMailsLoaded(List<Mail> mails, int count) {}
     public abstract LiveData<List<Mail>> getMailListLiveData();
     public abstract LiveData<String> getErrorMessage();

@@ -37,6 +37,9 @@ public interface MailDao {
     @Query("SELECT * FROM mails WHERE id = :mailId AND owner = :owner LIMIT 1")
     Mail getMailById(String mailId, String owner);
 
+    @Query("DELETE FROM mails WHERE owner = :owner AND is_trash = 1")
+    void emptyTrashByOwner(String owner);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert (List<Mail> mails);
 

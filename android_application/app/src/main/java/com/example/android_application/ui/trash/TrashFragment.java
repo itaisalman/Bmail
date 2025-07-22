@@ -7,10 +7,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.example.android_application.R;
 import com.example.android_application.ui.base.MailListFragment;
 import com.example.android_application.ui.home.HomeActivity;
 import com.example.android_application.ui.search.MailAdapter;
@@ -51,6 +54,17 @@ public class TrashFragment extends MailListFragment {
             intent.putExtra("mail_box", "Trash");
             intent.putExtra("mail_id", mail.getId());
             startActivity(intent);
+        });
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        Button emptyTrashButton = requireActivity().findViewById(R.id.btn_empty_trash);
+
+        emptyTrashButton.setOnClickListener(v -> {
+            mailListViewModel.emptyUserTrash();
         });
     }
 

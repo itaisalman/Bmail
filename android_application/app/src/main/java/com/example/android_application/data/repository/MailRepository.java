@@ -239,4 +239,27 @@ public class MailRepository {
             getMailsByLabel(owner, token, label, 1, null);
         }
     }
+
+    public void emptyUserTrash(String token, String owner) {
+        emptyTrashInServer(token);
+        emptyTrashLocally(owner);
+    }
+
+    private void emptyTrashInServer(String token) {
+        Call<Void> call = api.emptyTrash("Bearer " + token);
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {}
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {}
+        });
+    }
+
+    private void emptyTrashLocally(String owner) {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            mailDao.emptyTrashByOwner(owner);
+        });
+    }
+
 }
