@@ -84,10 +84,11 @@ public class ViewMailViewModel extends AndroidViewModel {
         isStarred.setValue(false);
         isImportant.setValue(false);
         isSpam.setValue(false);
+
         currentMail.setTrash(true);
         currentMail.setStarred(false);
         currentMail.setImportant(false);
-        currentMail.setTrash(false);
+        currentMail.setSpam(false);
         // Update server and room
         repository.updateMail(currentMail, "Trash", getTokenFromStorage());
 
@@ -104,9 +105,8 @@ public class ViewMailViewModel extends AndroidViewModel {
         currentMail.setStarred(false);
         currentMail.setImportant(false);
         currentMail.setTrash(false);
-        // Server update
-        repository.MoveMailToSpam(currentMail.getId(), getTokenFromStorage());
-        // Database update
+
+        // Server and Database update
         repository.updateMail(currentMail, "Spam", getTokenFromStorage());
 
     }
@@ -122,9 +122,8 @@ public class ViewMailViewModel extends AndroidViewModel {
         currentMail.setStarred(false);
         currentMail.setImportant(false);
         currentMail.setTrash(false);
-        // Server update
-        repository.RestoreMailFromSpam(currentMail.getId(), getTokenFromStorage());
-        // Database update
+
+        // Server and Database update
         repository.updateMail(currentMail, "RestoreSpam", getTokenFromStorage());
 
     }
