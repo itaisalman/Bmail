@@ -1,15 +1,8 @@
 # Bmail
 
 **Bmail** is a fullstack project that simulates an email platform with user authentication, email sending, label management, and malicious URL detection using a Bloom Filter server.
-The system includes:
 
-⚙️ A C++ multi-threaded Bloom Filter server
-
-✅ A Node.js backend (MVC architecture)
-
-🌐 A React frontend web application
-
-### **Key Features**
+## **Key Features**
 
 - **User Management**
 
@@ -37,209 +30,131 @@ If an email that contains a blacklisted URL is sent, it will appear in Spam sect
 Add/delete blacklist entries by adding or removing emails from Spam.
 Node.js acts as a client to the C++ backend.
 
-- **UI Features (React)**
+- **Web Client**
 
 Gmail-inspired interface using React + React Router.
 Responsive sidebar and topbar navigation.
 Live search with dynamic results.
 Dark/Light mode toggle using context.
 
-# Project Structure
+- **Android Client**
 
-```text
-BMAIL/
-|
-├── client_side/
-|  ├── public/
-|  |  ├── favicon.jpg
-|  |  ├── index.html
-|  |  └── manifest.json
-|  ├── src/
-|  |  ├── components/
-|  |  |  ├── ButtonMailComposer/
-|  |  |  │  └── ButtonMailComposer.js
-|  |  |  ├── Draft/
-|  |  |  │  ├── Draft.css
-|  |  |  │  └── Draft.js
-|  |  |  ├── DraftMailComposer/
-|  |  |  │  └── DraftMailComposer.js
-|  |  |  ├── Important/
-|  |  |  │  └── Important.js
-|  |  |  ├── Inbox/
-|  |  |  │  ├── Inbox.css
-|  |  |  │  └── Inbox.js
-|  |  |  ├── Labels/
-|  |  |  │  ├── apiLabels.js
-|  |  |  │  ├── LabelDelete.js
-|  |  |  │  ├── LabelEditor.js
-|  |  |  │  ├── LabelItem.js
-|  |  |  │  ├── Labels.css
-|  |  |  │  ├── Labels.js
-|  |  |  │  └── LabelView.js
-|  |  |  ├── LiveSearchResult/
-|  |  |  │  ├── LiveSearchResult.css
-|  |  |  │  └── LiveSearchResult.js
-|  |  |  ├── MailComposer/
-|  |  |  │  ├── MailComposer.css
-|  |  |  │  └── MailComposer.js
-|  |  |  ├── MailList/
-|  |  |  │  ├── MailList.css
-|  |  |  │  └── MailList.js
-|  |  |  ├── MailsControl/
-|  |  |  │  ├── MailsControl.css
-|  |  |  │  └── MailsControl.js
-|  |  |  ├── ProtectedRoute
-|  |  |  │  └── ProtectedRoute.js
-|  |  |  ├── SearchResult/
-|  |  |  |  ├── SearchResult.css
-|  |  |  |  └── SearchResult.js
-|  |  |  ├── Sent/
-|  |  |  |  └── Sent.js
-|  |  |  ├── Sidebar/
-|  |  |  |  ├── Sidebar.css
-|  |  |  |  └── Sidebar.js
-|  |  |  ├── Spam/
-|  |  |  |  └── Spam.js
-|  |  |  ├── Star/
-|  |  |  |  └── Star.js
-|  |  |  ├── Topbar/
-|  |  |  |  ├── Topbar.css
-|  |  |  |  └── Topbar.js
-|  |  |  ├── Trash/
-|  |  |  |  └── Trash.js
-|  |  |  ├── ViewMail/
-|  |  |  |  ├── ViewMail.css
-|  |  |  |  └── ViewMail.js
-|  |  |  ├── ViewResult/
-|  |  |  └── └── ViewResult.js
-|  |  ├── pages/
-|  |  |  ├── HomeScreen.css
-|  |  |  ├── HomeScreen.js
-|  |  |  ├── LoginScreen.css
-|  |  |  ├── LoginScreen.js
-|  |  |  ├── MainScreen.css
-|  |  |  └── MainScreen.js
-|  |  |  ├── SignupScreen.css
-|  |  |  └── SignupScreen.js
-|  |  ├── App.js
-|  |  ├── App.test.js
-|  |  ├── index.css
-|  |  ├── index.js
-|  |  ├── logo.jpg
-|  |  ├── reportWebVitals.js
-|  |  ├── setupTests.js
-|  |  └── ThemeContext.js
-|  ├── .gitignore
-|  ├── Dockerfile.react
-|  ├── package-lock.json
-|  └── package.json
-├── config/
-|  └── .env
-├── data/
-|  ├── upload/
-|  |  ├── default_female.png
-|  |  └── default_male.jpeg
-|  └── Blacklist.txt
-├── photos/
-|  └── *.jpg
-├── src/
-|  ├── controllers/
-|  |  ├── blacklist.js
-|  |  ├── labels.js
-|  |  ├── mails.js
-|  |  ├── tokens.js
-|  |  └── users.js
-|  ├── middleware/
-|  |  └── auth.js
-|  ├── models/
-|  |  ├── blacklist.js
-|  |  ├── labels.js
-|  |  ├── mails.js
-|  |  ├── tokens.js
-|  |  └── users.js
-|  ├── routes/
-|  |  ├── blacklist.js
-|  |  ├── labels.js
-|  |  ├── mails.js
-|  |  ├── tokens.js
-|  |  └── users.js
-|  ├── Add.cpp
-|  ├── Add.h
-|  ├── app.js
-|  ├── BloomFilter.cpp
-|  ├── BloomFilter.h
-|  ├── Check.cpp
-|  ├── Check.h
-|  ├── Client.py
-|  ├── Command.h
-|  ├── Delete.cpp
-|  ├── Delete.h
-|  ├── functions-test.cpp
-|  ├── Input.cpp
-|  ├── Input.h
-|  ├── server-tests.cpp
-|  ├── Server.cpp
-|  ├── Storage.cpp
-|  └── Storage.h
-├── .gitignore
-├── CMakeLists.txt
-├── docker-compose.yml
-├── DockerFile
-├── DockerFile.node
-├── package-lock.json
-├── package.json
-└── README.md
-```
+The Android app mirrors the functionality of the web client.  
+Built using the MVVM architecture and Room database for local offline access.  
+Supports and operates all system functionality and operations.
 
-## Folder Overview
+- **MongoDB Database**
 
-The project is organized into the following main parts:
+All data is stored in MongoDB, including users, emails, labels, and blacklist entries.  
+The backend uses Mongoose for schema definitions and communication with the database.  
+The MongoDB service runs inside Docker and is initialized automatically on first run.
 
-src/ – Node.js backend, built in an MVC pattern:
-routes/: define REST API endpoints
-controllers/: handle logic and response formatting
-models/: manage in-memory data and validation
-middleware/: includes JWT authentication logic
+## Design
 
-client_side/ – React-based frontend application:
-components/: reusable UI components such as Sidebar, MailList, ViewMail
-pages/: screen-level views like Login, Signup, Main (Inbox)
+### Web Client workflow
 
-C++ sources – Multi-threaded Bloom Filter server:
-Server.cpp, BloomFilter.cpp/.h, Input.cpp, etc.
+The client is built on React. It is responsible for displaying the user interface, and communicating with the server.
 
-data/ – Persistent files:
-Blacklist.txt: list of blocked URLs
-upload/: uploaded user profile images
+There is one thing to note about the client's workflow. When a user logs in, the server returns a JWT token. The client then stores this token in local storage, and uses this token to authenticate the user in every request to the server. When the user logs out, the client deletes the token from the local storage.
 
-# Executing The Program
+<img src="photos/Web_Client_workflow.jpg" alt="Web Client workflow" width = "250" height="250"/>
 
-To start the system, simply run:
+### Android Client workflow
 
-```bash
-docker compose up --build
-```
+Our Android client mirrors the web client's functionality, distinguished by its refined design employing the MVVM architecture. The app utilizing a local Room database. This plays a crucial role in enhancing the user experience by providing seamless access to data even in offline scenarios
 
-This command will launch three containers:
+<img src="photos/Android_Client_workflow.jpg" alt="Web Client workflow" width = "600" height="200"/>
 
-cpp-server runs on internal port 8080 and is exposed on port 8081. It handles all Bloom Filter logic and receives TCP requests from the Node.js backend for URL checks.
+## What we can do?
 
-node-client runs on port 3000 and serves as the REST API server for handling users, mails, labels, authentication, and blacklist logic.
+- First, you can create a new account using the Sign Up screen, then log in and start using Bmail.
 
-react-app runs the React frontend. It starts on internal port 3000, but is exposed on your machine through port 5174. The app communicates with the backend API through HTTP.
+- You can send and receive emails with full support for title, content, and receiver.
 
-Once the system is up and running, you can open your browser and access the following:
+* You can edit or delete your own drafts, and remove any email from your inbox.
 
-The React frontend: http://localhost:5174
-Note: The React app proxies API requests internally to port 3000 to communicate with the Node.js backend.
+* You can mark emails as important or star them for quick access.
 
-## Installation
+* You can create, edit, and delete labels to better organize your inbox.
+
+* You can assign labels to emails directly from the message screen and easily navigate between inbox, drafts, spam, and trash.
+
+* You can switch between light and dark mode by tapping the moon/sun icon at the top of the screen.
+
+* You can edit your username and profile picture by clicking the edit icon in the top menu.
+
+* You can log out or delete your account by clicking on your profile image in the top-right corner.
+
+* If an email contains a blacklisted URL, it will be automatically moved to spam.
+
+## Server API
+
+The server is built on Node.js and Express.js. It's responsible for handling the client's requests, and communicating with the database and the TCP server.
+
+The server exposes it's functionality through a REST API. Here's a list of the API's endpoints:
+
+| Endpoint                 | Method | Description                             |
+| ------------------------ | ------ | --------------------------------------- |
+| /api/users               | POST   | Create a new user                       |
+| /api/users/user_id       | GET    | Get user by ID                          |
+| /api/tokens              | POST   | Log in and receive authentication token |
+| /api/mails               | POST   | Send a mail                             |
+| /api/mails               | GET    | Get last 50 emails                      |
+| /api/mails/mail_id       | GET    | Get email by ID                         |
+| /api/mails/mail_id       | PATCH  | Edit an existing email by ID            |
+| /api/mails/mail_id       | DELETE | Delete an existing email by ID          |
+| /api/labels              | GET    | Get all labels                          |
+| /api/labels              | POST   | Create a new label                      |
+| /api/labels/label_id     | GET    | Get label by ID                         |
+| /api/labels/label_id     | PATCH  | Edit a label by ID                      |
+| /api/labels/label_id     | DELETE | Delete a label by ID                    |
+| /api/blacklist           | POST   | Add a URL to the blacklist              |
+| /api/blacklist           | DELETE | Remove a URL from the blacklist         |
+| /api/mails/search/string | GET    | Search emails by string                 |
+| /:mail_id/assign-label   | PATCH  | Assign a mail to a label                |
+| /mail/:mail_id           | DELETE | Remove a mail from its assigned label   |
+
+Most endpoints require the user to be authenticated. The authentication is done by sending the JWT token in the request's header.
+
+<img src="photos/Server_Architecture.jpg" alt="Web Client workflow" width = "600" height="200"/>
+
+## Getting Started
+
+### Installation
 
 Clone the repository:
 
 ```bash
 git clone - https://github.com/itaisalman/Bmail
 ```
+
+### Executing The Program
+
+To build and run the entire system:
+
+```bash
+docker compose up --build
+```
+
+Make sure Docker is installed and running on your machine.
+
+### Accessing the Web Client
+
+Once Docker is running, open your browser and go to:
+
+```bash
+http://localhost:5174/
+```
+
+From there, you can: Register or log in, compose and send emails, manage drafts and labels, filter by importance or starred, search and assign labels to emails and more.
+
+### Running the Android Client
+
+Open the Android project in Android Studio.
+
+Run the app on an emulator or physical device.
+
+The app connects automatically to the backend at http://10.0.2.2:3000.
 
 ## Authors
 
@@ -249,32 +164,27 @@ git clone - https://github.com/itaisalman/Bmail
 
 ## Screenshots Exampels
 
-### Build:
+#### Login
 
-<img src="photos/Build_part4.jpg" alt="build" width = "600" height="300"/>
+<img src="photos/loginScreen_part5.jpg" alt="Login android" width = "150" height="300"/>
+<img src="photos/loginScreen_part4.jpg" alt="Login web" width = "500" height="300"/>
 
-### Runs:
+#### Registration
 
-<img src="photos/homeScreen_part4.jpg" alt="home screen" width = "600" height="300"/>
+<img src="photos/signUpScreen_part5.jpg" alt="Register android" width = "150" height="300"/>
+<img src="photos/signUpScreen_part4.jpg" alt="Register web" width = "500" height="300"/>
 
-<img src="photos/signUpScreen_part4.jpg" alt="sign up screen" width = "600" height="300"/>
+#### Inbox
 
-<img src="photos/loginScreen_part4.jpg" alt="login screen" width = "600" height="300"/>
+<img src="photos/Inbox_part5.jpg" alt="main screen android" width = "150" height="300"/>
+<img src="photos/mainScreen_part4.jpg" alt="main screen web" width = "500" height="300"/>
 
-<img src="photos/mainScreen_part4.jpg" alt="main screen" width = "600" height="300"/>
+#### Create mail
 
-<img src="photos/viewMail_part4.jpg" alt="view mail" width = "600" height="300"/>
+<img src="photos/CreateMail_part5.jpg" alt="create new mail android" width = "150" height="300"/>
+<img src="photos/ComposeMail_part4.jpg" alt="create new mail web" width = "500" height="300"/>
 
-<img src="photos/ComposeMail_part4.jpg" alt="create new mail" width = "600" height="300"/>
+#### View mail
 
-<img src="photos/PatchDraft_part4.jpg" alt="edit draft" width = "600" height="300"/>
-
-<img src="photos/CreateLabel_part4.jpg" alt="creat label" width = "600" height="300"/>
-
-<img src="photos/assignToLabel_part4.jpg" alt="assign to label" width = "600" height="300"/>
-
-<img src="photos/searchBar_part4.jpg" alt="search bar" width = "600" height="300"/>
-
-<img src="photos/Trash_part4.jpg" alt="trash" width = "600" height="300"/>
-
-<img src="photos/darkMode_part4.jpg" alt="dark mode" width = "600" height="300"/>
+<img src="photos/viewMail_part5.jpg" alt="view mail android" width = "150" height="300"/>
+<img src="photos/viewMail_part4.jpg" alt="view mail web" width = "500" height="300"/>
