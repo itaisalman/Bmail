@@ -51,3 +51,10 @@ This local storage provides a smooth and responsive experience, even when offlin
 
 <img src="../photos/darkMode1_part5.jpg" alt="inbox" width="200"/>
 <img src="../photos/darkMode2_part5.jpg" alt="inbox" width="200"/>
+
+### Search Functionality
+
+- You can search for emails dynamically using the search bar at the top of the inbox.
+- As you type, the email list filters in real-time based on subject, content, or sender.
+
+<img src="../photos/searchBar_part5.jpg" alt="search bar" width="200"/>
