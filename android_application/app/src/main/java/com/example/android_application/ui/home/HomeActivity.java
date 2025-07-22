@@ -1,6 +1,5 @@
 package com.example.android_application.ui.home;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.Button;
 import android.widget.ImageButton;
 import androidx.appcompat.widget.SearchView;
 import android.widget.ImageView;
@@ -121,7 +121,6 @@ public class HomeActivity extends BaseThemedActivity {
                 String lastName = userJson.optString("last_name", "");
                 String username = userJson.optString("username", "");
 
-                SharedPreferences prefs = getApplicationContext().getSharedPreferences("auth", Context.MODE_PRIVATE);
                 String profilePath = userJson.optString("image", "");
                 String profileUrl = "http://10.0.2.2:3000/" + profilePath;
 
@@ -339,8 +338,6 @@ public class HomeActivity extends BaseThemedActivity {
     private void observeAndRenderLabels() {
         LinearLayout labelsContainer = findViewById(R.id.labels_container);
 
-        SharedPreferences prefs = getApplication().getSharedPreferences("auth", Context.MODE_PRIVATE);
-        String token = prefs.getString("jwt", "");
         // Observe the LiveData from the ViewModel
         labelViewModel.getLabels().observe(this, labels -> renderLabels(labelsContainer, labels, true));
     }
@@ -357,4 +354,8 @@ public class HomeActivity extends BaseThemedActivity {
         labelViewModel.getLabels().observe(this, labels -> renderLabels(labelsContainer, labels, false));
     }
 
+    public void showEmptyTrashButton(boolean show) {
+        Button btn = findViewById(R.id.btn_empty_trash);
+        btn.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
 }

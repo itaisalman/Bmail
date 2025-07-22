@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import com.example.android_application.data.local.entity.Draft;
 import com.example.android_application.data.local.entity.Mail;
 import com.example.android_application.data.repository.DraftRepository;
 import com.example.android_application.data.repository.MailRepository;
@@ -53,10 +52,11 @@ public class ComposeViewModel extends AndroidViewModel {
     // Send a mail via MailRepository.
     public void sendMail(String id,String to, String subject, String body) {
         Mail mail = new Mail();
+        mail.setOwner(getUsernameFromStorage());
         mail.setReceiverAddress(to);
         mail.setTitle(subject);
         mail.setContent(body);
-        repository.sendMail(getTokenFromStorage(), mail, new MailRepository.RepositoryCallback() {
+        repository.sendMail(getUsernameFromStorage(), getTokenFromStorage(), mail, new MailRepository.RepositoryCallback() {
             @Override
             public void onSuccess() {
                 mailSent.postValue(true);
@@ -123,5 +123,10 @@ public class ComposeViewModel extends AndroidViewModel {
     private String getTokenFromStorage() {
         SharedPreferences prefs = getApplication().getSharedPreferences("auth", Context.MODE_PRIVATE);
         return prefs.getString("jwt", "");
+    }
+
+    private String getUsernameFromStorage() {
+        SharedPreferences prefs = getApplication().getSharedPreferences("auth", Context.MODE_PRIVATE);
+        return prefs.getString("username", "");
     }
 }

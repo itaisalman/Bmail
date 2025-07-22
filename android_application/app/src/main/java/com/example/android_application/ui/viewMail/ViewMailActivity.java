@@ -1,18 +1,12 @@
 package com.example.android_application.ui.viewMail;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.*;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.annotation.NonNull;
 import com.example.android_application.R;
-import com.example.android_application.data.local.entity.Mail;
 import com.example.android_application.ui.label.LabelDialogHelper;
 import com.example.android_application.ui.label.LabelMailsViewModel;
 import com.example.android_application.ui.label.LabelViewModel;
-import androidx.lifecycle.ViewModelProvider;
 import com.example.android_application.ui.BaseThemedActivity;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -56,13 +50,9 @@ public class ViewMailActivity extends BaseThemedActivity {
 
 
         // Observe ViewModel
-        viewModel.getIsStarred().observe(this, isStarred -> {
-            starButton.setImageResource(isStarred ? R.drawable.ic_star : R.drawable.ic_star_view_mail);
-        });
+        viewModel.getIsStarred().observe(this, isStarred -> starButton.setImageResource(isStarred ? R.drawable.ic_star : R.drawable.ic_star_view_mail));
 
-        viewModel.getIsImportant().observe(this, isImportant -> {
-            importantButton.setImageResource(isImportant ? R.drawable.ic_important : R.drawable.ic_important_view_mail);
-        });
+        viewModel.getIsImportant().observe(this, isImportant -> importantButton.setImageResource(isImportant ? R.drawable.ic_important : R.drawable.ic_important_view_mail));
 
         mailBox = getIntent().getStringExtra("mail_box");
         if (mailBox != null) {

@@ -27,7 +27,7 @@ public class LabelMailsViewModel extends MailListViewModel {
         getMails(labelName, currentPage);
         SharedPreferences prefs = getApplication().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         String userId = prefs.getString("userID", null);
-        labelMails = labelRepository.getLabelMailsLive(labelName, userId);
+        labelMails = labelRepository.getLabelMailsLive(labelName, userId, getUsernameFromStorage());
     }
 
     @Override
@@ -41,12 +41,8 @@ public class LabelMailsViewModel extends MailListViewModel {
     }
 
     @Override
-    protected void onMailsLoaded(List<Mail> mails, int count) {
-    }
-
-    @Override
     public void getMails(String label, int page) {
-        mailRepository.getMailsByLabel(getTokenFromStorage(), label, page, new MailRepository.MailListCallback() {
+        mailRepository.getMailsByLabel(getUsernameFromStorage(), getTokenFromStorage(), label, page, new MailRepository.MailListCallback() {
             @Override
             public void onSuccess(List<Mail> mails, int totalCount) {
             }

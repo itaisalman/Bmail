@@ -242,7 +242,7 @@ public class LabelRepository {
     /**
      * Retrieves all mails associated with a specific label (by label name)
      */
-    public LiveData<List<Mail>> getLabelMailsLive(String labelName, String user_id) {
+    public LiveData<List<Mail>> getLabelMailsLive(String labelName, String user_id, String owner) {
         return Transformations.switchMap(
                 labelDao.getAllLabels(user_id),
                 labels -> {
@@ -254,7 +254,7 @@ public class LabelRepository {
                                 empty.setValue(new ArrayList<>());
                                 return empty;
                             }
-                            return mailDao.getMailsByIds(mailIds);
+                            return mailDao.getMailsByIds(mailIds, owner);
                         }
                     }
                     MutableLiveData<List<Mail>> notFound = new MutableLiveData<>();

@@ -80,5 +80,7 @@
     <string name="label_name_">Label Name</string>
     <string name="delete_label">Delete Label</string>
     <string name="trash">Trash</string>
+    <string name="empty_trash">Empty Trash</string>
+    <string name="send_email">Send email</string>
 </resources>
 
